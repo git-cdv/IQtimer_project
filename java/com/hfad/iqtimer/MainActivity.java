@@ -6,6 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -45,7 +49,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                    case R.id.btn_start: mViewModel.startTimer(); break;
+                    case R.id.btn_start:
+                        startService(new Intent(MainActivity.this, TimerService.class));
+                        registerReceiver(uiUpdated, new IntentFilter("TIMER_UPDATED"));
+                    break;
                     case R.id.btn_stop:  mViewModel.stopTimer(); break;
                     case R.id.btn_reset: mViewModel.startTimer(); break;
                 }
@@ -98,4 +105,13 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt(COUNT_S,mCountSession);
     }
+    private BroadcastReceiver uiUpdated = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //This is the part where I get the timer value from the service and I update it every second, because I send the data from the service every second.
+            mTextField.setText(intent.getExtras().getString("countdown"));
+
+        }
+    };
 }
