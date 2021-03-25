@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
     <EditTextPreference
-
-        android:title="Default Interval"
+        android:title="Время сессии"
         android:key="default_interval"
-        android:defaultValue="30"
-
+        android:summary="Время сессии по умолчанию"
+        android:defaultValue="45"
         />
-
-
 </PreferenceScreen>

@@ -16,30 +16,35 @@
         android:textAppearance="@android:style/TextAppearance.Large"
         android:textSize="56sp"
         />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <Button
         android:id="@+id/btn_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
         android:text="@string/start"/>
 
     <Button
         android:id="@+id/btn_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
         android:text="@string/stop"/>
 
     <Button
         android:id="@+id/btn_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
         android:text="@string/pause"/>
+</LinearLayout>
 
     <TextView
         android:id="@+id/count_ses"
