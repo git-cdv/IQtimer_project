@@ -3,4 +3,19 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="pause">Pause</string>
+    <string name="obzor">Обзор</string>
+    <string name="obzor_stat_day">Сегодня</string>
+    <string name="obzor_stat_week">Неделя</string>
+    <string name="obzor_stat_month">Месяц</string>
+    <string name="obzor_stat_total">Итого</string>
+
+    <string-array name="forSpinnerObzor">
+        <item>Сессии</item>
+        <item>Продолжительность</item>
+    </string-array>
+    <string-array name="forSpinnerHistory">
+        <item>Дни</item>
+        <item>Недели</item>
+        <item>Месяцы</item>
+    </string-array>
 </resources>

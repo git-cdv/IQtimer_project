@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -105,6 +106,9 @@ public class TimerService extends Service {
                         i.putExtra(KEY_COUNT, mPrefCount);
                         sendBroadcast(i);
                         sDefaultMillis = (Integer.valueOf(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
+
+                        MediaPlayer mPlayer = MediaPlayer.create(getApplication(),R.raw.bell_sound);
+                        mPlayer.start();
 
                     }
                 }.start();

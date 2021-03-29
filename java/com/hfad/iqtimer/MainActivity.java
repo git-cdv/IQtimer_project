@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.hfad.iqtimer.database.SessionDatabaseHelper;
 import com.hfad.iqtimer.settings.AboutActivity;
 import com.hfad.iqtimer.settings.SettingsActivity;
+import com.hfad.iqtimer.statistic.StatisticActivity;
 
 import java.time.LocalDate;
 import java.util.Locale;
@@ -157,17 +158,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             public void onClick(View v) {
                 switch (v.getId()){
                     case R.id.btn_start:
-                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                startForegroundService(mIntent);
-                            } else {
-                                startService(mIntent);
-                            }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(mIntent);
+                        } else {
+                            startService(mIntent);
+                        }
                         Log.d(TAG, "MainActivity: btn_Start");
-                    break;
+                        break;
                     case R.id.btn_stop:
                         Log.d(TAG, "MainActivity: btn_Stop");
-                         if(mBound){mTimerService.TimerStop();}
-                         mTextField.setText(mDefaultTime);
+                        if(mBound){mTimerService.TimerStop();}
+                        mTextField.setText(mDefaultTime);
                         break;
                     case R.id.btn_pause:
                         Log.d(TAG, "MainActivity: btn_Pause");
@@ -182,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPauseButton.setOnClickListener(clickListener);
         sPrefSettings.registerOnSharedPreferenceChangeListener(this);
 
-        }
+    }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         } catch (Exception e) {
             Log.d(TAG, "MainActivity: onStop - Unregistered receiver ERROR");
             // Receiver was probably already stopped in onPause()
-    }
+        }
     }
 
     @Override
@@ -244,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mTextFieldCount.setText("0");
     }
 
-//устанавливаем МЕНЮ
+    //устанавливаем МЕНЮ
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //создаем "заполнитель" меню
@@ -257,16 +258,24 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         //реагируем на нажатие элементов меню
         int id = item.getItemId();
-        if (id ==R.id.settings){
+        switch (id) {
             //открываем активити с настройками
-            Intent openSettings = new Intent(this, SettingsActivity.class);
-            startActivity(openSettings);
-            return true;
-        } else {
-            //открываем активити с инфой
-            Intent openAbout = new Intent(this, AboutActivity.class);
-            startActivity(openAbout);
-            return true;
+            case (R.id.settings):
+                Intent openSettings = new Intent(this, SettingsActivity.class);
+                startActivity(openSettings);
+                return true;
+            case (R.id.about):
+                //открываем активити с инфой
+                Intent openAbout = new Intent(this, AboutActivity.class);
+                startActivity(openAbout);
+                return true;
+            case (R.id.statistic):
+                //открываем активити со статистикой
+                Intent openStat = new Intent(this, StatisticActivity.class);
+                startActivity(openStat);
+                return true;
+            default:
+                return false;
         }
     }
     private void setDefaultTimeFromPref(SharedPreferences sPref) {
@@ -291,6 +300,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
 }
+
 
 // Добавить в нотификейшн - Стоп и Пауза
 // Добавить после паузы в нотификейшн - Продолжить? как у гудтайм

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="obzor">Обзор</string>
+    <string name="obzor_stat_day">Сегодня</string>
+    <string name="obzor_stat_week">Неделя</string>
+    <string name="obzor_stat_month">Месяц</string>
+    <string name="obzor_stat_total">Итого</string>
+</resources>
