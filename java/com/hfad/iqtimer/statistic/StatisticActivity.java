@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import androidx.preference.PreferenceManager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -46,6 +47,7 @@ import java.util.Locale;
 
 public class StatisticActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+
     TextView mTextObzorDay,mTextObzorWeek,mTextObzorMonth,mTextObzorTotal;
     SQLiteDatabase db;
     SessionDatabaseHelper DatabaseHelper;
@@ -59,9 +61,11 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
     BarChart mBarChart;
     ArrayList<BarEntry> arrayForChart;
     String[] datesForChart;
+    int mPlanDefault;
 
     private static final String TAG = "MYLOGS";
     private static final String KEY_PREF_COUNT = "prefcount";
+    private static final String KEY_PREF_PLAN = "set_plan_day";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,11 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
         //получаем ссылку на БД
         DatabaseHelper = new SessionDatabaseHelper(getApplication());
         db = DatabaseHelper.getReadableDatabase();//разрешаем чтение
+
+        //получаем доступ к файлу с настройками приложения
+        SharedPreferences sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        //вытаскиваем дефолтную значение плана из настроек и присваем переменной
+        mPlanDefault = Integer.valueOf(sPrefSettings.getString(KEY_PREF_PLAN, "5"));
 
         //получаем доступ к файлу с данными по дате и сессиям
         sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
@@ -101,18 +110,7 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
 
             listStat.setAdapter(listAdapter);
 
-        mCountWeek =0;
-        mCountMonth = 0;
-        mCountTotal = 0;
 
-        mCountWeek = mCountWeek+mPrefCount;
-        mCountMonth = mCountMonth+mPrefCount;
-        mCountTotal = mCountTotal+mPrefCount;
-        mTextObzorWeek.setText(mCountWeek.toString());
-        mTextObzorMonth.setText(mCountMonth.toString());
-        mTextObzorTotal.setText(mCountTotal.toString());
-
-        setupHistoryChart();
 
        //////БЛОК ОБЗОРА
         ///СПИНЕР ОБЗОРА
@@ -146,6 +144,14 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
 
         getDataForChart();
 
+        mCountWeek = mCountWeek+mPrefCount;
+        mCountMonth = mCountMonth+mPrefCount;
+        mCountTotal = mCountTotal+mPrefCount;
+
+        mTextObzorWeek.setText(mCountWeek.toString());
+        mTextObzorMonth.setText(mCountMonth.toString());
+        mTextObzorTotal.setText(mCountTotal.toString());
+
         String stringDescription = getResources().getString(R.string.stat_chart_description);
         String stringPlanDay = getResources().getString(R.string.stat_chart_planday);
 
@@ -169,11 +175,11 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
 
         //добавление "линии тренда" (план)
         YAxis leftAxis = mBarChart.getAxisLeft();
-        LimitLine ll = new LimitLine(4f, stringPlanDay);
+        LimitLine ll = new LimitLine(mPlanDefault, stringPlanDay);
         ll.setLineColor(Color.RED);
         //как пунктир
-        ll.enableDashedLine(5f,5f,2f);
-        ll.setLineWidth(2f);
+        ll.enableDashedLine(16f,4f,2f);
+        ll.setLineWidth(1f);
         ll.setTextColor(Color.RED);
         ll.setTextSize(10f);
         leftAxis.addLimitLine(ll);
@@ -190,25 +196,24 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
     void getDataForChart() {
         Log.d(TAG, "StatisticActivity: getDataForChart");
         int mCountArray =0;
-
-        //Курсор возвращает значения "_id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
-        Cursor cursor = db.query("SESSIONS",
-                new String[]{"_id", "DATE", "SESSION_COUNT"},
-                null, null, null, null, null);
+        mCountWeek =0;
+        mCountMonth = 0;
+        mCountTotal = 0;
 
         //создаем массив для графика
         arrayForChart = new ArrayList<BarEntry>();
         //создаем массив для значений замен на XAxis
-        datesForChart = new String [cursor.getCount()];
+        datesForChart = new String [sCursor.getCount()];
         //Создаем новый объект SimpleDateFormat с шаблоном, который совпадает с тем, что у нас в строке (иначе распарсить не получится)
         SimpleDateFormat formatterIn = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         SimpleDateFormat formatterOut = new SimpleDateFormat("MMM-dd", Locale.ENGLISH);
 
         //перебор всех записей в курсоре
-        while (cursor.moveToNext()) {
-            String strDate = cursor.getString(1);
-            int strCountSession = cursor.getInt(2);
+        while (sCursor.moveToNext()) {
+            String strDate = sCursor.getString(1);
+            int strCountSession = sCursor.getInt(2);
             Date date=null;
+
 
             try {
                 //Создаём дату с помощью форматтера, который в свою очередь парсит её из входной строки
@@ -223,9 +228,16 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
             //Добавляем дату в формате formatterOut в массив для замен на XAxis
             datesForChart[mCountArray] = formatterOut.format(date);
             mCountArray++;
+
+            //считаем сумму сессий за последние 7 дней
+            if (mCountArray>(sCursor.getCount()-7)){mCountWeek = mCountWeek+strCountSession;}
+            //считаем сумму сессий за последние 30 дней
+            if (mCountArray>(sCursor.getCount()-30)){mCountMonth = mCountMonth+strCountSession;}
+            //считаем сумму сессий Total
+            mCountTotal = mCountTotal+strCountSession;
         }
 
-    }
+        }
 
 
     @Override
@@ -247,8 +259,11 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
     //мы получаем результат работы лоадера – новый курсор с данными. Этот курсор мы отдаем адаптеру методом swapCursor.
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "StatisticActivity: onLoadFinished");
+        sCursor = data;
         //передаем адаптеру для отображения в листе
         listAdapter.swapCursor(data);
+        //запускаем загрузку графика, как готов курсор
+        setupHistoryChart();
 
     }
 
@@ -286,7 +301,7 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
 
         @Override
         public int getColor(int index) {
-            if(getEntryForIndex(index).getY() < 4){
+            if(getEntryForIndex(index).getY() < mPlanDefault){
                 return mColors.get(0);}
             else {
                 return mColors.get(1);}
@@ -295,48 +310,4 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
 
     }
 }
-
-/*    //Курсор возвращает значения "_id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
-    Cursor sCursor2 = db.query("SESSIONS",
-            new String[]{"_id", "DATE", "SESSION_COUNT"},
-            null, null, null, null, null);
-
-    DataPoint[] array = new DataPoint[sCursor2.getCount()];
-    int mCountArray=0;
-        mCountWeek =0;
-                mCountMonth = 0;
-                mCountTotal = 0;
-
-                //перебор всех записей в курсоре
-                while (sCursor2.moveToNext()) {
-                Date date=null;
-                String strDate = sCursor2.getString(1);
-                int strCountSession = sCursor2.getInt(2);
-                //Создаем новый объект SimpleDateFormat с шаблоном, который совпадает с тем, что у нас в строке (иначе распарсить не получится)
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-                try {
-                //Создаём дату с помощью форматтера, который в свою очередь парсит её из входной строки
-                date = formatter.parse(strDate);
-                } catch (ParseException e) {
-                e.printStackTrace();
-                }
-                //Добавляем дату и счетчик в массив
-                array[mCountArray] = new DataPoint(date, strCountSession);
-                mCountArray++;
-                //считаем сумму сессий за последние 7 дней
-                if (mCountArray<7){mCountWeek = mCountWeek+strCountSession;}
-        //считаем сумму сессий за последние 30 дней
-        if (mCountArray<30){mCountMonth = mCountMonth+strCountSession;}
-        //считаем сумму сессий Total
-        mCountTotal = mCountTotal+strCountSession;
-        }
-        //текущая дата
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(calendar.DAY_OF_MONTH, -1);
-        Date dayYest = calendar.getTime();
-        //Прибавление и вычитание значений в классе Calendar осуществляется с помощью метода add().
-        // В него необходимо передать то поле, которое ты хочешь изменить, и число - сколько именно ты хочешь прибавить/убавить от текущего значения.
-        calendar.add(calendar.DAY_OF_MONTH, -7);
-        //дата 7 дней назад
-        Date d2 = calendar.getTime();*/
 

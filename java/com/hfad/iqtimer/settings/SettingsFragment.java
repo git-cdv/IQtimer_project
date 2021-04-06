@@ -36,8 +36,11 @@ public class SettingsFragment extends PreferenceFragmentCompat
         }
         //получаем настройку интервала
         Preference preferenceInterval = findPreference("default_interval");
+        //получаем настройку плана
+        Preference preferencePlan = findPreference("set_plan_day");
         //назначаем на нее слушателя для проверки на валидность
         preferenceInterval.setOnPreferenceChangeListener(this);
+        preferencePlan.setOnPreferenceChangeListener(this);
     }
 
     //устанавливает название настройки, получает настройку и значение
@@ -68,7 +71,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
             toast = Toast.makeText(getContext(), "Please enter an integer number", Toast.LENGTH_LONG);
         }
 
-        if (preference.getKey().equals("default_interval")) {
+        if (preference.getKey().equals("default_interval")||preference.getKey().equals("set_plan_day")) {
             String defaultIntervalString =(String) o;
 
             try {

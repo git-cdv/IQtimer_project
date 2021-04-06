@@ -6,4 +6,10 @@
         android:summary="Время сессии по умолчанию"
         android:defaultValue="45"
         />
+    <EditTextPreference
+        android:title="План на день"
+        android:key="set_plan_day"
+        android:summary="План на день по умолчанию"
+        android:defaultValue="5"
+        />
 </PreferenceScreen>

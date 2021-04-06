@@ -7,4 +7,11 @@
     <string name="obzor_stat_total">Итого</string>
     <string name="stat_chart_description">Сессий в день</string>
     <string name="stat_chart_planday">План</string>
+    <string name="dialog_break_end">Перерыв закончен</string>
+    <string name="dialog_work_start">Приступить к работе</string>
+    <string name="cancel">Отмена</string>
+    <string name="dialog_rest_reset">Пропустить перерыв</string>
+    <string name="dialog_continue">Продолжить?</string>
+    <string name="break_time">Перерыв</string>
+    <string name="dialog_rest_end">Приступить к работе</string>
 </resources>

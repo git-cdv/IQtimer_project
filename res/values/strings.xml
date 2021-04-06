@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">IQtimer</string>
-    <string name="start">Start</string>
-    <string name="stop">Stop</string>
-    <string name="pause">Pause</string>
+    <string name="start">Старт</string>
+    <string name="stop">Стоп</string>
+    <string name="pause">Пауза</string>
+    <string name="back">Назад</string>
     <string name="obzor">Обзор</string>
     <string name="obzor_stat_day">Сегодня</string>
     <string name="obzor_stat_week">Неделя</string>
@@ -10,6 +11,10 @@
     <string name="obzor_stat_total">Итого</string>
     <string name="stat_chart_description">Сессий в день</string>
     <string name="stat_chart_planday">План</string>
+    <string name="dialog_session_end">Сессия закончена</string>
+    <string name="dialog_rest_start">Начать перерыв</string>
+    <string name="notif_rest_reset">Пропустить перерыв</string>
+
 
     <string-array name="forSpinnerObzor">
         <item>Сессии</item>
@@ -20,4 +25,13 @@
         <item>Недели</item>
         <item>Месяцы</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dialog_break_end">Перерыв закончен</string>
+    <string name="dialog_work_start">Приступить к работе</string>
+    <string name="cancel">Отмена</string>
+    <string name="dialog_rest_reset">Пропустить перерыв</string>
+    <string name="dialog_continue">Продолжить?</string>
+    <string name="break_time">Перерыв</string>
+    <string name="dialog_rest_end">Приступить к работе</string>
 </resources>
