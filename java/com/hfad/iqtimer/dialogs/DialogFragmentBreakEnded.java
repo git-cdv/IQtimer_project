@@ -14,6 +14,8 @@ import com.hfad.iqtimer.R;
 public class DialogFragmentBreakEnded extends DialogFragment implements DialogInterface.OnClickListener {
 
     private static final String TAG = "MYLOGS";
+    private static final int STATE_TIMER_WORKING = 500;
+    private static final int STATE_TIMER_WAIT = 101;
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder adb = new AlertDialog.Builder(getActivity())
@@ -27,9 +29,10 @@ public class DialogFragmentBreakEnded extends DialogFragment implements DialogIn
         switch (which) {
             case Dialog.BUTTON_POSITIVE:
                 Log.d(TAG, "Dialog: BUTTON_POSITIVE");
-                ((MainActivity)getActivity()).onBreakTime(false);
+                ((MainActivity)getActivity()).onBreakTime(STATE_TIMER_WORKING);
                 break;
             case Dialog.BUTTON_NEGATIVE:
+                ((MainActivity)getActivity()).onBreakTime(STATE_TIMER_WAIT);
                 break;
         }
            }

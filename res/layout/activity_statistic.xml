@@ -112,6 +112,5 @@
     <ListView
         android:id="@+id/list_stat"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        />
+        android:layout_height="300dp" />
 </LinearLayout>

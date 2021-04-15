@@ -14,4 +14,22 @@
     <string name="dialog_continue">Продолжить?</string>
     <string name="break_time">Перерыв</string>
     <string name="dialog_rest_end">Приступить к работе</string>
+    <string name="dowork">Работаем</string>
+    <string name="on_pause">На паузе</string>
+    <string name="qest_break">Начать перерыв?</string>
+    <string name="minut">мин.</string>
+    <string name="sessiy">сессий</string>
+    <string name="pref_sounds">Уведомление о окончании сессии</string>
+    <string name="pref_def_sound">Звук по умолчанию</string>
+    <string name="ok">Ok</string>
+    <string name="pref_sounds_break">Уведомление о окончании перерыва</string>
+    <string name="pref_vibrator">Вибрация</string>
+    <string name="no">Нет</string>
+    <string name="delicate">Слабая</string>
+    <string name="strong">Сильная</string>
+    <string name="fanfare">Фанфары</string>
+    <string name="starwars">Звездные Войны</string>
+    <string name="set_category_timer">Таймер и план</string>
+    <string name="set_category_notif">Уведомления</string>
+    <string name="set_swith_notif">Звук уведомления</string>
 </resources>

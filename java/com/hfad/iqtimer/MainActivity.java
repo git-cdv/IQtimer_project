@@ -43,14 +43,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final String KEY_PREF_COUNT = "prefcount";
     private static final String KEY_PREF_DATE = "prefdate";
     private static final String KEY_PREF_INTERVAL = "default_interval";
+    private static final String KEY_PREF_CHANGE = "iqtimer.timerchange";
     private static final String BR_FOR_SIGNALS = "iqtimer.brforsignals";
-    private static final int ST_TIMER_STARTED = 500;
-    private static final int ST_TIMER_FINISH = 100;
+    private static final int STATE_TIMER_WORKING = 500;
+    private static final int STATE_TIMER_FINISHED = 100;
+    private static final int STATE_TIMER_WAIT = 101;
     private static final int ST_TIMER_STOPED = 200;
-    private static final int ST_BREAK_STARTED = 400;
-    private static final int ST_BREAK_ENDED = 300;
+    private static final int STATE_BREAK_STARTED = 400;
+    private static final int STATE_BREAK_ENDED = 300;
     private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
     private static final String KEY_STATE = "iqtimer.state";
+
 
     TextView mTextField,mTextFieldCount;
     Button mStartButton, mStopButton, mPauseButton;
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private SQLiteDatabase db;
     SessionDatabaseHelper DatabaseHelper;
     boolean mBound = false;
+    boolean mActive = false;
     ServiceConnection mConn;
     TimerService mTimerService;
     Intent mIntent;
@@ -66,11 +70,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     SharedPreferences sPref, sPrefSettings;
     String mDefaultTime;
     DialogFragment dlg1,dlg2;
+    int mSTATE=STATE_TIMER_WAIT;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "MainActivity: onCreate");
         setContentView(R.layout.activity_main);
 
         mTextField = (TextView) findViewById(R.id.timer_view);
@@ -79,26 +85,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mStopButton = (Button) findViewById(R.id.btn_stop);
         mPauseButton = (Button) findViewById(R.id.btn_pause);
         mIntent = new Intent(MainActivity.this, TimerService.class);
-        mIntent.putExtra(KEY_STATE,ST_TIMER_STARTED);
         //получаем доступ к файлу с данными по дате и сессиям
         sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
         //получаем доступ к файлу с настройками приложения
         sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
         //вытаскиваем дефолтную значение интервала из настроек и присваиваем mDefaultTime
         setDefaultTimeFromPref(sPrefSettings);
-        mTextField.setText(mDefaultTime);
-        //создаем экземпляр диалога
-        dlg1 = new DialogFragmentSesEnd();
-        dlg2 = new DialogFragmentBreakEnded();
+        if (mSTATE==STATE_TIMER_WAIT){mTextField.setText(mDefaultTime);}//если первый вход и сервис еще не запущен
 
         if(savedInstanceState == null) {//проверяем что это не после переворота, а следующий вход
 
             mLocalDate = (LocalDate.now()).toString();
 
-            if (!sPref.contains(KEY_PREF_DATE)){//проверка на 0-вой заход
-                NewPreferences(); //заполняем Preferences файл как новый
-            } else {
-                //если уже была запись в текущий день (т.е день НЕ НОВЫЙ) - берем ее в mTextFieldCount
+            checkFirstRun();//проверяем на 0 вход
+            
+                 //если уже была запись в текущий день (т.е день НЕ НОВЫЙ) - берем ее в mTextFieldCount
                 if (sPref.getString(KEY_PREF_DATE,"").equals(mLocalDate)){
                     mCurrentCount = sPref.getInt(KEY_PREF_COUNT,500);
                     mTextFieldCount.setText(mCurrentCount.toString());
@@ -125,12 +126,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 }
             }
 
-        }
-
         if(savedInstanceState != null){//проверяем что это после переворота
             mBound= savedInstanceState.getBoolean("mBound");
             mCurrentCount = savedInstanceState.getInt("mCurrentCount");
             mTextFieldCount.setText(mCurrentCount.toString());
+            mSTATE = savedInstanceState.getInt(KEY_STATE);
+            Log.d(TAG, "MainActivity: savedInstanceState mSTATE - "+mSTATE);
+
         }
 
         //create BroadcastReceiver для обновления таймера
@@ -149,22 +151,28 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 int mState = intent.getExtras().getInt(KEY_STATE);
 
                 switch (mState){
-                    case ST_TIMER_FINISH:
+                    case STATE_TIMER_FINISHED:
                         mCurrentCount=intent.getExtras().getInt(KEY_COUNT);
                         mTextFieldCount.setText(mCurrentCount.toString());
                         mTextField.setText(mDefaultTime);
-                        dlg1.show(getSupportFragmentManager(), "IsBreak");
+                        //создаем диалог если Активити активно
+                        if(mActive) {
+                            showMyDialog(STATE_TIMER_FINISHED);
+                        }
                         break;
                     case ST_TIMER_STOPED:
                         mTextField.setText(mDefaultTime);
                         if(dlg1!=null){dlg1.dismiss();}
                         break;
-                    case ST_BREAK_ENDED:
+                    case STATE_BREAK_ENDED:
                         mTextField.setText(mDefaultTime);
-                        dlg2.show(getSupportFragmentManager(), "BreakEnded");
+                        //создаем диалог если Активити активно
+                        if(mActive) {
+                            showMyDialog(STATE_BREAK_ENDED);
+                        }
                         break;
                     case ST_BREAK_STARTED_IN_NOTIF:
-                        dlg1.dismiss();
+                        if(mActive) {dlg1.dismiss();}
                         break;
                 }
             }
@@ -176,6 +184,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 //получаем ссылку на сервис
                 mTimerService = ((TimerService.MyBinder) binder).getService();
                 mBound = true;
+                mSTATE=mTimerService.getSTATEinService();//получаем текущий статус в сервисе
+                stateViewPrepare(mSTATE);//подготавливаем UI в зависимости от статуса
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -184,13 +194,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             }
         };
 
-
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
                     case R.id.btn_start:
+                        mIntent.putExtra(KEY_STATE,STATE_TIMER_WORKING);
                         startTimeService(mIntent);
+                        mSTATE = STATE_TIMER_WORKING;
                         Log.d(TAG, "MainActivity: btn_Start");
                         break;
                     case R.id.btn_stop:
@@ -213,6 +224,34 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     }
 
+    private void stateViewPrepare(int state) {
+        Log.d(TAG, "MainActivity: stateViewPrepare()");
+        switch (state){
+            case STATE_TIMER_FINISHED:
+                showMyDialog(STATE_TIMER_FINISHED);
+                break;
+            case STATE_BREAK_ENDED:
+                showMyDialog(STATE_BREAK_ENDED);
+                break;
+        }
+    }
+
+    private void showMyDialog(int State) {
+        Log.d(TAG, "MainActivity: showMyDialog()");
+
+        switch (State){
+            case STATE_TIMER_FINISHED:
+                dlg1 = new DialogFragmentSesEnd();
+                dlg1.show(getSupportFragmentManager(), "IsBreak");
+                break;
+            case STATE_BREAK_ENDED:
+                dlg2 = new DialogFragmentBreakEnded();
+                dlg2.show(getSupportFragmentManager(), "BreakEnded");
+                break;
+        }
+
+    }
+
     private void startTimeService(Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent);
@@ -226,24 +265,36 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putBoolean("mBound",mBound);
         savedInstanceState.putInt("mCurrentCount",mCurrentCount);
+        savedInstanceState.putInt(KEY_STATE,mSTATE);
     }
 
-    public void onBreakTime(boolean isStart) {
-        if(isStart){
+    public void onBreakTime(int value) {
         Log.d(TAG, "MainActivity: onBreakTime()");
-        Intent mIntentBreak = new Intent(MainActivity.this, TimerService.class);
-        mIntentBreak.putExtra(KEY_STATE,ST_BREAK_STARTED);
-        startTimeService(mIntentBreak);
-        } else {
-            startTimeService(mIntent);
+        switch (value){
+            case STATE_BREAK_STARTED:
+                Intent mIntentBreak = new Intent(MainActivity.this, TimerService.class);
+                mIntentBreak.putExtra(KEY_STATE,STATE_BREAK_STARTED);
+                startTimeService(mIntentBreak);
+                break;
+            case STATE_TIMER_WORKING:
+                mSTATE = STATE_TIMER_WORKING;
+                startTimeService(mIntent);
+                break;
+            case STATE_TIMER_WAIT:
+                mSTATE = STATE_TIMER_WAIT;
+                mTimerService.setSTATEinService(STATE_TIMER_WAIT);
+                break;
         }
-    }
+        }
 
     @Override
     protected void onStart() {
-        Log.d(TAG, "MainActivity: onStart + bindService");
+        Log.d(TAG, "MainActivity: onStart + bindService + Registered receiver");
         super.onStart();
+        registerReceiver(uiUpdated, new IntentFilter("TIMER_UPDATED"));
+        registerReceiver(brForSignals, new IntentFilter(BR_FOR_SIGNALS));
         bindService(mIntent, mConn, 0);
+        mActive = true;
     }
 
     @Override
@@ -253,47 +304,30 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (!mBound) return;
         unbindService(mConn);
         mBound = false;
-        try {
-            unregisterReceiver(uiUpdated);
-            unregisterReceiver(brForSignals);
-        } catch (Exception e) {
-            Log.d(TAG, "MainActivity: onStop - Unregistered receiver ERROR");
-            // Receiver was probably already stopped in onPause()
-        }
-    }
+        mActive = false;
+         }
 
     @Override
     public void onResume() {
         super.onResume();
-        registerReceiver(uiUpdated, new IntentFilter("TIMER_UPDATED"));
-        registerReceiver(brForSignals, new IntentFilter(BR_FOR_SIGNALS));
-        Log.d(TAG, "MainActivity: onResume + Registered receiver");
+        Log.d(TAG, "MainActivity: onResume");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(uiUpdated);
-        unregisterReceiver(brForSignals);
-        Log.d(TAG, "MainActivity: onPause + Unregistered receiver");
+        Log.d(TAG, "MainActivity: onPause");
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "MainActivity: onDestroy");
+        Log.d(TAG, "MainActivity: onDestroy + Unregistered receiver");
         super.onDestroy();
         sPrefSettings.unregisterOnSharedPreferenceChangeListener(this);
+        unregisterReceiver(uiUpdated);
+        unregisterReceiver(brForSignals);
     }
 
-    void NewPreferences(){
-        Log.d(TAG, "MainActivity: NewPreferences");
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(KEY_PREF_DATE, mLocalDate);
-        ed.putInt(KEY_PREF_COUNT,0);
-        ed.commit();
-        mCurrentCount = 0;
-        mTextFieldCount.setText("0");
-    }
 
     //устанавливаем МЕНЮ
     @Override
@@ -338,21 +372,31 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         } else {//формат с минутами и секундами
             mDefaultTime = String.format(Locale.getDefault(), "%02d:%02d", mDefaultMinutes, 0);
         }
-
-
     }
-
     //слушает изменение настройки и выполняет код при событии
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals("default_interval")) {
             setDefaultTimeFromPref(sharedPreferences);
+            Log.d(TAG, "MainActivity: onSharedPreferenceChanged()");
+            SharedPreferences.Editor ed = sPref.edit();
+            ed.putBoolean(KEY_PREF_CHANGE, true);
+            ed.commit();
         }
     }
 
+    private void checkFirstRun() {
+        if (sPref.getBoolean("firstrun", true)) {
+            Log.d(TAG, "MainActivity: checkFirstRun()");
+            SharedPreferences.Editor ed = sPref.edit();
+            ed.putString(KEY_PREF_DATE, mLocalDate);
+            ed.putInt(KEY_PREF_COUNT,0);
+            ed.commit();
+            mCurrentCount = 0;
+            mTextFieldCount.setText("0");
+
+            sPref.edit().putBoolean("firstrun", false).commit();
+        }
+    }
 
 }
-
-
-// Добавить в нотификейшн - Стоп и Пауза
-// Добавить после паузы в нотификейшн - Продолжить? как у гудтайм
