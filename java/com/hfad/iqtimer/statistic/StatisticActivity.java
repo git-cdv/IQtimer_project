@@ -3,17 +3,17 @@ package com.hfad.iqtimer.statistic;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
-import androidx.preference.PreferenceManager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,27 +22,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.database.SessionDatabaseHelper;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.time.DayOfWeek;
+import java.time.temporal.WeekFields;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class StatisticActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -52,20 +41,14 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
     SQLiteDatabase db;
     SessionDatabaseHelper DatabaseHelper;
     static Cursor sCursor;
-    SimpleCursorAdapter listAdapter;
     SharedPreferences sPref;
     Integer mPrefCount;
     Integer mCountWeek;
     Integer mCountMonth;
     Integer mCountTotal;
-    BarChart mBarChart;
-    ArrayList<BarEntry> arrayForChart;
-    String[] datesForChart;
-    int mPlanDefault;
 
     private static final String TAG = "MYLOGS";
     private static final String KEY_PREF_COUNT = "prefcount";
-    private static final String KEY_PREF_PLAN = "set_plan_day";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,59 +59,67 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
         DatabaseHelper = new SessionDatabaseHelper(getApplication());
         db = DatabaseHelper.getReadableDatabase();//разрешаем чтение
 
-        //получаем доступ к файлу с настройками приложения
-        SharedPreferences sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
-        //вытаскиваем дефолтную значение плана из настроек и присваем переменной
-        mPlanDefault = Integer.valueOf(sPrefSettings.getString(KEY_PREF_PLAN, "5"));
-
         //получаем доступ к файлу с данными по дате и сессиям
         sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
         mTextObzorDay = (TextView) findViewById(R.id.obzor_stat_day);
         mTextObzorWeek = (TextView) findViewById(R.id.obzor_stat_week);
         mTextObzorMonth = (TextView) findViewById(R.id.obzor_stat_month);
         mTextObzorTotal = (TextView) findViewById(R.id.obzor_stat_total);
-        mBarChart = (BarChart) findViewById(R.id.history_chart);
-        //берем текущие значение
-        mPrefCount = sPref.getInt(KEY_PREF_COUNT,0);
-        mTextObzorDay.setText(mPrefCount.toString());
 
-        // создаем лоадер для чтения данных (работает только с фрагментами)
-        LoaderManager.getInstance(this).initLoader(0, null, this);
+        if(savedInstanceState == null) {//проверяем что это не после переворота, а следующий вход
+            //берем текущие значение
+            mPrefCount = sPref.getInt(KEY_PREF_COUNT,0);
+            mTextObzorDay.setText(mPrefCount.toString());
 
-             // формируем столбцы сопоставления
-            String[] from = new String[]{"DATE", "SESSION_COUNT"};
-            int[] to = new int[]{R.id.stat_date, R.id.stat_count};
+            // создаем лоадер для чтения данных (работает только с фрагментами)
+            LoaderManager.getInstance(this).initLoader(0, null, this);
+        }
 
-            listAdapter = new SimpleCursorAdapter(this,
-                    R.layout.stat_view_item,//Как должны выводиться данные.
-                    null,//в варианте с лоадером - курсор передает лоадре
-                    from,//Вывести содержимое столбца в надписях внутри компонента ListView
-                    to,//куда сопоставить и вывести
-                    0);
-            //получаем ссылку на списковое представление
-            ListView listStat = (ListView) findViewById(R.id.list_stat);
+        if(savedInstanceState != null){//проверяем что это после переворота
+            mCountWeek = savedInstanceState.getInt("mCountWeek");
+            mCountMonth = savedInstanceState.getInt("mCountMonth");
+            mCountTotal = savedInstanceState.getInt("mCountTotal");
+            mPrefCount = savedInstanceState.getInt("mPrefCount");
+            mTextObzorDay.setText(mPrefCount.toString());
+            mTextObzorWeek.setText(mCountWeek.toString());
+            mTextObzorMonth.setText(mCountMonth.toString());
+            mTextObzorTotal.setText(mCountTotal.toString());
 
-            listStat.setAdapter(listAdapter);
-
+        }
 
 
-       //////БЛОК ОБЗОРА
-        ///СПИНЕР ОБЗОРА
+        //добавляем фрагмент для отображения в контейнере
+        Fragment fragHistoryDays = new StatisticHistoryDaysFragment();
+        Fragment fragHistoryMonth = new StatisticHistoryMonthFragment();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.frgmContainer, fragHistoryDays);//1 - в каком контейнере, 2 - какой фрагмент добавить
+        ft.commit();
+
         // Создаем адаптер, используем simple_spinner_item в качестве layout для отображения Spinner на экран
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        //методом setDropDownViewResource указываем какой layout использовать для прорисовки пунктов выпадающего списка
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        Spinner spinner = (Spinner) findViewById(R.id.obzor_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.forSpinnerHistory, R.layout.spinner_item);
+        Spinner spinner = (Spinner) findViewById(R.id.history_spinner);
         spinner.setAdapter(adapter);
         // выделяем элемент
-        spinner.setSelection(1);
+        spinner.setSelection(0);
         // устанавливаем обработчик нажатия
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                //обработка нажатия
+                if(position==1){
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.remove(fragHistoryDays);
+                    ft.replace(R.id.frgmContainer, fragHistoryMonth);//1 - в каком контейнере, 2 - какой фрагмент добавить
+                    ft.commit();
+
+                }else {
+                    //добавляем фрагмент для отображения в контейнере
+                    Fragment fragHistoryDays = new StatisticHistoryDaysFragment();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.remove(fragHistoryMonth);
+                    ft.replace(R.id.frgmContainer, fragHistoryDays);//1 - в каком контейнере, 2 - какой фрагмент добавить
+                    ft.commit();
+                }
 
             }
             @Override
@@ -152,93 +143,85 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
         mTextObzorMonth.setText(mCountMonth.toString());
         mTextObzorTotal.setText(mCountTotal.toString());
 
-        String stringDescription = getResources().getString(R.string.stat_chart_description);
-        String stringPlanDay = getResources().getString(R.string.stat_chart_planday);
-
-        //создаем через свой класс, где переопределен метод вывода цвета для бара
-        MyBarDataSet barDataSet1 = new MyBarDataSet(arrayForChart,stringDescription);
-        //назначаем цвета для баров
-        barDataSet1.setColors(new int[]{Color.RED, Color.GREEN });
-        BarData barData = new BarData();
-        barData.addDataSet(barDataSet1);
-
-        ValueFormatter formatter = new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return datesForChart[(int) value];
-            }
-        };
-        //настройка оси Х (шаг и формат подписей)
-        XAxis xAxis = mBarChart.getXAxis();
-        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
-        xAxis.setValueFormatter(formatter);
-
-        //добавление "линии тренда" (план)
-        YAxis leftAxis = mBarChart.getAxisLeft();
-        LimitLine ll = new LimitLine(mPlanDefault, stringPlanDay);
-        ll.setLineColor(Color.RED);
-        //как пунктир
-        ll.enableDashedLine(16f,4f,2f);
-        ll.setLineWidth(1f);
-        ll.setTextColor(Color.RED);
-        ll.setTextSize(10f);
-        leftAxis.addLimitLine(ll);
-
-        mBarChart.setData(barData);
-        //устанавливает количество Баров для отображение, если больше - скролится
-        mBarChart.setVisibleXRangeMaximum(14f);
-        //убираем description
-        Description description = mBarChart.getDescription();
-        description.setEnabled(false);
-        mBarChart.invalidate();
-        }
+         }
 
     void getDataForChart() {
         Log.d(TAG, "StatisticActivity: getDataForChart");
-        int mCountArray =0;
+        int count=0;
+        boolean isCountWeek =true;
+        boolean isCountMonth =true;
         mCountWeek =0;
         mCountMonth = 0;
         mCountTotal = 0;
 
-        //создаем массив для графика
-        arrayForChart = new ArrayList<BarEntry>();
-        //создаем массив для значений замен на XAxis
-        datesForChart = new String [sCursor.getCount()];
-        //Создаем новый объект SimpleDateFormat с шаблоном, который совпадает с тем, что у нас в строке (иначе распарсить не получится)
+        Calendar calendar = Calendar.getInstance();
+
+        sCursor.moveToLast();//переходим на последнюю запись и записываем данные
         SimpleDateFormat formatterIn = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        SimpleDateFormat formatterOut = new SimpleDateFormat("MMM-dd", Locale.ENGLISH);
+        //получаем последнюю дату в БД из строки
+        try {
+            calendar.setTime(formatterIn.parse(sCursor.getString(0)));
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //если последняя дата не понедельник
+        if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY){
+            mCountWeek = mCountWeek+sCursor.getInt(1);
+        } else {//если ПН - заканчиваем подсчет
+            mCountWeek = mCountWeek+sCursor.getInt(1);
+            isCountWeek =false;
+        }
+        //если последняя дата не 1 число
+        if (isCountMonth&&calendar.get(Calendar.DAY_OF_MONTH) != 1){
+            mCountMonth = mCountMonth+sCursor.getInt(1);
+        } else {//если 1ое - заканчиваем подсчет
+            isCountMonth =false;
+            mCountMonth = mCountMonth+sCursor.getInt(1);
+        }
 
-        //перебор всех записей в курсоре
-        while (sCursor.moveToNext()) {
-            String strDate = sCursor.getString(1);
-            int strCountSession = sCursor.getInt(2);
-            Date date=null;
+        //перебор всех записей в курсоре в обратном порядке
+        while (sCursor.moveToPrevious()) {
+            int strCountSession = sCursor.getInt(1);
 
+            if(count<31){
 
-            try {
-                //Создаём дату с помощью форматтера, который в свою очередь парсит её из входной строки
-                date = formatterIn.parse(strDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
+                //получаем дату из строки
+                try {
+                    calendar.setTime(formatterIn.parse(sCursor.getString(0)));
+                }
+                catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            if (isCountWeek&&calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY){
+                mCountWeek = mCountWeek+strCountSession;
+            } else {
+                isCountWeek =false;
             }
 
-            //Добавляем индекс и счетчик в массив
-            arrayForChart.add(new BarEntry(mCountArray,strCountSession));
+            if (isCountMonth&&calendar.get(Calendar.DAY_OF_MONTH) != 1){
+                mCountMonth = mCountMonth+strCountSession;
+            } else {
+                isCountMonth =false;
+            }
+                count++;
+            }
 
-            //Добавляем дату в формате formatterOut в массив для замен на XAxis
-            datesForChart[mCountArray] = formatterOut.format(date);
-            mCountArray++;
-
-            //считаем сумму сессий за последние 7 дней
-            if (mCountArray>(sCursor.getCount()-7)){mCountWeek = mCountWeek+strCountSession;}
-            //считаем сумму сессий за последние 30 дней
-            if (mCountArray>(sCursor.getCount()-30)){mCountMonth = mCountMonth+strCountSession;}
             //считаем сумму сессий Total
             mCountTotal = mCountTotal+strCountSession;
         }
 
         }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("mPrefCount",mPrefCount);
+        savedInstanceState.putInt("mCountWeek",mCountWeek);
+        savedInstanceState.putInt("mCountMonth",mCountMonth);
+        savedInstanceState.putInt("mCountTotal",mCountTotal);
+    }
 
     @Override
     public void onDestroy() {
@@ -260,8 +243,6 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "StatisticActivity: onLoadFinished");
         sCursor = data;
-        //передаем адаптеру для отображения в листе
-        listAdapter.swapCursor(data);
         //запускаем загрузку графика, как готов курсор
         setupHistoryChart();
 
@@ -287,27 +268,12 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
             Log.d(TAG, "StatisticActivity: onLoadReset");
             //Курсор возвращает значения "_id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
             sCursor = db.query("SESSIONS",
-                    new String[]{"_id", "DATE", "SESSION_COUNT"},
+                    new String[]{"DATE", "SESSION_COUNT"},
                     null, null, null, null, null);
             return sCursor;
         }
     }
 
-    class MyBarDataSet extends BarDataSet {
 
-        public MyBarDataSet(List<BarEntry> yVals, String label) {
-            super(yVals, label);
-        }
-
-        @Override
-        public int getColor(int index) {
-            if(getEntryForIndex(index).getY() < mPlanDefault){
-                return mColors.get(0);}
-            else {
-                return mColors.get(1);}
-
-        }
-
-    }
 }
 

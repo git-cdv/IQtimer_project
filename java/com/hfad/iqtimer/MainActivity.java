@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.hfad.iqtimer.database.SessionDatabaseHelper;
+import com.hfad.iqtimer.database.WriteCountDataIntentService;
 import com.hfad.iqtimer.dialogs.DialogFragmentBreakEnded;
 import com.hfad.iqtimer.dialogs.DialogFragmentSesEnd;
 import com.hfad.iqtimer.settings.AboutActivity;
@@ -59,8 +60,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     Button mStartButton, mStopButton, mPauseButton;
     String mLocalDate;
     Integer mCurrentCount;
-    private SQLiteDatabase db;
-    SessionDatabaseHelper DatabaseHelper;
     boolean mBound = false;
     boolean mActive = false;
     ServiceConnection mConn;
@@ -94,35 +93,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (mSTATE==STATE_TIMER_WAIT){mTextField.setText(mDefaultTime);}//если первый вход и сервис еще не запущен
 
         if(savedInstanceState == null) {//проверяем что это не после переворота, а следующий вход
-
             mLocalDate = (LocalDate.now()).toString();
 
             checkFirstRun();//проверяем на 0 вход
-            
-                 //если уже была запись в текущий день (т.е день НЕ НОВЫЙ) - берем ее в mTextFieldCount
-                if (sPref.getString(KEY_PREF_DATE,"").equals(mLocalDate)){
+
+            //если уже была запись в текущий день (т.е день НЕ НОВЫЙ) - берем ее в mTextFieldCount
+            if (sPref.getString(KEY_PREF_DATE,"").equals(mLocalDate)){
                     mCurrentCount = sPref.getInt(KEY_PREF_COUNT,500);
                     mTextFieldCount.setText(mCurrentCount.toString());
+
                 } else {//если первый заход сегодня
-
-                    //берем текущие значени за прошлый день
-                    Integer mPrefCount = sPref.getInt(KEY_PREF_COUNT,500);
-                    String mPrefDate = sPref.getString(KEY_PREF_DATE,"default");
-
-                    //получаем ссылку на БД
-                    DatabaseHelper = new SessionDatabaseHelper(getApplication());
-                    db = DatabaseHelper.getWritableDatabase();//разрешаем чтение и запись
-                    //добавляет запись в БД с данными за прошлый день на момент первого входа на текущий день
-                    DatabaseHelper.insertSession(db, mPrefDate, mPrefCount);
-                    db.close();//закрывает БД
-
-                    //обновляем дату и обнуляем счетчик в sPref, обновляем mTextFieldCount
-                    SharedPreferences.Editor ed = sPref.edit();
-                    ed.putString(KEY_PREF_DATE, mLocalDate);
-                    ed.putInt(KEY_PREF_COUNT,0);
-                    ed.commit();
                     mCurrentCount = 0;
                     mTextFieldCount.setText("0");
+                    Intent mIntentService = new Intent(this, WriteCountDataIntentService.class);
+                    startService(mIntentService);
+
                 }
             }
 

@@ -3,7 +3,7 @@
     package="com.hfad.iqtimer">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -12,6 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.IQtimer">
+        <service
+            android:name=".database.WriteCountDataIntentService"
+            android:exported="false"></service>
+
         <activity
             android:name=".statistic.StatisticActivity"
             android:label="Statistic"
@@ -21,7 +25,7 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <service android:name=".TimerService"></service>
+        <service android:name=".TimerService" />
 
         <activity
             android:name=".settings.AboutActivity"

@@ -17,13 +17,8 @@
     <string name="pref_def_sound">Звук по умолчанию</string>
 
 
-    <string-array name="forSpinnerObzor">
-        <item>Сессии</item>
-        <item>Продолжительность</item>
-    </string-array>
     <string-array name="forSpinnerHistory">
         <item>Дни</item>
-        <item>Недели</item>
         <item>Месяцы</item>
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
@@ -54,4 +49,5 @@
     <string name="set_category_timer">Таймер и план</string>
     <string name="set_category_notif">Уведомления</string>
     <string name="set_swith_notif">Звук уведомления</string>
+    <string name="history">История</string>
 </resources>
