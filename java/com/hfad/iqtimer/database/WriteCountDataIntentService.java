@@ -7,19 +7,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class WriteCountDataIntentService extends IntentService {
     private static final String KEY_PREF_COUNT = "prefcount";
     private static final String KEY_PREF_DATE = "prefdate";
     private static final String TAG = "MYLOGS";
-    Calendar cLastDate;
+
 
     public WriteCountDataIntentService() {
         super("WriteCountDataIntentService");
@@ -34,11 +30,16 @@ public class WriteCountDataIntentService extends IntentService {
         //берем текущие значения за крайний день
         Integer mPrefCount = sPref.getInt(KEY_PREF_COUNT,500);
         String mPrefDate = sPref.getString(KEY_PREF_DATE,"default");
+        //получаем текущую дату из sPref
+        LocalDate mDateFromsPref = LocalDate.parse(mPrefDate);
+        //подготавливааем формат
+        DateTimeFormatter fmtOut = DateTimeFormat.forPattern("E, MMM. d, yyyy");
+        String strOutput = fmtOut.print(mDateFromsPref);
 
         //получаем ссылку на БД
         SessionDatabaseHelper DatabaseHelper = new SessionDatabaseHelper(getApplication());
         SQLiteDatabase db = DatabaseHelper.getWritableDatabase();//разрешаем чтение и запись
-        DatabaseHelper.insertSession(db, mPrefDate, mPrefCount);//записываем последние данные
+        DatabaseHelper.insertSession(db, mPrefDate, mPrefCount,strOutput);//записываем последние данные
 
         //обновляем дату и обнуляем счетчик в sPref
         SharedPreferences.Editor ed = sPref.edit();
@@ -53,29 +54,22 @@ public class WriteCountDataIntentService extends IntentService {
         //получаем и парсим последнюю дату в курсоре
         mCursor.moveToLast();
         String strDate = mCursor.getString(0);
-        SimpleDateFormat formatterIn = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        LocalDate mDateFromCursor = LocalDate.parse(strDate);
 
-        //Создаём дату с помощью форматтера, который в свою очередь парсит её из входной строки
-        try {
-            //получаем последнюю дату в БД из строки
-            cLastDate = Calendar.getInstance();
-            cLastDate.setTime(formatterIn.parse(strDate));
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
         // текущая дата
-        Calendar cToday = new GregorianCalendar();
+        LocalDate mToday = LocalDate.now();
         // получаем следующую дату
-        cLastDate.add(Calendar.DAY_OF_YEAR, 1);
+        LocalDate mNextDateFromCursor = mDateFromCursor.plusDays(1);
 
         //пока дата не равна текущему дню - проставляем 0
-        while(cLastDate.get(Calendar.YEAR) != cToday.get(Calendar.YEAR) &&
-                cLastDate.get(Calendar.DAY_OF_YEAR) != cToday.get(Calendar.DAY_OF_YEAR)){
-            String mDate = formatterIn.format(cLastDate.getTime());
-            DatabaseHelper.insertSession(db, mDate, 0);
+        while(mNextDateFromCursor.getDayOfYear() != mToday.getDayOfYear()){
+
+            String mNextDate = mNextDateFromCursor.toString("yyyy-MM-dd");
+            String mNextDateFull = mNextDateFromCursor.toString("E, MMM. d, yyyy");
+
+            DatabaseHelper.insertSession(db, mNextDate, 0,mNextDateFull);
             // получаем следующую дату
-            cLastDate.add(Calendar.DAY_OF_YEAR, 1);
+            mNextDateFromCursor = mNextDateFromCursor.plusDays(1);
         }
 
         db.close();//закрывает БД

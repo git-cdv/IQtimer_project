@@ -97,7 +97,7 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
             //Курсор возвращает значения "_id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
             sCursor = db.query("SESSIONS",
                     new String[]{"_id", "DATE", "SESSION_COUNT"},
-                    null, null, null, null, null);
+                    null, null, null, null, "_id DESC");
             return sCursor;
         }
     }

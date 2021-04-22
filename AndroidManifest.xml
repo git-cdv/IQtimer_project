@@ -18,7 +18,15 @@
 
         <activity
             android:name=".statistic.StatisticActivity"
-            android:label="Statistic"
+            android:label="@string/stat_actionbar_title"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".statistic.StatisticListActivity"
+            android:label="@string/stat_actionbar_title"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -29,7 +37,7 @@
 
         <activity
             android:name=".settings.AboutActivity"
-            android:label="About"
+            android:label="@string/about"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -37,7 +45,7 @@
         </activity>
         <activity
             android:name=".settings.SettingsActivity"
-            android:label="Settings"
+            android:label="@string/sett_actionbar_title"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

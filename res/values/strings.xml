@@ -50,4 +50,9 @@
     <string name="set_category_notif">Уведомления</string>
     <string name="set_swith_notif">Звук уведомления</string>
     <string name="history">История</string>
+    <string name="stat_list">Список</string>
+    <string name="stat_actionbar_title">Статистика</string>
+    <string name="sett_actionbar_title">Настройки</string>
+    <string name="about">О приложении</string>
+    <string name="sett_e_tost">Пожалуйста введите число от 1 до 30</string>
 </resources>

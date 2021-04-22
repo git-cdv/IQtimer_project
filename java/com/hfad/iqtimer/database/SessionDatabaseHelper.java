@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SessionDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "sessions"; // the name of our database
-    private static final int DB_VERSION = 1; // the version of the database
+    private static final int DB_VERSION = 2; // the version of the database
 
     //Вызываем конструктор суперкласса SQLiteOpenHelper и передаем ему имя и версию базы данных
     //Если имя не задано, то база данных будет существовать только в памяти, и при закрытии пропадет
@@ -29,13 +29,14 @@ public class SessionDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //метод для заполнения БД
-    public void insertSession(SQLiteDatabase db, String date, int count) {
+    public void insertSession(SQLiteDatabase db, String date, int count, String datefull) {
         //Объект ContentValues описывает набор данных.
         // Обычно создается новый объект ContentValues для каждой строки данных, которую потребуется создать.
         ContentValues sessionValues = new ContentValues();
         //добавляет данные в виде пар "имя/значение": NAME — столбец, в который добавляются данные, value — сами данные
         sessionValues.put("DATE", date);
         sessionValues.put("SESSION_COUNT", count);
+        sessionValues.put("DATEFULL", datefull);
         //В таблицу вставляется одна строка
         //второй параметр нужен если надо вставить пустую строку
         db.insert("SESSIONS", null, sessionValues);
@@ -55,6 +56,8 @@ public class SessionDatabaseHelper extends SQLiteOpenHelper {
                     + "SESSION_COUNT INTEGER);");
         }
         if (oldVersion < 2) { //код для обновления структуры БД
+            //добавляем столбец DATEFULL
+            db.execSQL("ALTER TABLE SESSIONS ADD COLUMN DATEFULL TEXT;");
         }
     }
 }

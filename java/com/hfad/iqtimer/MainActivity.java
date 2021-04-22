@@ -23,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hfad.iqtimer.database.SessionDatabaseHelper;
@@ -32,6 +33,7 @@ import com.hfad.iqtimer.dialogs.DialogFragmentSesEnd;
 import com.hfad.iqtimer.settings.AboutActivity;
 import com.hfad.iqtimer.settings.SettingsActivity;
 import com.hfad.iqtimer.statistic.StatisticActivity;
+import com.marcok.stepprogressbar.StepProgressBar;
 
 import java.time.LocalDate;
 import java.util.Locale;
@@ -54,10 +56,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final int STATE_BREAK_ENDED = 300;
     private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
     private static final String KEY_STATE = "iqtimer.state";
+    private static final String KEY_PREF_PLAN = "set_plan_day" ;
 
 
     TextView mTextField,mTextFieldCount;
     Button mStartButton, mStopButton, mPauseButton;
+    StepProgressBar mStepProgressBar;
     String mLocalDate;
     Integer mCurrentCount;
     boolean mBound = false;
@@ -68,8 +72,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     BroadcastReceiver uiUpdated, brForSignals;
     SharedPreferences sPref, sPrefSettings;
     String mDefaultTime;
+    Integer mDefaultPlan;
     DialogFragment dlg1,dlg2;
     int mSTATE=STATE_TIMER_WAIT;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -83,14 +89,20 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mStartButton = (Button) findViewById(R.id.btn_start);
         mStopButton = (Button) findViewById(R.id.btn_stop);
         mPauseButton = (Button) findViewById(R.id.btn_pause);
+        mStepProgressBar =(StepProgressBar)findViewById(R.id.stepProgressBar);
+
         mIntent = new Intent(MainActivity.this, TimerService.class);
         //получаем доступ к файлу с данными по дате и сессиям
         sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
+
         //получаем доступ к файлу с настройками приложения
         sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
         //вытаскиваем дефолтную значение интервала из настроек и присваиваем mDefaultTime
         setDefaultTimeFromPref(sPrefSettings);
         if (mSTATE==STATE_TIMER_WAIT){mTextField.setText(mDefaultTime);}//если первый вход и сервис еще не запущен
+        mDefaultPlan = Integer.valueOf(sPrefSettings.getString(KEY_PREF_PLAN, "8"));
+        //установка количества точек из плана в настройках
+        mStepProgressBar.setNumDots(mDefaultPlan);
 
         if(savedInstanceState == null) {//проверяем что это не после переворота, а следующий вход
             mLocalDate = (LocalDate.now()).toString();
@@ -98,24 +110,27 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             checkFirstRun();//проверяем на 0 вход
 
             //если уже была запись в текущий день (т.е день НЕ НОВЫЙ) - берем ее в mTextFieldCount
-            if (sPref.getString(KEY_PREF_DATE,"").equals(mLocalDate)){
-                    mCurrentCount = sPref.getInt(KEY_PREF_COUNT,500);
-                    mTextFieldCount.setText(mCurrentCount.toString());
+            if (sPref.getString(KEY_PREF_DATE, "").equals(mLocalDate)) {
+                mCurrentCount = sPref.getInt(KEY_PREF_COUNT, 500);
+                mTextFieldCount.setText(mCurrentCount.toString());
 
-                } else {//если первый заход сегодня
-                    mCurrentCount = 0;
-                    mTextFieldCount.setText("0");
-                    Intent mIntentService = new Intent(this, WriteCountDataIntentService.class);
-                    startService(mIntentService);
+            } else {//если первый заход сегодня
+                mCurrentCount = 0;
+                mTextFieldCount.setText("0");
+                Intent mIntentService = new Intent(this, WriteCountDataIntentService.class);
+                startService(mIntentService);
 
-                }
             }
+            progressBarSetup();
+        }
 
         if(savedInstanceState != null){//проверяем что это после переворота
             mBound= savedInstanceState.getBoolean("mBound");
             mCurrentCount = savedInstanceState.getInt("mCurrentCount");
+            mDefaultPlan = savedInstanceState.getInt("mDefaultPlan");
             mTextFieldCount.setText(mCurrentCount.toString());
             mSTATE = savedInstanceState.getInt(KEY_STATE);
+            progressBarSetup();
             Log.d(TAG, "MainActivity: savedInstanceState mSTATE - "+mSTATE);
 
         }
@@ -140,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         mCurrentCount=intent.getExtras().getInt(KEY_COUNT);
                         mTextFieldCount.setText(mCurrentCount.toString());
                         mTextField.setText(mDefaultTime);
+                        progressBarSetup();
                         //создаем диалог если Активити активно
                         if(mActive) {
                             showMyDialog(STATE_TIMER_FINISHED);
@@ -198,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         Log.d(TAG, "MainActivity: btn_Pause");
                         if(mBound){mTimerService.TimerPause();}
                         break;
+
                 }
             }
         };
@@ -207,6 +224,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mPauseButton.setOnClickListener(clickListener);
         sPrefSettings.registerOnSharedPreferenceChangeListener(this);
 
+    }
+
+    private void progressBarSetup() {
+        //убирает полностью активные точки если значение -1 (меньше или больше - выбросит ошибку)
+        if (mCurrentCount < mDefaultPlan) {
+            mStepProgressBar.setCurrentProgressDot(mCurrentCount - 1);
+        } else {
+            mStepProgressBar.setCurrentProgressDot(mDefaultPlan - 1);
+        }
     }
 
     private void stateViewPrepare(int state) {
@@ -250,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putBoolean("mBound",mBound);
         savedInstanceState.putInt("mCurrentCount",mCurrentCount);
+        savedInstanceState.putInt("mDefaultPlan",mDefaultPlan);
         savedInstanceState.putInt(KEY_STATE,mSTATE);
     }
 

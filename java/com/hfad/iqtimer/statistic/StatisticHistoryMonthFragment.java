@@ -30,6 +30,10 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.database.SessionDatabaseHelper;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Month;
@@ -190,8 +194,6 @@ public class StatisticHistoryMonthFragment extends Fragment implements LoaderMan
 
         int mCountArray =0;
         int mCheck=0;
-        //int mMaxDaysInMonth=0;
-        //int mDayInMonth;
         int mCountMonth=0;
         int mCurrentMonth=0;
         int mMonth=0;
@@ -202,31 +204,21 @@ public class StatisticHistoryMonthFragment extends Fragment implements LoaderMan
         //создаем массив для значений замен на XAxis
         monthForChart = new ArrayList<String>();;
         //Создаем новый объект SimpleDateFormat с шаблоном, который совпадает с тем, что у нас в строке (иначе распарсить не получится)
-        SimpleDateFormat formatterIn = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        SimpleDateFormat formatterOut = new SimpleDateFormat("MMM", Locale.ENGLISH);
+        DateTimeFormatter fmtOut = DateTimeFormat.forPattern("MMM");
 
         //перебор всех записей в курсоре
         while (mCursorMonth.moveToNext()) {
             String strDate = mCursorMonth.getString(1);
             int strCountSession = mCursorMonth.getInt(2);
 
-            //Создаём дату с помощью форматтера, который в свою очередь парсит её из входной строки
-            try {
-                //получаем дату в БД из строки
-                cDate = new GregorianCalendar();// календарь на текущую дату
-                cDate.setTime(formatterIn.parse(strDate));
-            }
-            catch (ParseException e) {
-                e.printStackTrace();
-            }
+            //получаем текущую дату с курсора
+            LocalDate mDateFromCursor = LocalDate.parse(strDate);
+
             if(mCheck==0){//проверяем что это первый проход
-                cCurrentDate = cDate;
-                mMonth=cDate.get(Calendar.MONTH);
+                mMonth=mDateFromCursor.getMonthOfYear();
                 mCheck=1;
             }
-            //день месяца
-            //mDayInMonth = cDate.get(Calendar.DAY_OF_MONTH);
-            mCurrentMonth =cDate.get(Calendar.MONTH);
+            mCurrentMonth =mDateFromCursor.getMonthOfYear();
 
             if(mMonth==mCurrentMonth){
 
@@ -235,9 +227,9 @@ public class StatisticHistoryMonthFragment extends Fragment implements LoaderMan
                 //Добавляем индекс и счетчик в массив
                 arrayForChart.add(new BarEntry(mCountArray,mCountMonth));
 
-                Date mDate = cCurrentDate.getTime();
-                //Добавляем месяц в формате formatterOut в массив для замен на XAxis
-                monthForChart.add(formatterOut.format(mDate));
+                String strOutputDateTime = fmtOut.print(mDateFromCursor.minusMonths(1));
+                //Добавляем месяц в формате fmtOut в массив для замен на XAxis
+                monthForChart.add(strOutputDateTime);
                 mCountArray++;
                 mCheck=0;
                 mCountMonth = strCountSession;
@@ -246,9 +238,9 @@ public class StatisticHistoryMonthFragment extends Fragment implements LoaderMan
                 //Добавляем индекс и счетчик в массив
                 arrayForChart.add(new BarEntry(mCountArray,mCountMonth));
 
-                Date mDate = cDate.getTime();
-                //Добавляем месяц в формате formatterOut в массив для замен на XAxis
-                monthForChart.add(formatterOut.format(mDate));
+                String strOutputDateTime = fmtOut.print(mDateFromCursor);
+                //Добавляем месяц в формате fmtOut в массив для замен на XAxis
+                monthForChart.add(strOutputDateTime);
             }
 
 

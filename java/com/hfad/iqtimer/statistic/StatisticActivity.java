@@ -1,7 +1,10 @@
-package com.hfad.iqtimer.statistic;
+ package com.hfad.iqtimer.statistic;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -11,11 +14,14 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,6 +32,9 @@ import android.widget.TextView;
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.database.SessionDatabaseHelper;
 
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -34,7 +43,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class StatisticActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class StatisticActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
     TextView mTextObzorDay,mTextObzorWeek,mTextObzorMonth,mTextObzorTotal;
@@ -49,6 +58,8 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
 
     private static final String TAG = "MYLOGS";
     private static final String KEY_PREF_COUNT = "prefcount";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,9 +138,39 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
             }
         });
 
-
+         //создаем стрелку НАЗАД
+        ActionBar actionBar = this.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.stat_actionbar_title);
+        }
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.stat_menu, menu);
+        return true;
+
+    }
+
+    @Override
+    //обрабатываем стрелку НАЗАД
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        //обработка кнопки назад
+        if (id == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+        }
+        //обработка кнопки Списка
+        if (id == R.id.stat_list) {
+        Intent i = new Intent(this,StatisticListActivity.class);
+        startActivity(i);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     void setupHistoryChart() {
 
@@ -147,65 +188,32 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
 
     void getDataForChart() {
         Log.d(TAG, "StatisticActivity: getDataForChart");
-        int count=0;
         boolean isCountWeek =true;
         boolean isCountMonth =true;
         mCountWeek =0;
         mCountMonth = 0;
         mCountTotal = 0;
 
-        Calendar calendar = Calendar.getInstance();
 
-        sCursor.moveToLast();//переходим на последнюю запись и записываем данные
-        SimpleDateFormat formatterIn = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        //получаем последнюю дату в БД из строки
-        try {
-            calendar.setTime(formatterIn.parse(sCursor.getString(0)));
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-        //если последняя дата не понедельник
-        if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY){
-            mCountWeek = mCountWeek+sCursor.getInt(1);
-        } else {//если ПН - заканчиваем подсчет
-            mCountWeek = mCountWeek+sCursor.getInt(1);
-            isCountWeek =false;
-        }
-        //если последняя дата не 1 число
-        if (isCountMonth&&calendar.get(Calendar.DAY_OF_MONTH) != 1){
-            mCountMonth = mCountMonth+sCursor.getInt(1);
-        } else {//если 1ое - заканчиваем подсчет
-            isCountMonth =false;
-            mCountMonth = mCountMonth+sCursor.getInt(1);
-        }
+        //перебор всех записей в курсоре
+        while (sCursor.moveToNext()) {
+            int strCountSession = sCursor.getInt(2);
+            String strCountDate = sCursor.getString(1);
 
-        //перебор всех записей в курсоре в обратном порядке
-        while (sCursor.moveToPrevious()) {
-            int strCountSession = sCursor.getInt(1);
+            LocalDate mDateFromCursor = LocalDate.parse(strCountDate);
 
-            if(count<31){
-
-                //получаем дату из строки
-                try {
-                    calendar.setTime(formatterIn.parse(sCursor.getString(0)));
-                }
-                catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-            if (isCountWeek&&calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY){
+            if (isCountWeek){
                 mCountWeek = mCountWeek+strCountSession;
-            } else {
-                isCountWeek =false;
+                if (mDateFromCursor.getDayOfWeek() == DateTimeConstants.MONDAY){
+                    isCountWeek =false;
+                }
             }
 
-            if (isCountMonth&&calendar.get(Calendar.DAY_OF_MONTH) != 1){
+            if (isCountMonth){
                 mCountMonth = mCountMonth+strCountSession;
-            } else {
-                isCountMonth =false;
-            }
-                count++;
+                if (mDateFromCursor.getDayOfMonth() == 1){
+                    isCountMonth =false;
+                }
             }
 
             //считаем сумму сессий Total
@@ -267,9 +275,10 @@ public class StatisticActivity extends FragmentActivity implements LoaderManager
         public Cursor loadInBackground() {
             Log.d(TAG, "StatisticActivity: onLoadReset");
             //Курсор возвращает значения "_id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
+            //с сортировкой по убыванию ИД
             sCursor = db.query("SESSIONS",
-                    new String[]{"DATE", "SESSION_COUNT"},
-                    null, null, null, null, null);
+                    new String[]{"_id","DATE", "SESSION_COUNT"},
+                    null, null, null, null, "_id DESC");
             return sCursor;
         }
     }

@@ -171,15 +171,30 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
         Toast toast = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            toast = Toast.makeText(getContext(), "Please enter an integer number", Toast.LENGTH_LONG);
+            toast = Toast.makeText(getContext(), R.string.sett_e_tost, Toast.LENGTH_LONG);
         }
 
-        if (preference.getKey().equals("default_interval")||preference.getKey().equals("set_plan_day")||preference.getKey().equals("break_time")) {
+        if (preference.getKey().equals("default_interval")||preference.getKey().equals("break_time")) {
             String defaultIntervalString =(String) o;
 
             try {
                 //пробуем распознать как целое число
                 int defaultInterval = Integer.parseInt(defaultIntervalString);
+            } catch (NumberFormatException nef) {
+                toast.show();
+                return false;
+            }
+        }
+        if (preference.getKey().equals("set_plan_day")) {
+            String defaultPlanString =(String) o;
+
+            try {
+                //пробуем распознать как целое число
+                int defaultInterval = Integer.parseInt(defaultPlanString);
+                if (Integer.parseInt(defaultPlanString)>30||Integer.parseInt(defaultPlanString)<1){
+                    toast.show();
+                    return false;
+                }
             } catch (NumberFormatException nef) {
                 toast.show();
                 return false;
