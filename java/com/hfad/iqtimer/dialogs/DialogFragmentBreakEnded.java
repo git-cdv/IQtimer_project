@@ -11,6 +11,8 @@ import androidx.fragment.app.DialogFragment;
 import com.hfad.iqtimer.MainActivity;
 import com.hfad.iqtimer.R;
 
+import java.util.Objects;
+
 public class DialogFragmentBreakEnded extends DialogFragment implements DialogInterface.OnClickListener {
 
     private static final String TAG = "MYLOGS";
@@ -29,7 +31,7 @@ public class DialogFragmentBreakEnded extends DialogFragment implements DialogIn
         switch (which) {
             case Dialog.BUTTON_POSITIVE:
                 Log.d(TAG, "Dialog: BUTTON_POSITIVE");
-                ((MainActivity)getActivity()).onBreakTime(STATE_TIMER_WORKING);
+                ((MainActivity) requireActivity()).onBreakTime(STATE_TIMER_WORKING);
                 break;
             case Dialog.BUTTON_NEGATIVE:
                 ((MainActivity)getActivity()).onBreakTime(STATE_TIMER_WAIT);

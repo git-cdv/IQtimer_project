@@ -14,18 +14,10 @@
         android:theme="@style/Theme.IQtimer">
         <service
             android:name=".database.WriteCountDataIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity
             android:name=".statistic.StatisticActivity"
-            android:label="@string/stat_actionbar_title"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".statistic.StatisticListActivity"
             android:label="@string/stat_actionbar_title"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -51,7 +43,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".MainActivity">
+
+        <activity android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

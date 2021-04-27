@@ -33,7 +33,7 @@ public class WriteCountDataIntentService extends IntentService {
         //получаем текущую дату из sPref
         LocalDate mDateFromsPref = LocalDate.parse(mPrefDate);
         //подготавливааем формат
-        DateTimeFormatter fmtOut = DateTimeFormat.forPattern("E, MMM. d, yyyy");
+        DateTimeFormatter fmtOut = DateTimeFormat.forPattern("E, MMM d, yyyy");
         String strOutput = fmtOut.print(mDateFromsPref);
 
         //получаем ссылку на БД
@@ -45,7 +45,7 @@ public class WriteCountDataIntentService extends IntentService {
         SharedPreferences.Editor ed = sPref.edit();
         ed.putString(KEY_PREF_DATE, mLocalDate);
         ed.putInt(KEY_PREF_COUNT,0);
-        ed.commit();
+        ed.apply();
 
         Cursor mCursor = db.query("SESSIONS",
                 new String[]{"DATE", "SESSION_COUNT"},
@@ -65,7 +65,7 @@ public class WriteCountDataIntentService extends IntentService {
         while(mNextDateFromCursor.getDayOfYear() != mToday.getDayOfYear()){
 
             String mNextDate = mNextDateFromCursor.toString("yyyy-MM-dd");
-            String mNextDateFull = mNextDateFromCursor.toString("E, MMM. d, yyyy");
+            String mNextDateFull = mNextDateFromCursor.toString("E, MMM d, yyyy");
 
             DatabaseHelper.insertSession(db, mNextDate, 0,mNextDateFull);
             // получаем следующую дату

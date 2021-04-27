@@ -39,7 +39,7 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
         LoaderManager.getInstance(this).initLoader(0, null, this);
 
         // формируем столбцы сопоставления
-        String[] from = new String[]{"DATE", "SESSION_COUNT"};
+        String[] from = new String[]{"DATEFULL", "SESSION_COUNT"};
         int[] to = new int[]{R.id.stat_date, R.id.stat_count};
 
         listAdapter = new SimpleCursorAdapter(getContext(),
@@ -96,7 +96,7 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
             Log.d(TAG, "StatisticListDaysFragment: onLoadReset");
             //Курсор возвращает значения "_id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
             sCursor = db.query("SESSIONS",
-                    new String[]{"_id", "DATE", "SESSION_COUNT"},
+                    new String[]{"_id","SESSION_COUNT","DATEFULL"},
                     null, null, null, null, "_id DESC");
             return sCursor;
         }
@@ -106,6 +106,6 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
     public void onDestroy() {
         super.onDestroy();
         sCursor.close();
-        db.close();
+        if(db!=null){db.close();}
     }
 }

@@ -3,9 +3,13 @@ package com.hfad.iqtimer.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
@@ -63,6 +67,25 @@ public class SettingsFragment extends PreferenceFragmentCompat
         setDefaultSummary(preferenceDialogSoundsBreak, KEY_PREF_SOUND_BREAK_NUM);
         Preference preferenceDialogVibro = findPreference("set_dialog_vibro");
         setDefaultSummary(preferenceDialogVibro, KEY_PREF_VIBRO_NUM);
+
+        //вытаскиваем EditTextPreference и назначаем его InputType.TYPE_CLASS_NUMBER
+        EditTextPreference editTextPreferenceInterval = getPreferenceManager().findPreference("default_interval");
+        EditTextPreference editTextPreferenceBreak = getPreferenceManager().findPreference("break_time");
+        EditTextPreference editTextPreferencePlan = getPreferenceManager().findPreference("set_plan_day");
+
+        EditTextPreference.OnBindEditTextListener EditTextListener = new EditTextPreference.OnBindEditTextListener() {
+            @Override
+            public void onBindEditText(@NonNull EditText editText) {
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                editText.getText().clear();//очищаем фокус для удобства ввода
+
+            }
+        };
+
+        editTextPreferenceInterval.setOnBindEditTextListener(EditTextListener);
+        editTextPreferenceBreak.setOnBindEditTextListener(EditTextListener);
+        editTextPreferencePlan.setOnBindEditTextListener(EditTextListener);
+
 
         if (!sPrefSettings.getBoolean("switch_notif",true)){
             preferenceDialogSounds.setVisible(false);
@@ -174,35 +197,18 @@ public class SettingsFragment extends PreferenceFragmentCompat
             toast = Toast.makeText(getContext(), R.string.sett_e_tost, Toast.LENGTH_LONG);
         }
 
-        if (preference.getKey().equals("default_interval")||preference.getKey().equals("break_time")) {
-            String defaultIntervalString =(String) o;
-
-            try {
-                //пробуем распознать как целое число
-                int defaultInterval = Integer.parseInt(defaultIntervalString);
-            } catch (NumberFormatException nef) {
-                toast.show();
-                return false;
-            }
-        }
         if (preference.getKey().equals("set_plan_day")) {
-            String defaultPlanString =(String) o;
+            String defaultPlanString = (String) o;
 
-            try {
-                //пробуем распознать как целое число
-                int defaultInterval = Integer.parseInt(defaultPlanString);
-                if (Integer.parseInt(defaultPlanString)>30||Integer.parseInt(defaultPlanString)<1){
-                    toast.show();
-                    return false;
-                }
-            } catch (NumberFormatException nef) {
+            if (Integer.parseInt(defaultPlanString) > 30 || Integer.parseInt(defaultPlanString) < 1) {
                 toast.show();
                 return false;
             }
+
+            }
+             return true;
         }
 
-        return true;
-    }
 
 
     @Override

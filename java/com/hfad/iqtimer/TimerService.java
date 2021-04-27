@@ -72,8 +72,8 @@ public class TimerService extends Service {
         sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
         //получаем доступ к файлу с настройками приложения
         sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
-        mDefaultTimeInMillis = (Integer.valueOf(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
-        mBreakTimeInMillis = (Integer.valueOf(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))*60000;
+        mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
+        mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))*60000;
         iTimeUpdateOnUI = new Intent("TIMER_UPDATED");
         mTimeLeftInMillis = mDefaultTimeInMillis;
     }
@@ -84,11 +84,11 @@ public class TimerService extends Service {
         super.onStartCommand(intent, flags, startId);
 
         if (sPref.getBoolean(KEY_PREF_CHANGE,false)){
-            mDefaultTimeInMillis = (Integer.valueOf(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
+            mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
             mTimeLeftInMillis = mDefaultTimeInMillis;
             SharedPreferences.Editor ed = sPref.edit();
             ed.putBoolean(KEY_PREF_CHANGE, false);
-            ed.commit();
+            ed.apply();
         }
 
         //извлекаем и проверяпм состояние
@@ -117,6 +117,7 @@ public class TimerService extends Service {
                 break;
             case STATE_BREAK_STARTED: //обработка интента для перерыва
                 Log.d(TAG, "TimerService: onStartCommand - ST_BREAK_STARTED");
+                mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))*60000;
                 mTimeLeftInMillis=mBreakTimeInMillis;
                 isBreak = true;
                 mTimer = new Timer(mTimeLeftInMillis, 1000);
