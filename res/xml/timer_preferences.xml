@@ -30,6 +30,7 @@
             android:key="switch_notif"
             android:title="@string/set_swith_notif"
             android:icon="@drawable/ic_outline_notifications_black"
+            android:defaultValue="true"
           />
     <Preference
         android:key="set_dialog_sounds"

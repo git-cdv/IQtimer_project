@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -139,8 +140,6 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         savedInstanceState.putParcelableArrayList("arrayForChartMonth",arrayForChartMonth);
         savedInstanceState.putStringArrayList("datesForChartMonth",datesForChartMonth);
     }
-
-
 
     void setupObzorChart() {
         Log.d(TAG, "StatisticFragment: setupObzorChart()");

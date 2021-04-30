@@ -58,4 +58,7 @@
     <string name="history_month">История, месяцы</string>
     <string name="stat_chart_description_month">Сессий в месяц</string>
     <string name="stat_graph">График</string>
+    <string name="icon_for_menu">Icon for Menu</string>
+    <string name="progress_shock_days">Ударных дней</string>
+    <string name="progress_text_title">Достижения</string>
 </resources>

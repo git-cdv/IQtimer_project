@@ -2,8 +2,8 @@ package com.hfad.iqtimer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
 import android.content.BroadcastReceiver;
@@ -13,20 +13,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.ImageButton;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.hfad.iqtimer.database.SessionDatabaseHelper;
 import com.hfad.iqtimer.database.WriteCountDataIntentService;
 import com.hfad.iqtimer.dialogs.DialogFragmentBreakEnded;
 import com.hfad.iqtimer.dialogs.DialogFragmentSesEnd;
@@ -34,11 +33,16 @@ import com.hfad.iqtimer.settings.AboutActivity;
 import com.hfad.iqtimer.settings.SettingsActivity;
 import com.hfad.iqtimer.statistic.StatisticActivity;
 import com.marcok.stepprogressbar.StepProgressBar;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.OnItemClickListener;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class MainActivity extends FragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final String TAG = "MYLOGS";
     private static final String KEY_TIME = "timedown";
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final int STATE_TIMER_WORKING = 500;
     private static final int STATE_TIMER_FINISHED = 100;
     private static final int STATE_TIMER_WAIT = 101;
+    private static final int STATE_TIMER_ONPAUSE = 102;
     private static final int ST_TIMER_STOPED = 200;
     private static final int STATE_BREAK_STARTED = 400;
     private static final int STATE_BREAK_ENDED = 300;
@@ -60,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
     TextView mTextField,mTextFieldCount;
-    Button mStartButton, mStopButton, mPauseButton;
+    ImageButton mButtonMenu,mStopButton;
     StepProgressBar mStepProgressBar;
     String mLocalDate;
     Integer mCurrentCount;
@@ -75,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     Integer mDefaultPlan;
     DialogFragment dlg1,dlg2;
     int mSTATE=STATE_TIMER_WAIT;
+    DialogPlus dialogMenu;
+    Animation animTimerView;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -86,9 +93,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         mTextField = (TextView) findViewById(R.id.timer_view);
         mTextFieldCount = (TextView) findViewById(R.id.count_ses);
-        mStartButton = (Button) findViewById(R.id.btn_start);
-        mStopButton = (Button) findViewById(R.id.btn_stop);
-        mPauseButton = (Button) findViewById(R.id.btn_pause);
+        mStopButton = (ImageButton) findViewById(R.id.imageButtonStop);
+        mButtonMenu = (ImageButton) findViewById(R.id.imageButtonMenu);
         mStepProgressBar =(StepProgressBar)findViewById(R.id.stepProgressBar);
 
         mIntent = new Intent(MainActivity.this, TimerService.class);
@@ -103,6 +109,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mDefaultPlan = Integer.valueOf(sPrefSettings.getString(KEY_PREF_PLAN, "8"));
         //установка количества точек из плана в настройках
         mStepProgressBar.setNumDots(mDefaultPlan);
+         //данные для меню
+        dataForMenu();
 
         if(savedInstanceState == null) {//проверяем что это не после переворота, а следующий вход
             mLocalDate = (LocalDate.now()).toString();
@@ -199,29 +207,48 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                    case R.id.btn_start:
+
+                    case R.id.timer_view:
+                        if (mSTATE == STATE_TIMER_WORKING){
+                            Log.d(TAG, "MainActivity: Pause");
+                            if(mBound){mTimerService.TimerPause();}
+                            mSTATE = STATE_TIMER_ONPAUSE;
+                            mTextField.startAnimation(createBlink());
+                            break;
+                        } else {
                         mIntent.putExtra(KEY_STATE,STATE_TIMER_WORKING);
                         startTimeService(mIntent);
                         mSTATE = STATE_TIMER_WORKING;
-                        Log.d(TAG, "MainActivity: btn_Start");
-                        break;
-                    case R.id.btn_stop:
+                        mStopButton.setVisibility(View.VISIBLE);
+                        if(animTimerView!=null){
+                            mTextField.clearAnimation();
+                            animTimerView=null;
+                        }
+                        Log.d(TAG, "MainActivity: Start");
+                        break;}
+
+                    case R.id.imageButtonStop:
                         Log.d(TAG, "MainActivity: btn_Stop");
                         if(mBound){mTimerService.TimerStop();}
                         mTextField.setText(mDefaultTime);
+                        mStopButton.setVisibility(View.INVISIBLE);
+                        if(animTimerView!=null){
+                            mTextField.clearAnimation();
+                            animTimerView=null;
+                        }
                         break;
-                    case R.id.btn_pause:
-                        Log.d(TAG, "MainActivity: btn_Pause");
-                        if(mBound){mTimerService.TimerPause();}
+                    case R.id.imageButtonMenu:
+                        Log.d(TAG, "MainActivity: btn_Menu");
+                        dialogMenu.show();
                         break;
 
                 }
             }
         };
         //регистрируем слушателей кнопок и настроек
-        mStartButton.setOnClickListener(clickListener);
         mStopButton.setOnClickListener(clickListener);
-        mPauseButton.setOnClickListener(clickListener);
+        mButtonMenu.setOnClickListener(clickListener);
+        mTextField.setOnClickListener(clickListener);
         sPrefSettings.registerOnSharedPreferenceChangeListener(this);
 
     }
@@ -340,43 +367,70 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         unregisterReceiver(brForSignals);
     }
 
+    void dataForMenu(){
 
-    //устанавливаем МЕНЮ
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //создаем "заполнитель" меню
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.timer_menu,menu);
-        return true;
-    }
+        // массивы данных
+        String[] texts = { "IQTimer","Обновить","Резервное копирование","Статистика", "Настройки", "О программе"};
+        int [] img = {R.drawable.ic_baseline_timer_24,R.drawable.ic_baseline_trending_up_24, R.drawable.ic_baseline_backup_24, R.drawable.ic_baseline_leaderboard_24,R.drawable.ic_baseline_settings_24,R.drawable.ic_baseline_info_24};
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //реагируем на нажатие элементов меню
-        int id = item.getItemId();
-        switch (id) {
-            //открываем активити с настройками
-            case (R.id.settings):
-                Intent openSettings = new Intent(this, SettingsActivity.class);
-                startActivity(openSettings);
-                return true;
-            case (R.id.about):
-                //открываем активити с инфой
-                Intent openAbout = new Intent(this, AboutActivity.class);
-                startActivity(openAbout);
-                return true;
-            case (R.id.statistic):
-                //открываем активити со статистикой
-                Intent openStat = new Intent(this, StatisticActivity.class);
-                startActivity(openStat);
-                return true;
-            default:
-                return false;
+        // упаковываем данные в понятную для адаптера структуру
+        ArrayList<Map<String, Object>> data = new ArrayList<>(
+                texts.length);
+        Map<String, Object> m;
+        for (int i = 0; i < texts.length; i++) {
+            m = new HashMap<>();
+            m.put("text", texts[i]);
+            m.put("image", img[i]);
+            data.add(m);
         }
+
+        // массив имен атрибутов, из которых будут читаться данные
+        String[] from = {"text","image"};
+        // массив ID View-компонентов, в которые будут вставлять данные
+        int[] to = {R.id.tvText, R.id.ivImg};
+
+        // создаем адаптер
+        SimpleAdapter sMenuAdapter = new SimpleAdapter(this, data, R.layout.item_list_menu,
+                from, to);
+
+        // ДИАЛОГОВОЕ МЕНЮ
+        dialogMenu = DialogPlus.newDialog(this)
+                .setAdapter(sMenuAdapter)
+                .setExpanded(false)
+                .setCancelable(true)
+                .setPadding(8,24,8,24)
+                .setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                        switch (position) {
+                            case (3):
+                                //открываем активити со статистикой
+                                Intent openStat = new Intent(getApplication(), StatisticActivity.class);
+                                startActivity(openStat);
+                                dialogMenu.dismiss();
+                                break;
+                            //открываем активити с настройками
+                            case (4):
+                                Intent openSettings = new Intent(getApplication(), SettingsActivity.class);
+                                startActivity(openSettings);
+                                dialogMenu.dismiss();
+                                break;
+                            case (5):
+                                //открываем активити с инфой
+                                Intent openAbout = new Intent(getApplication(), AboutActivity.class);
+                                startActivity(openAbout);
+                                dialogMenu.dismiss();
+                                break;
+                        }
+                    }
+                })
+                .create();
+
     }
+
     private void setDefaultTimeFromPref(SharedPreferences sPref) {
         //проверяем настройку с дефолтным интервалом, если ее нет то устанавливается - defValue
-        int mDefaultMinutes = Integer.valueOf(sPref.getString(KEY_PREF_INTERVAL, "45"));
+        int mDefaultMinutes = Integer.parseInt(sPref.getString(KEY_PREF_INTERVAL, "45"));
 
         if (mDefaultMinutes >= 60) {//если время отчета равно или больше 1 часа, то формат с часами
             mDefaultTime = String.format(Locale.getDefault(), "%02d:%02d:%02d", mDefaultMinutes / 60,
@@ -393,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             Log.d(TAG, "MainActivity: onSharedPreferenceChanged()");
             SharedPreferences.Editor ed = sPref.edit();
             ed.putBoolean(KEY_PREF_CHANGE, true);
-            ed.commit();
+            ed.apply();
         }
     }
 
@@ -403,12 +457,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             SharedPreferences.Editor ed = sPref.edit();
             ed.putString(KEY_PREF_DATE, mLocalDate);
             ed.putInt(KEY_PREF_COUNT,0);
-            ed.commit();
+            ed.apply();
             mCurrentCount = 0;
             mTextFieldCount.setText("0");
 
-            sPref.edit().putBoolean("firstrun", false).commit();
+            sPref.edit().putBoolean("firstrun", false).apply();
         }
+    }
+
+    Animation createBlink (){
+        animTimerView = new AlphaAnimation(0.2f, 1.0f);//анимация альфа канала (прозрачности от 0 до 1)
+        animTimerView.setDuration(800); //длительность анимации
+        animTimerView.setStartOffset(50);//сдвижка начала анимации (с середины)
+        animTimerView.setRepeatMode(Animation.REVERSE);//режим повтора - сначала или в обратном порядке
+        animTimerView.setRepeatCount(Animation.INFINITE);//режим повтора (бесконечно)
+        return animTimerView;
     }
 
 }
