@@ -4,12 +4,14 @@ package com.hfad.iqtimer.settings;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 
 import com.hfad.iqtimer.R;
+import com.hfad.iqtimer.progress.DialogFragmentGoal;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -32,5 +34,10 @@ public class AboutActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void testDialog(View view) {
+        DialogFragmentGoal dialog = new DialogFragmentGoal();
+        dialog.show(getSupportFragmentManager(),"dlg1");
     }
 }

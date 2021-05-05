@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,7 +51,10 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
                 0);
         //получаем ссылку на списковое представление
         ListView listStat = (ListView) v.findViewById(R.id.list_stat);
-
+        //текст при путом списке
+        TextView emptyText = (TextView)v.findViewById(R.id.empty_text_list);
+        emptyText.setVisibility(View.VISIBLE);
+        listStat.setEmptyView(emptyText);
         listStat.setAdapter(listAdapter);
 
         return v;

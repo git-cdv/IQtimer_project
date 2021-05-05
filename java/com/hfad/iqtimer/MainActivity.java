@@ -6,6 +6,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import com.hfad.iqtimer.database.WriteCountDataIntentService;
 import com.hfad.iqtimer.dialogs.DialogFragmentBreakEnded;
 import com.hfad.iqtimer.dialogs.DialogFragmentSesEnd;
+import com.hfad.iqtimer.progress.ProgressActivity;
 import com.hfad.iqtimer.settings.AboutActivity;
 import com.hfad.iqtimer.settings.SettingsActivity;
 import com.hfad.iqtimer.statistic.StatisticActivity;
@@ -204,6 +206,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         };
 
         View.OnClickListener clickListener = new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
@@ -232,6 +235,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                         if(mBound){mTimerService.TimerStop();}
                         mTextField.setText(mDefaultTime);
                         mStopButton.setVisibility(View.INVISIBLE);
+                        mSTATE = STATE_TIMER_FINISHED;
                         if(animTimerView!=null){
                             mTextField.clearAnimation();
                             animTimerView=null;
@@ -370,8 +374,8 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     void dataForMenu(){
 
         // массивы данных
-        String[] texts = { "IQTimer","Обновить","Резервное копирование","Статистика", "Настройки", "О программе"};
-        int [] img = {R.drawable.ic_baseline_timer_24,R.drawable.ic_baseline_trending_up_24, R.drawable.ic_baseline_backup_24, R.drawable.ic_baseline_leaderboard_24,R.drawable.ic_baseline_settings_24,R.drawable.ic_baseline_info_24};
+        String[] texts = { "IQTimer","Обновить","Достижения","Статистика", "Настройки", "О программе"};
+        int [] img = {R.drawable.ic_baseline_timer_24,R.drawable.ic_baseline_trending_up_24, R.drawable.ic_outline_cup_24, R.drawable.ic_baseline_leaderboard_24,R.drawable.ic_baseline_settings_24,R.drawable.ic_baseline_info_24};
 
         // упаковываем данные в понятную для адаптера структуру
         ArrayList<Map<String, Object>> data = new ArrayList<>(
@@ -403,6 +407,12 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                     @Override
                     public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
                         switch (position) {
+                            case (2):
+                                //открываем активити со Достижениями
+                                Intent openProgress = new Intent(getApplication(), ProgressActivity.class);
+                                startActivity(openProgress);
+                                dialogMenu.dismiss();
+                                break;
                             case (3):
                                 //открываем активити со статистикой
                                 Intent openStat = new Intent(getApplication(), StatisticActivity.class);
@@ -442,13 +452,22 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     //слушает изменение настройки и выполняет код при событии
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("default_interval")) {
-            setDefaultTimeFromPref(sharedPreferences);
-            Log.d(TAG, "MainActivity: onSharedPreferenceChanged()");
-            SharedPreferences.Editor ed = sPref.edit();
-            ed.putBoolean(KEY_PREF_CHANGE, true);
-            ed.apply();
+        Log.d(TAG, "MainActivity: onSharedPreferenceChanged()");
+        switch (key) {
+            case ("default_interval"):
+                setDefaultTimeFromPref(sharedPreferences);
+                mTextField.setText(mDefaultTime);
+                SharedPreferences.Editor ed = sPref.edit();
+                ed.putBoolean(KEY_PREF_CHANGE, true);
+                ed.apply();
+                break;
+            case ("set_plan_day"):
+                mDefaultPlan = Integer.valueOf(sharedPreferences.getString(KEY_PREF_PLAN, "8"));
+                //установка количества точек из плана в настройках
+                mStepProgressBar.setNumDots(mDefaultPlan);
+                break;
         }
+
     }
 
     private void checkFirstRun() {

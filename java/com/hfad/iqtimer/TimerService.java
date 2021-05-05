@@ -287,7 +287,7 @@ public class TimerService extends Service {
                 .setOngoing(true)//прилипает оповещение и можно удалить только програмно
                 .setContentTitle(getString(R.string.break_time))
                 .setContentText(mTime)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_baseline_breaktime_8)
                 .setContentIntent(pendingIntent)
                 .addAction(0, getString(R.string.stop), stopPendingIntent)
                 .build()};

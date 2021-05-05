@@ -247,9 +247,9 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         int mCountArray =0;
 
         //создаем массив для графика
-        arrayForChartDay = new ArrayList<BarEntry>();
+        arrayForChartDay = new ArrayList<>();
         //создаем массив для значений замен на XAxis
-        datesForChartDay = new String [sCursorForHistory.getCount()];
+        datesForChartDay = new String [sCursorForHistory.getCount()+1];
         //Создаем новый объект SimpleDateFormat с шаблоном, который совпадает с тем, что у нас в строке (иначе распарсить не получится)
         SimpleDateFormat formatterIn = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         SimpleDateFormat formatterOut = new SimpleDateFormat("MMM-dd", Locale.ENGLISH);
@@ -275,6 +275,18 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
             mCountArray++;
 
         }
+        if (sCursorForHistory.getCount()==0) {//если 0-вой вход
+            //Добавляем сегоднешнюю дату
+            datesForChartDay[0] = formatterOut.format(new Date());
+            //Добавляем индекс и счетчик в массив с сегоднешним значением
+            arrayForChartDay.add(new BarEntry(0, mPrefCount));
+        }else {
+             //Добавляем сегоднешнюю дату
+            datesForChartDay[mCountArray] = formatterOut.format(new Date());
+            //Добавляем индекс и счетчик в массив с сегоднешним значением
+            arrayForChartDay.add(new BarEntry(mCountArray, mPrefCount));
+        }
+
     }
 
     void getDataForHistoryMonth(){
@@ -329,12 +341,18 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
             }
             if(sCursorForHistory.isLast()){
                 //Добавляем индекс и счетчик в массив
-                arrayForChartMonth.add(new BarEntry(mCountArray,mCountMonth));
+                arrayForChartMonth.add(new BarEntry(mCountArray,mCountMonth+mPrefCount));
 
                 String strOutputDateTime = fmtOut.print(mDateFromCursor);
                 //Добавляем месяц в формате fmtOut в массив для замен на XAxis
                 datesForChartMonth.add(strOutputDateTime);
             }
+        }
+        if (sCursorForHistory.getCount()==0) {//если 0-вой вход
+            //Добавляем сегоднешнюю дату
+            datesForChartMonth.add(fmtOut.print(LocalDate.now()));
+            //Добавляем индекс и счетчик в массив
+            arrayForChartMonth.add(new BarEntry(0,mPrefCount));
         }
     }
 
