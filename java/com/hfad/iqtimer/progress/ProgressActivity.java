@@ -10,6 +10,7 @@ import com.hfad.iqtimer.R;
 
 public class ProgressActivity extends AppCompatActivity {
 
+
     NavController navController;
 
     @Override
@@ -17,5 +18,6 @@ public class ProgressActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-    }
+
+}
 }

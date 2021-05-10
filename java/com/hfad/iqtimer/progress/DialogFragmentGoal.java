@@ -1,7 +1,10 @@
 package com.hfad.iqtimer.progress;
 
-import android.content.DialogInterface;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,35 +12,102 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.hfad.iqtimer.R;
 
-public class DialogFragmentGoal extends DialogFragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+import static com.hfad.iqtimer.R.id.btnCancel;
+
+public class DialogFragmentGoal extends DialogFragment implements View.OnClickListener {
+    private static final String TAG = "MYLOGS";
+
     View v;
+    ProgressViewModel mProgressViewModel;
+    TextInputLayout mTextInputSession,mTextInputPeriod;
+    TextInputEditText mEditTextSession,mEditTextPeriod,mEditTextNameGoal;
+    int mSelectedGoal;
+    String selectedNameGoal;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "DialogFragmentGoal: onCreateView");
         v = inflater.inflate(R.layout.fragment_dialog_goal, null);
         v.findViewById(R.id.btnOk).setOnClickListener(this);
-        v.findViewById(R.id.btnCancel).setOnClickListener(this);
+        v.findViewById(btnCancel).setOnClickListener(this);
+        mEditTextSession = v.findViewById(R.id.dlgEditTextSession);
+        mEditTextPeriod= v.findViewById(R.id.dlgEditTextPeriod);
+        mEditTextNameGoal = v.findViewById(R.id.dlgEditTextNameGoal);
+        mTextInputSession = v.findViewById(R.id.textInputSession);
+        mTextInputPeriod= v.findViewById(R.id.textInputDays);;
 
         return v;
     }
-    //слушает выбор спиннеров
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-    }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mProgressViewModel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
+        mSelectedGoal=0;
+        selectedNameGoal = getResources().getString(R.string.sessiy);
     }
+
     //слушает кнопки
     @Override
     public void onClick(View v) {
 
+    switch (v.getId()){
+    case btnCancel:
+        this.dismiss();
+        break;
+    case R.id.btnOk:
+        if(validateInput()){
+            String mQnum;
+            String mPeriodNum;
+            String mDays = getResources().getString(R.string.days);
+        ///ложим данные в Live data
+        mQnum = mEditTextSession.getText().toString();
+        mPeriodNum = mEditTextPeriod.getText().toString();
+        String mTextDisc = "Моя цель: "+ mQnum + " " + selectedNameGoal + " за " + mPeriodNum + " " + mDays+".";
+        mProgressViewModel.setGoalData(mEditTextNameGoal.getText().toString(),mTextDisc,mQnum,mSelectedGoal,mPeriodNum);
+        this.dismiss();
+        }
+        break;
+}
+    }
+
+    private boolean validateInput() {
+
+        if (mEditTextSession.getText().toString().length() == 0) {
+            mTextInputSession.setError(getResources().getString(R.string.empty));
+            setupTextListener(mTextInputSession,mEditTextSession);
+            return false;
+        } else if (mEditTextPeriod.getText().toString().length() == 0){
+            mTextInputPeriod.setError(getResources().getString(R.string.empty));
+            setupTextListener(mTextInputPeriod,mEditTextPeriod);
+            return false;
+        }
+        return true;
+    }
+
+    private void setupTextListener(TextInputLayout layout,TextInputEditText textEdit) {
+        TextWatcher mTextWatcher = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {}
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                layout.setError(null);
+            }
+        };
+        textEdit.addTextChangedListener(mTextWatcher);
     }
 
     @Override
@@ -45,12 +115,19 @@ public class DialogFragmentGoal extends DialogFragment implements AdapterView.On
         super.onResume();
         //устанавливается здесь чтобы не пропадало после переворота
         AutoCompleteTextView completeTextViewSes = (AutoCompleteTextView) v.findViewById(R.id.autoCompleteTextViewSes);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.goals, android.R.layout.simple_spinner_dropdown_item);
         completeTextViewSes.setAdapter(adapter);
-        AutoCompleteTextView completeTextViewDays = (AutoCompleteTextView) v.findViewById(R.id.autoCompleteTextViewDays);
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getContext(),
-                R.array.date_goals, android.R.layout.simple_spinner_dropdown_item);
-        completeTextViewDays.setAdapter(adapter2);
+        completeTextViewSes.setOnItemClickListener((new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
+                mSelectedGoal = position;
+                //0 - дней, 1- ударных дней
+                selectedNameGoal = (String) parent.getItemAtPosition(position);
+            }
+        }));
+
     }
+
 }

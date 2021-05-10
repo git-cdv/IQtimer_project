@@ -71,7 +71,7 @@ public class TimerService extends Service {
         mNotifChannel = createNotificationChannel();
         sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
         //получаем доступ к файлу с настройками приложения
-        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
         mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))*60000;
         iTimeUpdateOnUI = new Intent("TIMER_UPDATED");

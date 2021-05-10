@@ -29,6 +29,7 @@
     <string name="qest_break">Начать перерыв?</string>
     <string name="minut">мин.</string>
     <string name="sessiy">сессий</string>
+    <string name="days">дней</string>
     <string name="pref_sounds">Уведомление о окончании сессии</string>
     <string name="ok">Ok</string>
     <string name="pref_sounds_break">Уведомление о окончании перерыва</string>
@@ -59,12 +60,15 @@
     <string name="maingoal_text_title">Главная цель</string>
     <string name="progress_name">Достижения</string>
     <string name="set_goal">Поставить цель</string>
+    <string name="empty">Пусто</string>
+    <string name="dlg_progress_q_days">Количество дней</string>
     <string-array name="goals">
         <item>Сессий</item>
         <item>Ударных дней</item>
     </string-array>
     <string-array name="date_goals">
         <item>Дней</item>
+        <item>Недель</item>
         <item>Месяцев</item>
     </string-array>
 

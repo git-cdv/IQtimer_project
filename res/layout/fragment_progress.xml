@@ -111,24 +111,81 @@
 
         <ProgressBar
             android:id="@+id/progressBarGoal"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:scaleY="4"
             app:layout_constraintBottom_toBottomOf="@+id/viewMainGoal"
+            app:layout_constraintEnd_toStartOf="@+id/countGoal_current_value"
             app:layout_constraintStart_toStartOf="@+id/viewMainGoal"
             app:layout_constraintTop_toBottomOf="@+id/goalDisc" />
 
         <TextView
-            android:id="@+id/textCountGoal"
+            android:id="@+id/countGoal_current_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="0"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
+            app:layout_constraintEnd_toStartOf="@+id/countGoal_slash" />
+
+        <TextView
+            android:id="@+id/countGoal_plan_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="Счетчик"
+            android:text="0"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
             app:layout_constraintEnd_toEndOf="@+id/viewMainGoal" />
+
+        <TextView
+            android:id="@+id/countGoal_slash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="/"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
+            app:layout_constraintEnd_toStartOf="@+id/countGoal_plan_value" />
+
+        <TextView
+            android:id="@+id/barGoal_current_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="0"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
+            app:layout_constraintEnd_toStartOf="@+id/barGoal_slash"
+            app:layout_constraintTop_toTopOf="@+id/progressBarGoal" />
+
+        <TextView
+            android:id="@+id/barGoal_plan_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="0"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
+            app:layout_constraintStart_toEndOf="@+id/barGoal_slash"
+            app:layout_constraintTop_toTopOf="@+id/progressBarGoal" />
+
+        <TextView
+            android:id="@+id/barGoal_slash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
+            app:layout_constraintEnd_toEndOf="@+id/progressBarGoal"
+            app:layout_constraintStart_toStartOf="@+id/progressBarGoal"
+            app:layout_constraintTop_toTopOf="@+id/progressBarGoal" />
 
     <View
         android:id="@+id/viewMain"
@@ -380,29 +437,16 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
-        <FrameLayout
-            android:id="@+id/frameGoal"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginBottom="2dp"
-            android:alpha="0.8"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintBottom_toBottomOf="@+id/viewMainGoal"
-            app:layout_constraintEnd_toEndOf="@+id/viewMainGoal"
-            app:layout_constraintStart_toStartOf="@+id/viewMainGoal"
-            app:layout_constraintTop_toTopOf="@+id/viewMainGoal">
-
-            <Button
-                android:id="@+id/btn_set_goal"
-                style = "@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:text="@string/set_goal" />
-        </FrameLayout>
+        <ImageButton
+            android:id="@+id/img_btn_add_goal"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/textView4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView4"
+            app:srcCompat="@drawable/ic_outline_add_circle_outline_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

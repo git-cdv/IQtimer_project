@@ -336,7 +336,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         super.onStart();
         registerReceiver(uiUpdated, new IntentFilter("TIMER_UPDATED"));
         registerReceiver(brForSignals, new IntentFilter(BR_FOR_SIGNALS));
-        bindService(mIntent, mConn, 0);
+        if(!mBound){bindService(mIntent, mConn, 0);}
         mActive = true;
     }
 
