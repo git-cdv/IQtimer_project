@@ -58,6 +58,21 @@
     <string name="textGoalDone">Поздравляем, вы выполнили цель!</string>
     <string name="new_goal">Новая цель</string>
     <string name="textDaysEnded">"Вы выполнили цель на "</string>
+    <string name="p_title_entuziast">Энтузиаст</string>
+    <string name="p_title_voin">Воин выходного дня</string>
+    <string name="p_title_hero">Герой выходного дня</string>
+    <string name="p_title_pokoritel">Покоритель</string>
+    <string name="p_title_legenda">Легенда</string>
+    <string name="p_title_pobeditel">Победитель</string>
+    <string name="p_title_boss">Босс</string>
+    <string name="p_desc_entuziast">Удержите ударный режим 5 дней</string>
+    <string name="p_desc_voin">Выполните работу в 1 выходной день</string>
+    <string name="p_desc_hero">Выполните план по сессиям в выходной день</string>
+    <string name="p_desc_pokoritel">Отработайте подряд 5 дней</string>
+    <string name="p_desc_legenda">Выполните достижения Энтузиаст, Герой выходного дня и Покоритель до 2 уровня</string>
+    <string name="p_desc_pobeditel">Выполните все достижения</string>
+    <string name="p_desc_boss">Выполните 5 Главных задач</string>
+
     <string-array name="goals">
         <item>Сессий</item>
         <item>Ударных дней</item>
