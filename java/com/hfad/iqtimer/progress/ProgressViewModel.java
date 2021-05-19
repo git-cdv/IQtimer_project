@@ -29,6 +29,12 @@ public class ProgressViewModel extends AndroidViewModel {
     public MutableLiveData<Boolean> isViewDone = new MutableLiveData<>();
     public MutableLiveData<String> textGoalDone = new MutableLiveData<>();
 
+    public MutableLiveData<Integer> entuziast_progress = new MutableLiveData<>();
+    public MutableLiveData<Integer> entuziast_max = new MutableLiveData<>();
+    public MutableLiveData<Integer> voin_progress = new MutableLiveData<>();
+    public MutableLiveData<Integer> voin_max = new MutableLiveData<>();
+    public MutableLiveData<Integer> boss_progress = new MutableLiveData<>();
+    public MutableLiveData<Integer> boss_max = new MutableLiveData<>();
 
     ProgressRepository repository = new ProgressRepository(getApplication());
 
@@ -58,6 +64,7 @@ public class ProgressViewModel extends AndroidViewModel {
     }
 
 
+
     void getState(){
         switch (repository.getStateGoal()) {
             case STATE_GOAL_OFF:
@@ -66,6 +73,14 @@ public class ProgressViewModel extends AndroidViewModel {
             case STATE_GOAL_ACTIVE:
                 setGoal(repository.readGoal());
                 isPutAdd(true);
+                ///ЗАГЛУШКА
+                entuziast_progress.setValue(2);
+                entuziast_max.setValue(5);
+                voin_progress.setValue(0);
+                voin_max.setValue(1);
+                boss_progress.setValue(4);
+                boss_max.setValue(5);
+                ///ЗАГЛУШКА
                 break;
             case STATE_GOAL_DONE:
                 setGoal(repository.readGoal());

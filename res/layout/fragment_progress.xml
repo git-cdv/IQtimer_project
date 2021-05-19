@@ -129,9 +129,9 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:scaleY="4"
             android:max="@{Integer.parseInt(viewmodel.q_plan)}"
             android:progress="@{Integer.parseInt(viewmodel.q_current)}"
+            android:scaleY="4"
             app:layout_constraintBottom_toBottomOf="@+id/viewMainGoal"
             app:layout_constraintEnd_toStartOf="@+id/countGoal_current_value"
             app:layout_constraintStart_toStartOf="@+id/viewMainGoal"
@@ -141,68 +141,25 @@
             android:id="@+id/countGoal_current_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:text="@{viewmodel.days_current}"
-            tools:text="0"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
-            app:layout_constraintEnd_toStartOf="@+id/countGoal_slash" />
-
-        <TextView
-            android:id="@+id/countGoal_plan_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="@{viewmodel.days_plan}"
-            tools:text="0"
+            android:text='@{viewmodel.days_current + " / " + viewmodel.days_plan}'
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
-            app:layout_constraintEnd_toEndOf="@+id/viewMainGoal" />
-
-        <TextView
-            android:id="@+id/countGoal_slash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:text="/"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
-            app:layout_constraintEnd_toStartOf="@+id/countGoal_plan_value" />
+            app:layout_constraintEnd_toEndOf="@+id/viewMainGoal"
+            app:layout_constraintTop_toTopOf="@+id/progressBarGoal"
+            tools:text="0 / 0" />
 
         <TextView
             android:id="@+id/barGoal_current_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:text="@{viewmodel.q_current}"
-            tools:text="0"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
-            app:layout_constraintEnd_toStartOf="@+id/barGoal_slash"
-            app:layout_constraintTop_toTopOf="@+id/progressBarGoal" />
-
-        <TextView
-            android:id="@+id/barGoal_plan_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="@{viewmodel.q_plan}"
-            tools:text="0"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
-            app:layout_constraintStart_toEndOf="@+id/barGoal_slash"
-            app:layout_constraintTop_toTopOf="@+id/progressBarGoal" />
-
-        <TextView
-            android:id="@+id/barGoal_slash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="/"
+            android:text='@{viewmodel.q_current + " / " + viewmodel.q_plan}'
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
             app:layout_constraintEnd_toEndOf="@+id/progressBarGoal"
             app:layout_constraintStart_toStartOf="@+id/progressBarGoal"
-            app:layout_constraintTop_toTopOf="@+id/progressBarGoal" />
+            app:layout_constraintTop_toTopOf="@+id/progressBarGoal"
+            tools:text="0 / 0" />
 
     <View
         android:id="@+id/viewMain"
@@ -276,37 +233,45 @@
         app:layout_constraintStart_toEndOf="@+id/image1"
         app:layout_constraintTop_toTopOf="@+id/image1" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/image1"
-        app:layout_constraintStart_toEndOf="@+id/image1" />
+        <ProgressBar
+            android:id="@+id/BarEntuziast"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:max="@{viewmodel.entuziast_max}"
+            android:progress="@{viewmodel.entuziast_progress}"
+            android:scaleY="4"
+            app:layout_constraintBottom_toBottomOf="@+id/image1"
+            app:layout_constraintEnd_toStartOf="@+id/textCount1"
+            app:layout_constraintStart_toEndOf="@+id/image1" />
 
     <TextView
-        android:id="@+id/textDisc1"
+        android:id="@+id/textDiscEntuziast"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:minLines="2"
-        android:text="TextViewfghfbfgbfgbgfnbfgdndgndgndghnghdnmdgh"
-        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        android:text="@string/p_desc_entuziast"
+        app:layout_constraintBottom_toTopOf="@+id/BarEntuziast"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toEndOf="@+id/image1"
         app:layout_constraintTop_toBottomOf="@+id/title1" />
 
-    <TextView
-        android:id="@+id/textCount1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/progressBar"
-        app:layout_constraintEnd_toEndOf="@+id/viewMain" />
+        <TextView
+            android:id="@+id/textCount1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text='@{viewmodel.entuziast_progress + " / " + viewmodel.entuziast_max}'
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/BarEntuziast"
+            app:layout_constraintEnd_toEndOf="@+id/viewMain"
+            app:layout_constraintTop_toTopOf="@+id/BarEntuziast"
+            tools:text="0 / 0" />
 
     <ImageView
         android:id="@+id/image2"
@@ -327,22 +292,27 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Title"
+        android:text="@string/p_title_voin"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/image2"
         app:layout_constraintTop_toTopOf="@+id/image2" />
 
-    <ProgressBar
-        android:id="@+id/progressBar2"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/image2"
-        app:layout_constraintStart_toEndOf="@+id/image2" />
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:max="@{viewmodel.voin_max}"
+            android:progress="@{viewmodel.voin_progress}"
+            android:scaleY="4"
+            app:layout_constraintBottom_toBottomOf="@+id/image2"
+            app:layout_constraintEnd_toStartOf="@+id/textCount2"
+            app:layout_constraintStart_toEndOf="@+id/image2" />
 
     <TextView
         android:id="@+id/textDisc2"
@@ -351,20 +321,23 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:minLines="2"
-        android:text="TextViewfghfbfgbfgbgfnbfgdndgndgndghnghdnmdgh"
+        android:text="@string/p_desc_voin"
         app:layout_constraintBottom_toTopOf="@+id/progressBar2"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toEndOf="@+id/image2"
         app:layout_constraintTop_toBottomOf="@+id/title2" />
 
-    <TextView
-        android:id="@+id/textCount2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/progressBar2"
-        app:layout_constraintEnd_toEndOf="@+id/viewMain" />
+        <TextView
+            android:id="@+id/textCount2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text='@{viewmodel.voin_progress + " / " + viewmodel.voin_max}'
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/progressBar2"
+            app:layout_constraintEnd_toEndOf="@+id/viewMain"
+            app:layout_constraintTop_toTopOf="@+id/progressBar2"
+            tools:text="0 / 0" />
 
     <ImageView
         android:id="@+id/image3"
@@ -385,22 +358,27 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Title"
+        android:text="@string/p_title_boss"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/image3"
         app:layout_constraintTop_toTopOf="@+id/image3" />
 
-    <ProgressBar
-        android:id="@+id/progressBar3"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/image3"
-        app:layout_constraintStart_toEndOf="@+id/image3" />
+        <ProgressBar
+            android:id="@+id/progressBar3"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:max="@{viewmodel.boss_max}"
+            android:progress="@{viewmodel.boss_progress}"
+            android:scaleY="4"
+            app:layout_constraintBottom_toBottomOf="@+id/image3"
+            app:layout_constraintEnd_toStartOf="@+id/textCount3"
+            app:layout_constraintStart_toEndOf="@+id/image3" />
 
     <TextView
         android:id="@+id/textDisc3"
@@ -409,20 +387,23 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:minLines="2"
-        android:text="TextViewfghfbfgbfgbgfnbfgdndgndgndghnghdnmdgh"
+        android:text="@string/p_desc_boss"
         app:layout_constraintBottom_toTopOf="@+id/progressBar3"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toEndOf="@+id/image3"
         app:layout_constraintTop_toBottomOf="@+id/title3" />
 
-    <TextView
-        android:id="@+id/textCount3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/progressBar3"
-        app:layout_constraintEnd_toEndOf="@+id/viewMain" />
+        <TextView
+            android:id="@+id/textCount3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text='@{viewmodel.boss_progress + " / " + viewmodel.boss_max}'
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/progressBar3"
+            app:layout_constraintEnd_toEndOf="@+id/viewMain"
+            app:layout_constraintTop_toTopOf="@+id/progressBar3"
+            tools:text="0 / 0" />
 
     <TextView
         android:id="@+id/textView12"
