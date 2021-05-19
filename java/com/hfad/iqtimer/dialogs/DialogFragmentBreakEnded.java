@@ -34,7 +34,7 @@ public class DialogFragmentBreakEnded extends DialogFragment implements DialogIn
                 ((MainActivity) requireActivity()).onBreakTime(STATE_TIMER_WORKING);
                 break;
             case Dialog.BUTTON_NEGATIVE:
-                ((MainActivity)getActivity()).onBreakTime(STATE_TIMER_WAIT);
+                ((MainActivity) requireActivity()).onBreakTime(STATE_TIMER_WAIT);
                 break;
         }
            }

@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.IQtimer">
-
+        <service
+            android:name=".progress.ProgressCountDataIntentService"
+            android:exported="false"></service>
         <service
             android:name=".database.WriteCountDataIntentService"
             android:exported="false" />
@@ -48,9 +50,9 @@
             android:name=".progress.ProgressActivity"
             android:label="@string/progress_name"
             android:parentActivityName=".MainActivity">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".MainActivity"

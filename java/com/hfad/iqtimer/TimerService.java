@@ -23,14 +23,14 @@ import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
 import com.hfad.iqtimer.database.ListSounds;
+import com.hfad.iqtimer.database.WriteCountDataIntentService;
+import com.hfad.iqtimer.progress.ProgressCountDataIntentService;
 
 import java.util.Locale;
 
 public class TimerService extends Service {
     private static final String TAG = "MYLOGS";
     private static final String KEY_TIME = "timedown";
-    private static final String KEY_COUNT = "countup";
-    private static final String KEY_PREF_COUNT = "prefcount";
     private static final String KEY_PREF_INTERVAL = "default_interval";
     private static final String KEY_PREF_BREAKTIME = "break_time";
     private static final String KEY_PREF_SOUND_RES = "prefsoundres";
@@ -49,6 +49,7 @@ public class TimerService extends Service {
     private static final int ST_NOTIF_STOPED = 700;
     private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
     private static final int ST_NOTIF_BREAK_STOPED = 900;
+    private static final String KEY_TASK = "taskforintentservice";
 
     static private long mTimeLeftInMillis;
     static private long mBreakTimeInMillis;
@@ -231,7 +232,7 @@ public class TimerService extends Service {
         //если версия после О то создаем с использованием канала
         String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? mNotifChannel : "";
         final Notification[] notification = {new NotificationCompat.Builder(this, channelId)
-                .setOngoing(true)//прилипает оповещение и можно удалить только програмно
+                .setOngoing(false)//прилипает оповещение и можно удалить только програмно
                 .setContentTitle(getString(R.string.on_pause))
                 .setContentText(getString(R.string.qest_continue))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -259,7 +260,7 @@ public class TimerService extends Service {
         //если версия после О то создаем с использованием канала
         String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? mNotifChannel : "";
         final Notification[] notification = {new NotificationCompat.Builder(this, channelId)
-                .setOngoing(true)//прилипает оповещение и можно удалить только програмно
+                .setOngoing(false)//прилипает оповещение и можно удалить только програмно
                 .setContentTitle(getString(R.string.dialog_session_end))
                 .setContentText(getString(R.string.qest_break))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -307,7 +308,7 @@ public class TimerService extends Service {
         //если версия после О то создаем с использованием канала
         String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? mNotifChannel : "";
         final Notification[] notification = {new NotificationCompat.Builder(this, channelId)
-                .setOngoing(true)//прилипает оповещение и можно удалить только програмно
+                .setOngoing(false)//прилипает оповещение и можно удалить только програмно
                 .setContentTitle(getString(R.string.dialog_break_end))
                 .setContentText(getString(R.string.qest_continue))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -373,19 +374,11 @@ public class TimerService extends Service {
 
         public void onFinish() {
             if (!isBreak){
-            int mPrefCount = sPref.getInt(KEY_PREF_COUNT, 500);
-            mPrefCount++;
-            SharedPreferences.Editor ed = sPref.edit();
-            ed.putInt(KEY_PREF_COUNT, mPrefCount);
-            ed.commit();
+                Intent mIntentService = new Intent(getApplicationContext(), ProgressCountDataIntentService.class);
+                mIntentService.putExtra(KEY_TASK,STATE_TIMER_FINISHED);
+                startService(mIntentService);
             mSTATE = STATE_TIMER_FINISHED;
-
             NotificationOnSessionEnd();
-
-            Intent i = new Intent(BR_FOR_SIGNALS);
-            i.putExtra(KEY_COUNT, mPrefCount);
-            i.putExtra(KEY_STATE,STATE_TIMER_FINISHED);
-            sendBroadcast(i);
             mTimeLeftInMillis = mDefaultTimeInMillis;
             startSoundForNotif(STATE_TIMER_FINISHED);
             startVibrator();

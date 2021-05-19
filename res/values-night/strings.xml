@@ -9,6 +9,7 @@
     <string name="stat_chart_planday">План</string>
     <string name="dialog_break_end">Перерыв закончен</string>
     <string name="dialog_work_start">Приступить к работе</string>
+    <string name="yes">Да</string>
     <string name="cancel">Отмена</string>
     <string name="dialog_rest_reset">Пропустить перерыв</string>
     <string name="dialog_continue">Продолжить?</string>
@@ -52,13 +53,13 @@
     <string name="set_goal">Поставить цель</string>
     <string name="empty">Пусто</string>
     <string name="dlg_progress_q_days">Количество дней</string>
+    <string name="powerdays">ударных дней</string>
+    <string name="dlg_delete_goal_title">Удалить цель?</string>
+    <string name="textGoalDone">Поздравляем, вы выполнили цель!</string>
+    <string name="new_goal">Новая цель</string>
+    <string name="textDaysEnded">"Вы выполнили цель на "</string>
     <string-array name="goals">
         <item>Сессий</item>
         <item>Ударных дней</item>
-    </string-array>
-    <string-array name="date_goals">
-        <item>Дней</item>
-        <item>Недель</item>
-        <item>Месяцев</item>
     </string-array>
 </resources>

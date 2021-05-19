@@ -1,6 +1,6 @@
 package com.hfad.iqtimer.progress;
 
-import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,14 +12,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
-
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.hfad.iqtimer.R;
+
+import org.jetbrains.annotations.NotNull;
 
 import static com.hfad.iqtimer.R.id.btnCancel;
 
@@ -27,11 +29,10 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
     private static final String TAG = "MYLOGS";
 
     View v;
-    ProgressViewModel mProgressViewModel;
     TextInputLayout mTextInputSession,mTextInputPeriod;
     TextInputEditText mEditTextSession,mEditTextPeriod,mEditTextNameGoal;
-    int mSelectedGoal;
     String selectedNameGoal;
+    ProgressViewModel model;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,9 +52,8 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProgressViewModel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
-        mSelectedGoal=0;
-        selectedNameGoal = getResources().getString(R.string.sessiy);
+        selectedNameGoal = "sessions";
+        model = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
     }
 
     //слушает кнопки
@@ -62,22 +62,37 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
 
     switch (v.getId()){
     case btnCancel:
+        model.isPutAdd(false);
         this.dismiss();
         break;
     case R.id.btnOk:
         if(validateInput()){
-            String mQnum;
-            String mPeriodNum;
-            String mDays = getResources().getString(R.string.days);
-        ///ложим данные в Live data
-        mQnum = mEditTextSession.getText().toString();
-        mPeriodNum = mEditTextPeriod.getText().toString();
-        String mTextDisc = "Моя цель: "+ mQnum + " " + selectedNameGoal + " за " + mPeriodNum + " " + mDays+".";
-        mProgressViewModel.setGoalData(mEditTextNameGoal.getText().toString(),mTextDisc,mQnum,mSelectedGoal,mPeriodNum);
+            String mSelectedName;
+            String mName = mEditTextNameGoal.getText().toString();
+            String mQnum= mEditTextSession.getText().toString();
+            String mPeriodNum= mEditTextPeriod.getText().toString();
+            boolean isGoalSessions = selectedNameGoal.equals("sessions");
+            if (isGoalSessions){
+                mSelectedName = getResources().getString(R.string.sessiy);
+            }else {mSelectedName = getResources().getString(R.string.powerdays);}
+
+            String mTextDisc = "Моя цель: "+ mQnum + " " + mSelectedName + " за " + mPeriodNum + " " + getResources().getString(R.string.days) +".";
+
+            if (isGoalSessions){
+                model.createNewGoalSes(mName,mTextDisc,mQnum,mPeriodNum);
+            }else {model.createNewGoalPower(mName,mTextDisc,mQnum,mPeriodNum);}
+
+
         this.dismiss();
         }
         break;
 }
+    }
+
+    @Override
+    public void onCancel(@NonNull @NotNull DialogInterface dialog) {
+        super.onCancel(dialog);
+        model.isPutAdd(false);
     }
 
     private boolean validateInput() {
@@ -122,9 +137,12 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
         completeTextViewSes.setOnItemClickListener((new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
-                mSelectedGoal = position;
-                //0 - дней, 1- ударных дней
-                selectedNameGoal = (String) parent.getItemAtPosition(position);
+                if (position==0){
+                    selectedNameGoal = "sessions";
+                } else {
+                    selectedNameGoal = "powerdays";
+                }
+
             }
         }));
 

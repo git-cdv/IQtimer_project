@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewmodel"
+            type="com.hfad.iqtimer.progress.ProgressViewModel"/>
+
+    </data>
+
+<ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -91,7 +100,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Название цели"
+            android:text="@{viewmodel.name}"
+            tools:text="Название цели"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -105,7 +115,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:minLines="2"
-            android:text="Описание цели"
+            android:text="@{viewmodel.desc}"
+            tools:text="Описание цели"
             app:layout_constraintStart_toStartOf="@+id/viewMainGoal"
             app:layout_constraintTop_toBottomOf="@+id/nameMainGoal" />
 
@@ -119,6 +130,8 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:scaleY="4"
+            android:max="@{Integer.parseInt(viewmodel.q_plan)}"
+            android:progress="@{Integer.parseInt(viewmodel.q_current)}"
             app:layout_constraintBottom_toBottomOf="@+id/viewMainGoal"
             app:layout_constraintEnd_toStartOf="@+id/countGoal_current_value"
             app:layout_constraintStart_toStartOf="@+id/viewMainGoal"
@@ -129,7 +142,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:text="0"
+            android:text="@{viewmodel.days_current}"
+            tools:text="0"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
             app:layout_constraintEnd_toStartOf="@+id/countGoal_slash" />
@@ -139,7 +153,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="0"
+            android:text="@{viewmodel.days_plan}"
+            tools:text="0"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
             app:layout_constraintEnd_toEndOf="@+id/viewMainGoal" />
@@ -159,7 +174,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:text="0"
+            android:text="@{viewmodel.q_current}"
+            tools:text="0"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
             app:layout_constraintEnd_toStartOf="@+id/barGoal_slash"
@@ -170,7 +186,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="0"
+            android:text="@{viewmodel.q_plan}"
+            tools:text="0"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBarGoal"
             app:layout_constraintStart_toEndOf="@+id/barGoal_slash"
@@ -252,7 +269,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Title"
+        android:text="@string/p_title_entuziast"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -439,14 +456,71 @@
 
         <ImageButton
             android:id="@+id/img_btn_add_goal"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
             android:background="#FFFFFF"
+            android:visibility="@{viewmodel.isPutAdd ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="@+id/textView4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView4"
-            app:srcCompat="@drawable/ic_outline_add_circle_outline_24" />
+            app:srcCompat="@drawable/ic_outline_add_24" />
+
+        <ImageButton
+            android:id="@+id/img_btn_cancel_goal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:background="#FFFFFF"
+            android:visibility="@{viewmodel.isPutAdd ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toBottomOf="@+id/textView4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView4"
+            app:srcCompat="@drawable/ic_outline_cancel_24"
+            />
+
+        <View
+            android:id="@+id/viewGoalDone"
+            android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:alpha="0.8"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintBottom_toBottomOf="@+id/viewMainGoal"
+            app:layout_constraintEnd_toEndOf="@+id/viewMainGoal"
+            app:layout_constraintStart_toStartOf="@+id/viewMainGoal"
+            app:layout_constraintTop_toTopOf="@+id/viewMainGoal" />
+
+        <TextView
+            android:id="@+id/textGoalDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewmodel.textGoalDone}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toTopOf="@+id/btnNewGoal"
+            app:layout_constraintEnd_toEndOf="@+id/viewGoalDone"
+            app:layout_constraintStart_toStartOf="@+id/viewGoalDone"
+            app:layout_constraintTop_toTopOf="@+id/viewGoalDone" />
+
+        <Button
+            android:id="@+id/btnNewGoal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/new_goal"
+            android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toBottomOf="@+id/viewGoalDone"
+            app:layout_constraintEnd_toEndOf="@+id/viewGoalDone"
+            app:layout_constraintStart_toStartOf="@+id/viewGoalDone" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
+</layout>
