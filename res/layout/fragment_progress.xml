@@ -17,7 +17,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="0dp"
+        android:paddingBottom="32dp"
+        >
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -46,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/progress_shock_days"
+        android:text="@string/progress_efective_days"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
@@ -241,8 +243,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:max="@{viewmodel.entuziast_max}"
-            android:progress="@{viewmodel.entuziast_progress}"
+            android:max="@{viewmodel.entuziast_p}"
+            android:progress="@{viewmodel.entuziast_c}"
             android:scaleY="4"
             app:layout_constraintBottom_toBottomOf="@+id/image1"
             app:layout_constraintEnd_toStartOf="@+id/textCount1"
@@ -266,7 +268,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text='@{viewmodel.entuziast_progress + " / " + viewmodel.entuziast_max}'
+            android:text='@{viewmodel.entuziast_c + " / " + viewmodel.entuziast_p}'
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/BarEntuziast"
             app:layout_constraintEnd_toEndOf="@+id/viewMain"
@@ -307,8 +309,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:max="@{viewmodel.voin_max}"
-            android:progress="@{viewmodel.voin_progress}"
+            android:max="@{viewmodel.voin_p}"
+            android:progress="@{viewmodel.voin_c}"
             android:scaleY="4"
             app:layout_constraintBottom_toBottomOf="@+id/image2"
             app:layout_constraintEnd_toStartOf="@+id/textCount2"
@@ -332,7 +334,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text='@{viewmodel.voin_progress + " / " + viewmodel.voin_max}'
+            android:text='@{viewmodel.voin_c + " / " + viewmodel.voin_p}'
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBar2"
             app:layout_constraintEnd_toEndOf="@+id/viewMain"
@@ -373,8 +375,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-            android:max="@{viewmodel.boss_max}"
-            android:progress="@{viewmodel.boss_progress}"
+            android:max="@{viewmodel.boss_p}"
+            android:progress="@{viewmodel.boss_c}"
             android:scaleY="4"
             app:layout_constraintBottom_toBottomOf="@+id/image3"
             app:layout_constraintEnd_toStartOf="@+id/textCount3"
@@ -398,7 +400,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text='@{viewmodel.boss_progress + " / " + viewmodel.boss_max}'
+            android:text='@{viewmodel.boss_c + " / " + viewmodel.boss_p}'
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBar3"
             app:layout_constraintEnd_toEndOf="@+id/viewMain"

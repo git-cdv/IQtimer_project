@@ -205,6 +205,8 @@ public class TimerService extends Service {
         String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? mNotifChannel : "";
         final Notification[] notification = {new NotificationCompat.Builder(this, channelId)
                 .setOngoing(true)//прилипает оповещение и можно удалить только програмно
+                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(getString(R.string.dowork))
                 .setContentText(mTime)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -260,7 +262,12 @@ public class TimerService extends Service {
         //если версия после О то создаем с использованием канала
         String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? mNotifChannel : "";
         final Notification[] notification = {new NotificationCompat.Builder(this, channelId)
-                .setOngoing(false)//прилипает оповещение и можно удалить только програмно
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setOngoing(false)
+                .setShowWhen(false)
+                .setAutoCancel(true)
                 .setContentTitle(getString(R.string.dialog_session_end))
                 .setContentText(getString(R.string.qest_break))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -268,7 +275,16 @@ public class TimerService extends Service {
                 .addAction(0, getString(R.string.dialog_rest_start), startBreakPendingIntent)
                 .addAction(0, getString(R.string.dialog_rest_reset), continuePendingIntent)
                 .build()};
-        startForeground(1, notification[0]);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(Service.STOP_FOREGROUND_DETACH);
+        } else {
+            stopForeground(false);}
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(1, notification[0]);
     }
 
     public void NotificationOnBreak(String mTime) {
@@ -308,14 +324,28 @@ public class TimerService extends Service {
         //если версия после О то создаем с использованием канала
         String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? mNotifChannel : "";
         final Notification[] notification = {new NotificationCompat.Builder(this, channelId)
-                .setOngoing(false)//прилипает оповещение и можно удалить только програмно
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setOngoing(false)
+                .setShowWhen(false)
+                .setAutoCancel(true)
                 .setContentTitle(getString(R.string.dialog_break_end))
                 .setContentText(getString(R.string.qest_continue))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(pendingIntent)
                 .addAction(0, getString(R.string.dialog_rest_end), continuePendingIntent)
                 .build()};
-        startForeground(1, notification[0]);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(Service.STOP_FOREGROUND_DETACH);
+        } else {
+            stopForeground(false);}
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(1, notification[0]);
     }
 
 
@@ -378,10 +408,10 @@ public class TimerService extends Service {
                 mIntentService.putExtra(KEY_TASK,STATE_TIMER_FINISHED);
                 startService(mIntentService);
             mSTATE = STATE_TIMER_FINISHED;
-            NotificationOnSessionEnd();
             mTimeLeftInMillis = mDefaultTimeInMillis;
             startSoundForNotif(STATE_TIMER_FINISHED);
             startVibrator();
+            NotificationOnSessionEnd();
             } else {
                 //для окончания перерыва
                 Intent i = new Intent(BR_FOR_SIGNALS);

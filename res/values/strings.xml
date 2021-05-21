@@ -54,7 +54,7 @@
     <string name="stat_chart_description_month">Сессий в месяц</string>
     <string name="stat_graph">График</string>
     <string name="icon_for_menu">Icon for Menu</string>
-    <string name="progress_shock_days">Ударных дней</string>
+    <string name="progress_efective_days">Эффективных дней</string>
     <string name="progress_text_title">Достижения</string>
     <string name="show_yet">Показать еще</string>
     <string name="list_stat_empty_text">Пока нет данных</string>
@@ -77,7 +77,7 @@
     <string name="p_title_legenda">Легенда</string>
     <string name="p_title_pobeditel">Победитель</string>
     <string name="p_title_boss">Босс</string>
-    <string name="p_desc_entuziast">Удержите ударный режим 5 дней</string>
+    <string name="p_desc_entuziast">Удержите эффективный режим 5 дней</string>
     <string name="p_desc_voin">Выполните работу в 1 выходной день</string>
     <string name="p_desc_hero">Выполните план по сессиям в выходной день</string>
     <string name="p_desc_pokoritel">Отработайте подряд 5 дней</string>

@@ -31,8 +31,12 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         mViewmodel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
-        mViewmodel.getState();//заполняем вью в зависимости от активности цели
-    }
+        mViewmodel.getStateGoal();//заполняем вью ЦЕЛИ в зависимости от активности цели
+
+        if (mViewmodel.isPremium()) {
+            mViewmodel.getStateP();//заполняем вью Достижений
+        }
+        }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
