@@ -163,21 +163,21 @@
             app:layout_constraintTop_toTopOf="@+id/progressBarGoal"
             tools:text="0 / 0" />
 
-    <View
-        android:id="@+id/viewMain"
-        android:layout_width="match_parent"
-        android:layout_height="490dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        <View
+            android:id="@+id/viewMain"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
 
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/rounded_border"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3">
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/rounded_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3">
 
 
-    </View>
+        </View>
 
     <View
         android:id="@+id/divider"
@@ -199,15 +199,15 @@
         app:layout_constraintStart_toStartOf="@+id/viewMain"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-    <View
-        android:id="@+id/divider3"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginTop="150dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintEnd_toEndOf="@+id/viewMain"
-        app:layout_constraintStart_toStartOf="@+id/viewMain"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="150dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="@+id/viewMain"
+            app:layout_constraintStart_toStartOf="@+id/viewMain"
+            app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <ImageView
         android:id="@+id/image1"
@@ -221,6 +221,19 @@
         app:layout_constraintStart_toStartOf="@+id/viewMain"
         app:layout_constraintTop_toTopOf="@+id/viewMain"
         tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/LevelEnt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@{@string/level(viewmodel.entuziast_l)}"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/image1"
+            app:layout_constraintEnd_toEndOf="@+id/image1"
+            app:layout_constraintStart_toStartOf="@+id/image1"
+            tools:text="Уровень 0" />
 
     <TextView
         android:id="@+id/title1"
@@ -257,7 +270,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:minLines="2"
-        android:text="@string/p_desc_entuziast"
+        android:text="@{@string/p_desc_entuziast(viewmodel.entuziast_p)}"
         app:layout_constraintBottom_toTopOf="@+id/BarEntuziast"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toEndOf="@+id/image1"
@@ -287,6 +300,19 @@
         app:layout_constraintStart_toStartOf="@+id/viewMain"
         app:layout_constraintTop_toTopOf="@+id/divider"
         tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/LevelVoin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@{@string/level(viewmodel.voin_l)}"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/image2"
+            app:layout_constraintEnd_toEndOf="@+id/image2"
+            app:layout_constraintStart_toStartOf="@+id/image2"
+            tools:text="Уровень 0" />
 
     <TextView
         android:id="@+id/title2"
@@ -323,7 +349,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:minLines="2"
-        android:text="@string/p_desc_voin"
+        android:text="@{@string/p_desc_voin(viewmodel.voin_p)}"
         app:layout_constraintBottom_toTopOf="@+id/progressBar2"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toEndOf="@+id/image2"
@@ -353,6 +379,19 @@
         app:layout_constraintStart_toStartOf="@+id/viewMain"
         app:layout_constraintTop_toTopOf="@+id/divider2"
         tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/LevelBoss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@{@string/level(viewmodel.boss_l)}"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/image3"
+            app:layout_constraintEnd_toEndOf="@+id/image3"
+            app:layout_constraintStart_toStartOf="@+id/image3"
+            tools:text="Уровень 0" />
 
     <TextView
         android:id="@+id/title3"
@@ -389,7 +428,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:minLines="2"
-        android:text="@string/p_desc_boss"
+        android:text="@{@string/p_desc_boss(viewmodel.boss_p)}"
         app:layout_constraintBottom_toTopOf="@+id/progressBar3"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toEndOf="@+id/image3"
@@ -502,6 +541,19 @@
             app:layout_constraintBottom_toBottomOf="@+id/viewGoalDone"
             app:layout_constraintEnd_toEndOf="@+id/viewGoalDone"
             app:layout_constraintStart_toStartOf="@+id/viewGoalDone" />
+
+        <View
+            android:id="@+id/viewBtnMore"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/viewMain"
+            app:layout_constraintEnd_toEndOf="@+id/viewMain"
+            app:layout_constraintStart_toStartOf="@+id/viewMain"
+            app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

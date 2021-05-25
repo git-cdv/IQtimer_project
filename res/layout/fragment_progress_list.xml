@@ -40,16 +40,14 @@
             <View
                 android:id="@+id/viewMain"
                 android:layout_width="match_parent"
-                android:layout_height="1080dp"
+                android:layout_height="1063dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="32dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/rounded_border"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3">
-            </View>
+                app:layout_constraintTop_toBottomOf="@+id/textView3"></View>
 
             <View
                 android:id="@+id/divider"
@@ -107,15 +105,6 @@
                 app:layout_constraintEnd_toEndOf="@+id/viewMain"
                 app:layout_constraintStart_toStartOf="@+id/viewMain"
                 app:layout_constraintTop_toBottomOf="@+id/divider5" />
-            <View
-                android:id="@+id/divider7"
-                android:layout_width="0dp"
-                android:layout_height="2dp"
-                android:layout_marginTop="150dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintEnd_toEndOf="@+id/viewMain"
-                app:layout_constraintStart_toStartOf="@+id/viewMain"
-                app:layout_constraintTop_toBottomOf="@+id/divider6" />
 
             <ImageView
                 android:id="@+id/image1"
@@ -129,6 +118,19 @@
                 app:layout_constraintStart_toStartOf="@+id/viewMain"
                 app:layout_constraintTop_toTopOf="@+id/viewMain"
                 tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/LevelEnt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@{@string/level(viewmodel.entuziast_l)}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/image1"
+                app:layout_constraintEnd_toEndOf="@+id/image1"
+                app:layout_constraintStart_toStartOf="@+id/image1"
+                tools:text="Уровень 0" />
 
             <TextView
                 android:id="@+id/title1"
@@ -165,7 +167,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:minLines="2"
-                android:text="@string/p_desc_entuziast"
+                android:text="@{@string/p_desc_entuziast(viewmodel.entuziast_p)}"
                 app:layout_constraintBottom_toTopOf="@+id/BarEntuziast"
                 app:layout_constraintEnd_toEndOf="@+id/viewMain"
                 app:layout_constraintStart_toEndOf="@+id/image1"
@@ -195,6 +197,19 @@
                 app:layout_constraintStart_toStartOf="@+id/viewMain"
                 app:layout_constraintTop_toTopOf="@+id/divider"
                 tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/LevelVoin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@{@string/level(viewmodel.voin_l)}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/image2"
+                app:layout_constraintEnd_toEndOf="@+id/image2"
+                app:layout_constraintStart_toStartOf="@+id/image2"
+                tools:text="Уровень 0" />
 
             <TextView
                 android:id="@+id/title2"
@@ -231,7 +246,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:minLines="2"
-                android:text="@string/p_desc_voin"
+                android:text="@{@string/p_desc_voin(viewmodel.voin_p)}"
                 app:layout_constraintBottom_toTopOf="@+id/progressBar2"
                 app:layout_constraintEnd_toEndOf="@+id/viewMain"
                 app:layout_constraintStart_toEndOf="@+id/image2"
@@ -261,6 +276,19 @@
                 app:layout_constraintStart_toStartOf="@+id/viewMain"
                 app:layout_constraintTop_toTopOf="@+id/divider2"
                 tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/LevelBoss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@{@string/level(viewmodel.boss_l)}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/image3"
+                app:layout_constraintEnd_toEndOf="@+id/image3"
+                app:layout_constraintStart_toStartOf="@+id/image3"
+                tools:text="Уровень 0" />
 
             <TextView
                 android:id="@+id/title3"
@@ -297,7 +325,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:minLines="2"
-                android:text="@string/p_desc_boss"
+                android:text="@{@string/p_desc_boss(viewmodel.boss_p)}"
                 app:layout_constraintBottom_toTopOf="@+id/progressBar3"
                 app:layout_constraintEnd_toEndOf="@+id/viewMain"
                 app:layout_constraintStart_toEndOf="@+id/image3"
@@ -327,6 +355,19 @@
                 app:layout_constraintStart_toStartOf="@+id/viewMain"
                 app:layout_constraintTop_toTopOf="@+id/divider3"
                 tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/LevelPok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@{@string/level(viewmodel.pokoritel_l)}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/image4"
+                app:layout_constraintEnd_toEndOf="@+id/image4"
+                app:layout_constraintStart_toStartOf="@+id/image4"
+                tools:text="Уровень 0" />
 
             <TextView
                 android:id="@+id/title4"
@@ -363,7 +404,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:minLines="2"
-                android:text="@string/p_desc_pokoritel"
+                android:text="@{@string/p_desc_pokoritel(viewmodel.pokoritel_p)}"
                 app:layout_constraintBottom_toTopOf="@+id/progressBar4"
                 app:layout_constraintEnd_toEndOf="@+id/viewMain"
                 app:layout_constraintStart_toEndOf="@+id/image4"
@@ -393,6 +434,19 @@
                 app:layout_constraintStart_toStartOf="@+id/viewMain"
                 app:layout_constraintTop_toTopOf="@+id/divider4"
                 tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/LevelHero"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@{@string/level(viewmodel.hero_l)}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/image5"
+                app:layout_constraintEnd_toEndOf="@+id/image5"
+                app:layout_constraintStart_toStartOf="@+id/image5"
+                tools:text="Уровень 0" />
 
             <TextView
                 android:id="@+id/title5"
@@ -429,7 +483,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:minLines="2"
-                android:text="@string/p_desc_hero"
+                android:text="@{@string/p_desc_hero(viewmodel.hero_p)}"
                 app:layout_constraintBottom_toTopOf="@+id/progressBar5"
                 app:layout_constraintEnd_toEndOf="@+id/viewMain"
                 app:layout_constraintStart_toEndOf="@+id/image5"
@@ -459,6 +513,19 @@
                 app:layout_constraintStart_toStartOf="@+id/viewMain"
                 app:layout_constraintTop_toTopOf="@+id/divider5"
                 tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/LevelLegenda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@{@string/level(viewmodel.legenda_l)}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/image6"
+                app:layout_constraintEnd_toEndOf="@+id/image6"
+                app:layout_constraintStart_toStartOf="@+id/image6"
+                tools:text="Уровень 0" />
 
             <TextView
                 android:id="@+id/title6"
@@ -495,7 +562,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:minLines="2"
-                android:text="@string/p_desc_legenda"
+                android:text="@{@string/p_desc_legenda(viewmodel.legenda_l+1)}"
                 app:layout_constraintBottom_toTopOf="@+id/progressBar6"
                 app:layout_constraintEnd_toEndOf="@+id/viewMain"
                 app:layout_constraintStart_toEndOf="@+id/image6"
@@ -521,10 +588,23 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="#3F51B5"
-                app:layout_constraintBottom_toTopOf="@+id/divider7"
+                app:layout_constraintBottom_toBottomOf="@+id/viewMain"
                 app:layout_constraintStart_toStartOf="@+id/viewMain"
                 app:layout_constraintTop_toTopOf="@+id/divider6"
                 tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/LevelWin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@{@string/level(viewmodel.winner_l)}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/image7"
+                app:layout_constraintEnd_toEndOf="@+id/image7"
+                app:layout_constraintStart_toStartOf="@+id/image7"
+                tools:text="Уровень 0" />
 
             <TextView
                 android:id="@+id/title7"

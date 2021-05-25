@@ -35,8 +35,11 @@ public class ProgressRepository {
     }
 
     public int [][] getStateP (){
-        int [] mPlan1 = {2,6,10,14,20,30,40,50,60,80,100};
-        int [] mPlan2 = {5,10,30,50,75,100,150,200,250,300,365};
+        /*int [] mPlan1 = {2,6,10,14,20,30,40,50,60,80,100};
+        int [] mPlan2 = {5,10,30,50,75,100,150,200,250,300,365};*/
+
+        int [] mPlan1 = {2,3,4,5,6,7,8,9,10,11,12};
+        int [] mPlan2 = {2,3,4,5,6,7,8,9,10,11,12};
 
         int mEntLevel = mPref.getInt(KEY_ENTUZIAST_LEVEL,0);
         int [] entuziastArray = {mEntLevel, mPref.getInt(KEY_ENTUZIAST_CURRENT,0), mPlan2[mEntLevel]};
@@ -54,7 +57,7 @@ public class ProgressRepository {
         int [] pokoritelArray = {mPokLevel, mPref.getInt(KEY_POKORITEL_CURRENT,0), mPlan2[mPokLevel]};
 
         int mLegLevel = mPref.getInt(KEY_LEGENDA_LEVEL,0);
-        int [] legendaArray = {mLegLevel, mPref.getInt(KEY_LEGENDA_CURRENT,0), mLegLevel};
+        int [] legendaArray = {mLegLevel, mPref.getInt(KEY_LEGENDA_CURRENT,0), 3};
 
         int mWinnerLevel = mPref.getInt(KEY_WINNER_LEVEL,0);
         int [] winnerArray = {mWinnerLevel, mPref.getInt(KEY_WINNER_CURRENT,0), 6};

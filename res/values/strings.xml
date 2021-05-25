@@ -77,13 +77,14 @@
     <string name="p_title_legenda">Легенда</string>
     <string name="p_title_pobeditel">Победитель</string>
     <string name="p_title_boss">Босс</string>
-    <string name="p_desc_entuziast">Удержите эффективный режим 5 дней</string>
-    <string name="p_desc_voin">Выполните работу в 1 выходной день</string>
-    <string name="p_desc_hero">Выполните план по сессиям в выходной день</string>
-    <string name="p_desc_pokoritel">Отработайте подряд 5 дней</string>
-    <string name="p_desc_legenda">Выполните достижения Энтузиаст, Герой выходного дня и Покоритель до 2 уровня</string>
+    <string name="p_desc_entuziast">Удержите эффективный режим %1$d рабочих дней подряд</string>
+    <string name="p_desc_voin">Выполните работу в %1$d выходных дня</string>
+    <string name="p_desc_hero">Выполните план по сессиям в %1$d выходных дня</string>
+    <string name="p_desc_pokoritel">Отработайте подряд %1$d рабочих дней</string>
+    <string name="p_desc_legenda">Выполните достижения Энтузиаст, Герой выходного дня и Покоритель до %1$d уровня</string>
     <string name="p_desc_pobeditel">Выполните все достижения</string>
-    <string name="p_desc_boss">Выполните 5 Главных задач</string>
+    <string name="p_desc_boss">Выполните %1$d Главных целей</string>
+    <string name="level">Уровень %1$d</string>
     <string-array name="goals">
         <item>Сессий</item>
         <item>Ударных дней</item>

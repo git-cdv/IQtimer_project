@@ -7,5 +7,18 @@
     <fragment
         android:id="@+id/progressFragment"
         android:name="com.hfad.iqtimer.progress.ProgressFragment"
-        android:label="ProgressFragment" />
+        android:label="ProgressFragment" >
+        <action
+            android:id="@+id/action_progressFragment_to_listProgressFragment"
+            app:destination="@id/listProgressFragment"
+            app:enterAnim="@anim/my_slide_in_right"
+            app:exitAnim="@anim/my_slide_out_left"
+            app:popEnterAnim="@anim/my_slide_in_left"
+            app:popExitAnim="@anim/my_slide_out_right"
+            app:popUpTo="@id/progressFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listProgressFragment"
+        android:name="com.hfad.iqtimer.progress.ListProgressFragment"
+        android:label="ListProgressFragment" />
 </navigation>

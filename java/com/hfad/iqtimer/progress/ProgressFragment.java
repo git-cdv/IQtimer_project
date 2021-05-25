@@ -13,10 +13,15 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import com.hfad.iqtimer.MainActivity;
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.databinding.FragmentProgressBinding;
 import com.hfad.iqtimer.dialogs.DialogProgressDeleteGoal;
+
+import java.util.Objects;
 
 
 public class ProgressFragment extends Fragment implements View.OnClickListener {
@@ -36,6 +41,7 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
         if (mViewmodel.isPremium()) {
             mViewmodel.getStateP();//заполняем вью Достижений
         }
+
         }
 
     @Override
@@ -45,6 +51,7 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
                 inflater, R.layout.fragment_progress,container,false);
         View v = binding.getRoot();
 
+        (v.findViewById(R.id.viewBtnMore)).setOnClickListener(this);
         (v.findViewById(R.id.btnNewGoal)).setOnClickListener(this);
         (v.findViewById(R.id.img_btn_add_goal)).setOnClickListener(this);
         (v.findViewById(R.id.img_btn_cancel_goal)).setOnClickListener(this);
@@ -68,6 +75,9 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
                 dlgDelGoal= new DialogProgressDeleteGoal();
                 dlgDelGoal.show(getParentFragmentManager(), "dlgDelGoal");
                 mViewmodel.isPutAdd(false);
+                break;
+            case R.id.viewBtnMore:
+                ((ProgressActivity) requireActivity()).toProgressList();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + v.getId());

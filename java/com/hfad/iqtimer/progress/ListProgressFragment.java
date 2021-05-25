@@ -24,7 +24,7 @@ public class ListProgressFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mViewmodel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
-
+        mViewmodel.getStateP();
     }
 
     @Override

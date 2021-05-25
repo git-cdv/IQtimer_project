@@ -20,4 +20,8 @@ public class ProgressActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
 }
+
+public void toProgressList(){
+    navController.navigate(R.id.action_progressFragment_to_listProgressFragment);
+}
 }
