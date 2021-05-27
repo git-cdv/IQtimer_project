@@ -1,12 +1,16 @@
 package com.hfad.iqtimer;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,7 +23,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -28,15 +31,23 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.hfad.iqtimer.database.WriteCountDataIntentService;
+import com.hfad.iqtimer.databinding.ActivityMainBinding;
 import com.hfad.iqtimer.dialogs.DialogFragmentBreakEnded;
 import com.hfad.iqtimer.dialogs.DialogFragmentSesEnd;
 import com.hfad.iqtimer.progress.ProgressActivity;
+import com.hfad.iqtimer.progress.ProgressViewModel;
 import com.hfad.iqtimer.settings.AboutActivity;
 import com.hfad.iqtimer.settings.SettingsActivity;
 import com.hfad.iqtimer.statistic.StatisticActivity;
+import com.hfad.iqtimer.tools.StateEvent;
+import com.hfad.iqtimer.tools.TickEvent;
 import com.marcok.stepprogressbar.StepProgressBar;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnItemClickListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,15 +55,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class MainActivity extends FragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class MainActivity extends FragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "MYLOGS";
-    private static final String KEY_TIME = "timedown";
     private static final String KEY_COUNT = "countup";
-    private static final String KEY_PREF_COUNT = "prefcount";
-    private static final String KEY_PREF_DATE = "prefdate";
-    private static final String KEY_PREF_INTERVAL = "default_interval";
-    private static final String KEY_PREF_CHANGE = "iqtimer.timerchange";
     private static final String BR_FOR_SIGNALS = "iqtimer.brforsignals";
     private static final int STATE_TIMER_WORKING = 500;
     private static final int STATE_TIMER_FINISHED = 100;
@@ -63,41 +69,42 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     private static final int STATE_BREAK_ENDED = 300;
     private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
     private static final String KEY_STATE = "iqtimer.state";
-    private static final String KEY_PREF_PLAN = "set_plan_day" ;
+    private static final String KEY_PREF_PLAN = "set_plan_day";
+    private static final int STATE_STOP = 706;
+    private static final int STATE_RUN = 705;
+    private static final int CHANGE_INTERVAL_STICKY = 710;
 
 
-    TextView mTextField,mTextFieldCount;
-    ImageButton mButtonMenu,mStopButton;
-    StepProgressBar mStepProgressBar;
-    String mLocalDate;
+    ImageButton mButtonMenu, mStopButton;
     Integer mCurrentCount;
     boolean mBound = false;
     boolean mActive = false;
     ServiceConnection mConn;
     TimerService mTimerService;
     Intent mIntent;
-    BroadcastReceiver uiUpdated, brForSignals;
+    BroadcastReceiver brForSignals;
     SharedPreferences sPref, sPrefSettings;
-    String mDefaultTime;
-    Integer mDefaultPlan;
-    DialogFragment dlg1,dlg2;
-    int mSTATE=STATE_TIMER_WAIT;
+    DialogFragment dlg1, dlg2;
     DialogPlus dialogMenu;
     Animation animTimerView;
+    MainViewModel model;
+    ActivityMainBinding binding;
 
+    Button mStartButton;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "MainActivity: onCreate");
-        setContentView(R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        model = new ViewModelProvider(this).get(MainViewModel.class);
+        //проверяем что это не после переворота, а следующий вход и что таймер не запущен
+        if (savedInstanceState == null&model.mState!=STATE_RUN) {model.checkEntryState();}
+        binding.setModel(model);
 
-        mTextField = (TextView) findViewById(R.id.timer_view);
-        mTextFieldCount = (TextView) findViewById(R.id.count_ses);
+        mStartButton = (Button) findViewById(R.id.button);
         mStopButton = (ImageButton) findViewById(R.id.imageButtonStop);
         mButtonMenu = (ImageButton) findViewById(R.id.imageButtonMenu);
-        mStepProgressBar =(StepProgressBar)findViewById(R.id.stepProgressBar);
 
         mIntent = new Intent(MainActivity.this, TimerService.class);
         //получаем доступ к файлу с данными по дате и сессиям
@@ -105,53 +112,9 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
         //получаем доступ к файлу с настройками приложения
         sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
-        //вытаскиваем дефолтную значение интервала из настроек и присваиваем mDefaultTime
-        setDefaultTimeFromPref(sPrefSettings);
-        if (mSTATE==STATE_TIMER_WAIT){mTextField.setText(mDefaultTime);}//если первый вход и сервис еще не запущен
-        mDefaultPlan = Integer.valueOf(sPrefSettings.getString(KEY_PREF_PLAN, "8"));
-        //установка количества точек из плана в настройках
-        mStepProgressBar.setNumDots(mDefaultPlan);
-         //данные для меню
+
+        //данные для меню
         dataForMenu();
-
-        if(savedInstanceState == null) {//проверяем что это не после переворота, а следующий вход
-            mLocalDate = (LocalDate.now()).toString();
-
-            checkFirstRun();//проверяем на 0 вход
-
-            //если уже была запись в текущий день (т.е день НЕ НОВЫЙ) - берем ее в mTextFieldCount
-            if (sPref.getString(KEY_PREF_DATE, "").equals(mLocalDate)) {
-                mCurrentCount = sPref.getInt(KEY_PREF_COUNT, 500);
-                mTextFieldCount.setText(mCurrentCount.toString());
-
-            } else {//если первый заход сегодня
-                mCurrentCount = 0;
-                mTextFieldCount.setText("0");
-                Intent mIntentService = new Intent(this, WriteCountDataIntentService.class);
-                startService(mIntentService);
-
-            }
-            progressBarSetup();
-        }
-
-        if(savedInstanceState != null){//проверяем что это после переворота
-            mBound= savedInstanceState.getBoolean("mBound");
-            mCurrentCount = savedInstanceState.getInt("mCurrentCount");
-            mDefaultPlan = savedInstanceState.getInt("mDefaultPlan");
-            mTextFieldCount.setText(mCurrentCount.toString());
-            mSTATE = savedInstanceState.getInt(KEY_STATE);
-            progressBarSetup();
-            Log.d(TAG, "MainActivity: savedInstanceState mSTATE - "+mSTATE);
-
-        }
-
-        //create BroadcastReceiver для обновления таймера
-        uiUpdated = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mTextField.setText(intent.getExtras().getString(KEY_TIME));
-            }
-        };
 
         //create BroadcastReceiver для сигналов
         brForSignals = new BroadcastReceiver() {
@@ -163,20 +126,20 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 switch (mState){
                     case STATE_TIMER_FINISHED:
                         mCurrentCount=intent.getExtras().getInt(KEY_COUNT);
-                        mTextFieldCount.setText(mCurrentCount.toString());
-                        mTextField.setText(mDefaultTime);
-                        progressBarSetup();
+                        /*mTextFieldCount.setText(mCurrentCount.toString());*/
+                        /*mTextField.setText(mDefaultTime);*/
+                        /*progressBarSetup();*/
                         //создаем диалог если Активити активно
                         if(mActive) {
                             showMyDialog(STATE_TIMER_FINISHED);
                         }
                         break;
                     case ST_TIMER_STOPED:
-                        mTextField.setText(mDefaultTime);
+                       /* mTextField.setText(mDefaultTime);*/
                         if(dlg1!=null){dlg1.dismiss();}
                         break;
                     case STATE_BREAK_ENDED:
-                        mTextField.setText(mDefaultTime);
+                        /*mTextField.setText(mDefaultTime);*/
                         //создаем диалог если Активити активно
                         if(mActive) {
                             showMyDialog(STATE_BREAK_ENDED);
@@ -195,8 +158,8 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 //получаем ссылку на сервис
                 mTimerService = ((TimerService.MyBinder) binder).getService();
                 mBound = true;
-                mSTATE=mTimerService.getSTATEinService();//получаем текущий статус в сервисе
-                stateViewPrepare(mSTATE);//подготавливаем UI в зависимости от статуса
+                /*mSTATE=mTimerService.getSTATEinService();//получаем текущий статус в сервисе
+                stateViewPrepare(mSTATE);//подготавливаем UI в зависимости от статуса*/
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -211,35 +174,26 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
             public void onClick(View v) {
                 switch (v.getId()){
 
-                    case R.id.timer_view:
-                        if (mSTATE == STATE_TIMER_WORKING){
-                            Log.d(TAG, "MainActivity: Pause");
-                            if(mBound){mTimerService.TimerPause();}
-                            mSTATE = STATE_TIMER_ONPAUSE;
-                            mTextField.startAnimation(createBlink());
-                            break;
-                        } else {
+                    case R.id.button:
                         mIntent.putExtra(KEY_STATE,STATE_TIMER_WORKING);
                         startTimeService(mIntent);
-                        mSTATE = STATE_TIMER_WORKING;
-                        mStopButton.setVisibility(View.VISIBLE);
-                        if(animTimerView!=null){
-                            mTextField.clearAnimation();
+                        EventBus.getDefault().post(new StateEvent(STATE_RUN));
+                        /*if(animTimerView!=null){
+                          mTextField.clearAnimation();
                             animTimerView=null;
-                        }
+                        }*/
                         Log.d(TAG, "MainActivity: Start");
-                        break;}
+                        break;
 
                     case R.id.imageButtonStop:
                         Log.d(TAG, "MainActivity: btn_Stop");
-                        if(mBound){mTimerService.TimerStop();}
-                        mTextField.setText(mDefaultTime);
-                        mStopButton.setVisibility(View.INVISIBLE);
-                        mSTATE = STATE_TIMER_FINISHED;
-                        if(animTimerView!=null){
+                        EventBus.getDefault().post(new StateEvent(STATE_STOP));
+
+
+                      /*  if(animTimerView!=null){
                             mTextField.clearAnimation();
                             animTimerView=null;
-                        }
+                        }*/
                         break;
                     case R.id.imageButtonMenu:
                         Log.d(TAG, "MainActivity: btn_Menu");
@@ -252,18 +206,9 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         //регистрируем слушателей кнопок и настроек
         mStopButton.setOnClickListener(clickListener);
         mButtonMenu.setOnClickListener(clickListener);
-        mTextField.setOnClickListener(clickListener);
+        mStartButton.setOnClickListener(clickListener);
         sPrefSettings.registerOnSharedPreferenceChangeListener(this);
 
-    }
-
-    private void progressBarSetup() {
-        //убирает полностью активные точки если значение -1 (меньше или больше - выбросит ошибку)
-        if (mCurrentCount < mDefaultPlan) {
-            mStepProgressBar.setCurrentProgressDot(mCurrentCount - 1);
-        } else {
-            mStepProgressBar.setCurrentProgressDot(mDefaultPlan - 1);
-        }
     }
 
     private void stateViewPrepare(int state) {
@@ -302,15 +247,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putBoolean("mBound",mBound);
-        savedInstanceState.putInt("mCurrentCount",mCurrentCount);
-        savedInstanceState.putInt("mDefaultPlan",mDefaultPlan);
-        savedInstanceState.putInt(KEY_STATE,mSTATE);
-    }
-
     public void onBreakTime(int value) {
         Log.d(TAG, "MainActivity: onBreakTime()");
         switch (value){
@@ -320,21 +256,24 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 startTimeService(mIntentBreak);
                 break;
             case STATE_TIMER_WORKING:
-                mSTATE = STATE_TIMER_WORKING;
                 startTimeService(mIntent);
                 break;
             case STATE_TIMER_WAIT:
-                mSTATE = STATE_TIMER_WAIT;
-                mTimerService.setSTATEinService(STATE_TIMER_WAIT);
+                /*mTimerService.setSTATEinService(STATE_TIMER_WAIT);*/
                 break;
         }
         }
+
+   /* @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(TickEvent event) {
+       binding.timerView.setText(event.message);
+    }*/
 
     @Override
     protected void onStart() {
         Log.d(TAG, "MainActivity: onStart + bindService + Registered receiver");
         super.onStart();
-        registerReceiver(uiUpdated, new IntentFilter("TIMER_UPDATED"));
+        /*EventBus.getDefault().register(this);*/
         registerReceiver(brForSignals, new IntentFilter(BR_FOR_SIGNALS));
         if(!mBound){bindService(mIntent, mConn, 0);}
         mActive = true;
@@ -344,6 +283,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     protected void onStop() {
         Log.d(TAG, "MainActivity: onStop + unbindService");
         super.onStop();
+        /*EventBus.getDefault().unregister(this);*/
         if (!mBound) return;
         unbindService(mConn);
         mBound = false;
@@ -367,7 +307,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         Log.d(TAG, "MainActivity: onDestroy + Unregistered receiver");
         super.onDestroy();
         sPrefSettings.unregisterOnSharedPreferenceChangeListener(this);
-        unregisterReceiver(uiUpdated);
         unregisterReceiver(brForSignals);
     }
 
@@ -438,51 +377,23 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
     }
 
-    private void setDefaultTimeFromPref(SharedPreferences sPref) {
-        //проверяем настройку с дефолтным интервалом, если ее нет то устанавливается - defValue
-        int mDefaultMinutes = Integer.parseInt(sPref.getString(KEY_PREF_INTERVAL, "45"));
-
-        if (mDefaultMinutes >= 60) {//если время отчета равно или больше 1 часа, то формат с часами
-            mDefaultTime = String.format(Locale.getDefault(), "%02d:%02d:%02d", mDefaultMinutes / 60,
-                    mDefaultMinutes % 60, 0);
-        } else {//формат с минутами и секундами
-            mDefaultTime = String.format(Locale.getDefault(), "%02d:%02d", mDefaultMinutes, 0);
-        }
-    }
     //слушает изменение настройки и выполняет код при событии
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.d(TAG, "MainActivity: onSharedPreferenceChanged()");
         switch (key) {
             case ("default_interval"):
-                setDefaultTimeFromPref(sharedPreferences);
-                mTextField.setText(mDefaultTime);
-                SharedPreferences.Editor ed = sPref.edit();
-                ed.putBoolean(KEY_PREF_CHANGE, true);
-                ed.apply();
+              if(model.mState!=STATE_RUN){
+                  binding.timerView.setText(model.repo.getDefaultTime());}
+                  EventBus.getDefault().postSticky(new StateEvent(CHANGE_INTERVAL_STICKY));
                 break;
             case ("set_plan_day"):
-                mDefaultPlan = Integer.valueOf(sharedPreferences.getString(KEY_PREF_PLAN, "8"));
                 //установка количества точек из плана в настройках
-                mStepProgressBar.setNumDots(mDefaultPlan);
+                binding.stepProgressBar.setNumDots(model.repo.getPlan());
                 break;
         }
-
     }
 
-    private void checkFirstRun() {
-        if (sPref.getBoolean("firstrun", true)) {
-            Log.d(TAG, "MainActivity: checkFirstRun()");
-            SharedPreferences.Editor ed = sPref.edit();
-            ed.putString(KEY_PREF_DATE, mLocalDate);
-            ed.putInt(KEY_PREF_COUNT,0);
-            ed.apply();
-            mCurrentCount = 0;
-            mTextFieldCount.setText("0");
-
-            sPref.edit().putBoolean("firstrun", false).apply();
-        }
-    }
 
     Animation createBlink (){
         animTimerView = new AlphaAnimation(0.2f, 1.0f);//анимация альфа канала (прозрачности от 0 до 1)

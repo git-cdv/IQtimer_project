@@ -15,7 +15,9 @@ public class WriteCountDataIntentService extends IntentService {
     private static final String KEY_PREF_COUNT = "prefcount";
     private static final String KEY_PREF_DATE = "prefdate";
     private static final String TAG = "MYLOGS";
-
+    SharedPreferences sPref;
+    SharedPreferences.Editor ed;
+    LocalDate mToday;
 
     public WriteCountDataIntentService() {
         super("WriteCountDataIntentService");
@@ -24,56 +26,65 @@ public class WriteCountDataIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "IntentService: onHandleIntent");
-        String mLocalDate = (LocalDate.now()).toString();
         //получаем доступ к файлу с данными по дате и сессиям
-        SharedPreferences sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
-        //берем текущие значения за крайний день
-        Integer mPrefCount = sPref.getInt(KEY_PREF_COUNT,500);
-        String mPrefDate = sPref.getString(KEY_PREF_DATE,"default");
-        //получаем текущую дату из sPref
-        LocalDate mDateFromsPref = LocalDate.parse(mPrefDate);
-        //подготавливааем формат
-        DateTimeFormatter fmtOut = DateTimeFormat.forPattern("E, MMM d, yyyy");
-        String strOutput = fmtOut.print(mDateFromsPref);
-
-        //получаем ссылку на БД
-        SessionDatabaseHelper DatabaseHelper = new SessionDatabaseHelper(getApplication());
-        SQLiteDatabase db = DatabaseHelper.getWritableDatabase();//разрешаем чтение и запись
-        DatabaseHelper.insertSession(db, mPrefDate, mPrefCount,strOutput);//записываем последние данные
-
-        //обновляем дату и обнуляем счетчик в sPref
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(KEY_PREF_DATE, mLocalDate);
-        ed.putInt(KEY_PREF_COUNT,0);
-        ed.apply();
-
-        Cursor mCursor = db.query("SESSIONS",
-                new String[]{"DATE", "SESSION_COUNT"},
-                null, null, null, null, null);
-
-        //получаем и парсим последнюю дату в курсоре
-        mCursor.moveToLast();
-        String strDate = mCursor.getString(0);
-        LocalDate mDateFromCursor = LocalDate.parse(strDate);
-
+        sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
+        ed = sPref.edit();
         // текущая дата
-        LocalDate mToday = LocalDate.now();
-        // получаем следующую дату
-        LocalDate mNextDateFromCursor = mDateFromCursor.plusDays(1);
+        mToday = LocalDate.now();
 
-        //пока дата не равна текущему дню - проставляем 0
-        while(mNextDateFromCursor.getDayOfYear() != mToday.getDayOfYear()){
+        //проверяем что это не первый вход
+        if (sPref.getBoolean("firstrun", true)) {
+            Log.d(TAG, "WriteCountDataIntentService: checkFirstRun()");
+            ed.putString(KEY_PREF_DATE, mToday.toString());
+            ed.putInt(KEY_PREF_COUNT, 0);
+            ed.putBoolean("firstrun", false);
+            ed.apply();
+        } else {
+            //берем текущие значения за крайний день
+            int mPrefCount = sPref.getInt(KEY_PREF_COUNT, 500);
+            String mPrefDate = sPref.getString(KEY_PREF_DATE, "default");
+            //получаем текущую дату из sPref
+            LocalDate mDateFromsPref = LocalDate.parse(mPrefDate);
+            //подготавливааем формат
+            DateTimeFormatter fmtOut = DateTimeFormat.forPattern("E, MMM d, yyyy");
+            String strOutput = fmtOut.print(mDateFromsPref);
 
-            String mNextDate = mNextDateFromCursor.toString("yyyy-MM-dd");
-            String mNextDateFull = mNextDateFromCursor.toString("E, MMM d, yyyy");
+            //получаем ссылку на БД
+            SessionDatabaseHelper DatabaseHelper = new SessionDatabaseHelper(getApplication());
+            SQLiteDatabase db = DatabaseHelper.getWritableDatabase();//разрешаем чтение и запись
+            DatabaseHelper.insertSession(db, mPrefDate, mPrefCount, strOutput);//записываем последние данные
 
-            DatabaseHelper.insertSession(db, mNextDate, 0,mNextDateFull);
+            //обновляем дату и обнуляем счетчик в sPref
+            ed.putString(KEY_PREF_DATE, mToday.toString());
+            ed.putInt(KEY_PREF_COUNT, 0);
+            ed.apply();
+
+            Cursor mCursor = db.query("SESSIONS",
+                    new String[]{"DATE", "SESSION_COUNT"},
+                    null, null, null, null, null);
+
+            //получаем и парсим последнюю дату в курсоре
+            mCursor.moveToLast();
+            String strDate = mCursor.getString(0);
+            LocalDate mDateFromCursor = LocalDate.parse(strDate);
+
             // получаем следующую дату
-            mNextDateFromCursor = mNextDateFromCursor.plusDays(1);
-        }
+            LocalDate mNextDateFromCursor = mDateFromCursor.plusDays(1);
 
-        db.close();//закрывает БД
-        mCursor.close();
+            //пока дата не равна текущему дню - проставляем 0
+            while (mNextDateFromCursor.getDayOfYear() != mToday.getDayOfYear()) {
+
+                String mNextDate = mNextDateFromCursor.toString("yyyy-MM-dd");
+                String mNextDateFull = mNextDateFromCursor.toString("E, MMM d, yyyy");
+
+                DatabaseHelper.insertSession(db, mNextDate, 0, mNextDateFull);
+                // получаем следующую дату
+                mNextDateFromCursor = mNextDateFromCursor.plusDays(1);
+            }
+
+            db.close();//закрывает БД
+            mCursor.close();
         }
+    }
 
 }

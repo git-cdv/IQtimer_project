@@ -20,17 +20,24 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
 
 import com.hfad.iqtimer.database.ListSounds;
 import com.hfad.iqtimer.database.WriteCountDataIntentService;
 import com.hfad.iqtimer.progress.ProgressCountDataIntentService;
+import com.hfad.iqtimer.tools.StateEvent;
+import com.hfad.iqtimer.tools.TickEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Locale;
 
 public class TimerService extends Service {
     private static final String TAG = "MYLOGS";
-    private static final String KEY_TIME = "timedown";
     private static final String KEY_PREF_INTERVAL = "default_interval";
     private static final String KEY_PREF_BREAKTIME = "break_time";
     private static final String KEY_PREF_SOUND_RES = "prefsoundres";
@@ -50,6 +57,9 @@ public class TimerService extends Service {
     private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
     private static final int ST_NOTIF_BREAK_STOPED = 900;
     private static final String KEY_TASK = "taskforintentservice";
+    private static final int STATE_STOP = 706;
+    private static final int STATE_RUN = 705;
+    private static final int CHANGE_INTERVAL_STICKY = 710;
 
     static private long mTimeLeftInMillis;
     static private long mBreakTimeInMillis;
@@ -62,13 +72,15 @@ public class TimerService extends Service {
     long mSeconds;
     static boolean isBreak = false;
     Intent iTimeUpdateOnUI;
-    static int mSTATE=0;
+    static int mState;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
         Log.d(TAG, "TimerService: onCreate");
         super.onCreate();
+        EventBus.getDefault().register(this);
+
         mNotifChannel = createNotificationChannel();
         sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
         //получаем доступ к файлу с настройками приложения
@@ -77,20 +89,13 @@ public class TimerService extends Service {
         mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))*60000;
         iTimeUpdateOnUI = new Intent("TIMER_UPDATED");
         mTimeLeftInMillis = mDefaultTimeInMillis;
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "TimerService: onStartCommand startId -"+startId+", mSTATE - "+mSTATE);
+        Log.d(TAG, "TimerService: onStartCommand startId -"+startId+", mSTATE - "+mState);
         super.onStartCommand(intent, flags, startId);
-
-        if (sPref.getBoolean(KEY_PREF_CHANGE,false)){
-            mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
-            mTimeLeftInMillis = mDefaultTimeInMillis;
-            SharedPreferences.Editor ed = sPref.edit();
-            ed.putBoolean(KEY_PREF_CHANGE, false);
-            ed.apply();
-        }
 
         //извлекаем и проверяпм состояние
         int mState = intent.getIntExtra(KEY_STATE,0);
@@ -100,7 +105,7 @@ public class TimerService extends Service {
                 Log.d(TAG, "TimerService: onStartCommand - ST_TIMER_STARTED");
                 mTimer = new Timer(mTimeLeftInMillis, 1000);
                 mTimer.start();
-                mSTATE = STATE_TIMER_WORKING;
+
                 break;
             case ST_NOTIF_PAUSED: //обработка интента от кнопки Пауза из Notification
                 Log.d(TAG, "TimerService: onStartCommand - ST_NOTIF_PAUSED");
@@ -123,7 +128,7 @@ public class TimerService extends Service {
                 isBreak = true;
                 mTimer = new Timer(mTimeLeftInMillis, 1000);
                 mTimer.start();
-                mSTATE = STATE_BREAK_STARTED;
+
                 //закрываем диалог
                 Intent i2 = new Intent(BR_FOR_SIGNALS);
                 i2.putExtra(KEY_STATE, ST_BREAK_STARTED_IN_NOTIF);
@@ -139,11 +144,27 @@ public class TimerService extends Service {
                 Intent i3 = new Intent(BR_FOR_SIGNALS);
                 i3.putExtra(KEY_STATE,ST_TIMER_STOPED);
                 sendBroadcast(i3);
-                mSTATE = STATE_TIMER_WAIT;
+
                 break;
         }
 
         return START_STICKY;
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(StateEvent event) {
+    switch (event.state){
+        case STATE_STOP:
+            TimerStop();
+            break;
+        case STATE_RUN:
+            mState=STATE_RUN;
+            break;
+        case CHANGE_INTERVAL_STICKY:
+            mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
+            mTimeLeftInMillis = mDefaultTimeInMillis;
+        break;
+}
     }
 
     public IBinder onBind(Intent intent) {
@@ -165,6 +186,7 @@ public class TimerService extends Service {
     public void onDestroy() {
         Log.d(TAG, "TimerService: onDestroy");
         mTimer.cancel();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -362,16 +384,7 @@ public class TimerService extends Service {
         notificationManager.createNotificationChannel(channel);
         return channelId;
     }
-    //возвращает текущее состояние сервиса
-    int getSTATEinService (){
-        return mSTATE;
-    }
 
-    //устанавливает состояние сервиса
-    int setSTATEinService (int state){
-        mSTATE = state;
-        return mSTATE;
-    }
 
     class Timer extends CountDownTimer{
 
@@ -390,9 +403,8 @@ public class TimerService extends Service {
             } else {//формат с минутами и секундами
                 mTime = String.format(Locale.getDefault(), "%02d:%02d", mSeconds  / 60, mSeconds % 60);
             }
-            //отправляем для отображения в mTextField MainActivity
-            iTimeUpdateOnUI.putExtra(KEY_TIME, mTime);
-            sendBroadcast(iTimeUpdateOnUI);
+            EventBus.getDefault().post(new TickEvent(mTime));
+
 
             if (!isBreak){
             NotificationUpdate(mTime);
@@ -407,7 +419,7 @@ public class TimerService extends Service {
                 Intent mIntentService = new Intent(getApplicationContext(), ProgressCountDataIntentService.class);
                 mIntentService.putExtra(KEY_TASK,STATE_TIMER_FINISHED);
                 startService(mIntentService);
-            mSTATE = STATE_TIMER_FINISHED;
+
             mTimeLeftInMillis = mDefaultTimeInMillis;
             startSoundForNotif(STATE_TIMER_FINISHED);
             startVibrator();
@@ -420,7 +432,6 @@ public class TimerService extends Service {
                 mTimeLeftInMillis = mDefaultTimeInMillis;
                 isBreak = false;
                 NotificationOnBreakEnd();
-                mSTATE = STATE_BREAK_ENDED;
                 startSoundForNotif(STATE_BREAK_ENDED);
                 startVibrator();
             }
