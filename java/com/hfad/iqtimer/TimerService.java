@@ -28,6 +28,7 @@ import com.hfad.iqtimer.database.ListSounds;
 import com.hfad.iqtimer.database.WriteCountDataIntentService;
 import com.hfad.iqtimer.progress.ProgressCountDataIntentService;
 import com.hfad.iqtimer.tools.StateEvent;
+import com.hfad.iqtimer.tools.StateServiceEvent;
 import com.hfad.iqtimer.tools.TickEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -42,13 +43,10 @@ public class TimerService extends Service {
     private static final String KEY_PREF_BREAKTIME = "break_time";
     private static final String KEY_PREF_SOUND_RES = "prefsoundres";
     private static final String KEY_PREF_SOUND_BREAK_RES = "prefsoundbreakres";
-    private static final String KEY_PREF_CHANGE = "iqtimer.timerchange";
     private static final String KEY_PREF_VIBRO_NUM = "prefvibrochoice";
     private static final String BR_FOR_SIGNALS = "iqtimer.brforsignals";
     private static final String KEY_STATE = "iqtimer.state";
-    private static final int STATE_TIMER_WORKING = 500;
     private static final int STATE_TIMER_FINISHED = 100;
-    private static final int STATE_TIMER_WAIT = 101;
     private static final int ST_TIMER_STOPED = 200;
     private static final int STATE_BREAK_STARTED = 400;
     private static final int STATE_BREAK_ENDED = 300;
@@ -59,7 +57,10 @@ public class TimerService extends Service {
     private static final String KEY_TASK = "taskforintentservice";
     private static final int STATE_STOP = 706;
     private static final int STATE_RUN = 705;
+    private static final int STATE_PAUSE = 707;
     private static final int CHANGE_INTERVAL_STICKY = 710;
+    private static final int STATE_A_DESTROY = 712;
+    private static final int STATE_PAUSE_SERVICE = 713;
 
     static private long mTimeLeftInMillis;
     static private long mBreakTimeInMillis;
@@ -73,6 +74,7 @@ public class TimerService extends Service {
     static boolean isBreak = false;
     Intent iTimeUpdateOnUI;
     static int mState;
+    static String mTime;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -101,11 +103,11 @@ public class TimerService extends Service {
         int mState = intent.getIntExtra(KEY_STATE,0);
 
         switch (mState){
-            case STATE_TIMER_WORKING:
-                Log.d(TAG, "TimerService: onStartCommand - ST_TIMER_STARTED");
+            case STATE_RUN:
+                Log.d(TAG, "TimerService: onStartCommand - STATE_RUN");
                 mTimer = new Timer(mTimeLeftInMillis, 1000);
                 mTimer.start();
-
+                EventBus.getDefault().post(new StateEvent(STATE_RUN));
                 break;
             case ST_NOTIF_PAUSED: //обработка интента от кнопки Пауза из Notification
                 Log.d(TAG, "TimerService: onStartCommand - ST_NOTIF_PAUSED");
@@ -155,15 +157,30 @@ public class TimerService extends Service {
     public void onMessageEvent(StateEvent event) {
     switch (event.state){
         case STATE_STOP:
+            Log.d(TAG, "TimerService: STATE_STOP");
             TimerStop();
+            mState=STATE_STOP;
             break;
         case STATE_RUN:
+            Log.d(TAG, "TimerService: STATE_RUN");
             mState=STATE_RUN;
             break;
         case CHANGE_INTERVAL_STICKY:
             mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
             mTimeLeftInMillis = mDefaultTimeInMillis;
         break;
+        case STATE_PAUSE:
+            Log.d(TAG, "TimerService: STATE_PAUSE");
+            TimerPause();
+            NotificationOnPause();
+            mState=STATE_PAUSE;
+            break;
+        case STATE_A_DESTROY:
+            Log.d(TAG, "TimerService: STATE_A_DESTROY");
+            if (mState==STATE_PAUSE){
+                //возвращает состояние паузы для ViewModel, если ее убили
+            EventBus.getDefault().postSticky(new StateServiceEvent(STATE_PAUSE_SERVICE,mTime));}
+            break;
 }
     }
 
@@ -250,7 +267,7 @@ public class TimerService extends Service {
         PendingIntent stopPendingIntent = PendingIntent.getService(this, 5, stopIntent, 0);
         //интент для кнопки ПРОДОЛЖИТЬ
         Intent continueIntent = new Intent(this, TimerService.class);
-        continueIntent.putExtra(KEY_STATE,STATE_TIMER_WORKING);
+        continueIntent.putExtra(KEY_STATE,STATE_RUN);
         PendingIntent continuePendingIntent = PendingIntent.getService(this, 6, continueIntent, 0);
 
         //если версия после О то создаем с использованием канала
@@ -278,7 +295,7 @@ public class TimerService extends Service {
         PendingIntent startBreakPendingIntent = PendingIntent.getService(this, 8, startBreakIntent, 0);
         //интент для кнопки Пропустить перерыв
         Intent continueIntent = new Intent(this, TimerService.class);
-        continueIntent.putExtra(KEY_STATE,STATE_TIMER_WORKING);
+        continueIntent.putExtra(KEY_STATE,STATE_RUN);
         PendingIntent continuePendingIntent = PendingIntent.getService(this, 9, continueIntent, 0);
 
         //если версия после О то создаем с использованием канала
@@ -340,7 +357,7 @@ public class TimerService extends Service {
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 10, notificationIntent, 0);
         //интент для кнопки Продолжить работу
         Intent continueIntent = new Intent(this, TimerService.class);
-        continueIntent.putExtra(KEY_STATE,STATE_TIMER_WORKING);
+        continueIntent.putExtra(KEY_STATE,STATE_RUN);
         PendingIntent continuePendingIntent = PendingIntent.getService(this, 12, continueIntent, 0);
 
         //если версия после О то создаем с использованием канала
@@ -395,7 +412,6 @@ public class TimerService extends Service {
         public void onTick(long millisUntilFinished) {
             mTimeLeftInMillis = millisUntilFinished;
             mSeconds = mTimeLeftInMillis/1000;
-            String mTime;
 
             if (mTimeLeftInMillis >= 3600000) {//если время отчета равно или больше 1 часа, то формат с часами
                 mTime = String.format(Locale.getDefault(), "%02d:%02d:%02d", mSeconds  / 3600,

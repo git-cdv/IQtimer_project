@@ -24,6 +24,7 @@
         android:text="@{model.timer}"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="88sp"
+        app:animationOnPause="@{model.isPause}"
         app:layout_constraintBottom_toTopOf="@+id/imageButtonMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -90,16 +91,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageButtonMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageButtonMenu" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/start"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stepProgressBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

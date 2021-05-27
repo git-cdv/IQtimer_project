@@ -63,16 +63,15 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     private static final int STATE_TIMER_WORKING = 500;
     private static final int STATE_TIMER_FINISHED = 100;
     private static final int STATE_TIMER_WAIT = 101;
-    private static final int STATE_TIMER_ONPAUSE = 102;
     private static final int ST_TIMER_STOPED = 200;
     private static final int STATE_BREAK_STARTED = 400;
     private static final int STATE_BREAK_ENDED = 300;
     private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
     private static final String KEY_STATE = "iqtimer.state";
-    private static final String KEY_PREF_PLAN = "set_plan_day";
     private static final int STATE_STOP = 706;
     private static final int STATE_RUN = 705;
     private static final int CHANGE_INTERVAL_STICKY = 710;
+    private static final int STATE_PAUSE = 707;
 
 
     ImageButton mButtonMenu, mStopButton;
@@ -80,17 +79,14 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     boolean mBound = false;
     boolean mActive = false;
     ServiceConnection mConn;
-    TimerService mTimerService;
     Intent mIntent;
     BroadcastReceiver brForSignals;
-    SharedPreferences sPref, sPrefSettings;
+    SharedPreferences sPrefSettings;
     DialogFragment dlg1, dlg2;
     DialogPlus dialogMenu;
-    Animation animTimerView;
     MainViewModel model;
     ActivityMainBinding binding;
-
-    Button mStartButton;
+    TextView mTimerView;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -98,17 +94,16 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         model = new ViewModelProvider(this).get(MainViewModel.class);
+        //ПОЛОЖИ ЧТО-то ДЛЯ ПРОВЕРКИ
         //проверяем что это не после переворота, а следующий вход и что таймер не запущен
-        if (savedInstanceState == null&model.mState!=STATE_RUN) {model.checkEntryState();}
+        if (savedInstanceState == null) {model.checkState();}
         binding.setModel(model);
 
-        mStartButton = (Button) findViewById(R.id.button);
+        mTimerView = (TextView) findViewById(R.id.timer_view);
         mStopButton = (ImageButton) findViewById(R.id.imageButtonStop);
         mButtonMenu = (ImageButton) findViewById(R.id.imageButtonMenu);
 
         mIntent = new Intent(MainActivity.this, TimerService.class);
-        //получаем доступ к файлу с данными по дате и сессиям
-        sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
 
         //получаем доступ к файлу с настройками приложения
         sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -155,11 +150,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         mConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.d(TAG, "MainActivity: onServiceConnected");
-                //получаем ссылку на сервис
-                mTimerService = ((TimerService.MyBinder) binder).getService();
                 mBound = true;
-                /*mSTATE=mTimerService.getSTATEinService();//получаем текущий статус в сервисе
-                stateViewPrepare(mSTATE);//подготавливаем UI в зависимости от статуса*/
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -174,26 +165,22 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
             public void onClick(View v) {
                 switch (v.getId()){
 
-                    case R.id.button:
-                        mIntent.putExtra(KEY_STATE,STATE_TIMER_WORKING);
-                        startTimeService(mIntent);
-                        EventBus.getDefault().post(new StateEvent(STATE_RUN));
-                        /*if(animTimerView!=null){
-                          mTextField.clearAnimation();
-                            animTimerView=null;
-                        }*/
-                        Log.d(TAG, "MainActivity: Start");
+                    case R.id.timer_view:
+                        if(model.mState==STATE_RUN){//это пауза
+                            Log.d(TAG, "MainActivity: Pause");
+                            EventBus.getDefault().post(new StateEvent(STATE_PAUSE));
+                        }else {
+                            Log.d(TAG, "MainActivity: Start");
+                            mIntent.putExtra(KEY_STATE, STATE_RUN);
+                            startTimeService(mIntent);
+                            EventBus.getDefault().post(new StateEvent(STATE_RUN));
+                        }
+
                         break;
 
                     case R.id.imageButtonStop:
                         Log.d(TAG, "MainActivity: btn_Stop");
                         EventBus.getDefault().post(new StateEvent(STATE_STOP));
-
-
-                      /*  if(animTimerView!=null){
-                            mTextField.clearAnimation();
-                            animTimerView=null;
-                        }*/
                         break;
                     case R.id.imageButtonMenu:
                         Log.d(TAG, "MainActivity: btn_Menu");
@@ -204,9 +191,9 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
             }
         };
         //регистрируем слушателей кнопок и настроек
+        mTimerView.setOnClickListener(clickListener);
         mStopButton.setOnClickListener(clickListener);
         mButtonMenu.setOnClickListener(clickListener);
-        mStartButton.setOnClickListener(clickListener);
         sPrefSettings.registerOnSharedPreferenceChangeListener(this);
 
     }
@@ -393,15 +380,4 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 break;
         }
     }
-
-
-    Animation createBlink (){
-        animTimerView = new AlphaAnimation(0.2f, 1.0f);//анимация альфа канала (прозрачности от 0 до 1)
-        animTimerView.setDuration(800); //длительность анимации
-        animTimerView.setStartOffset(50);//сдвижка начала анимации (с середины)
-        animTimerView.setRepeatMode(Animation.REVERSE);//режим повтора - сначала или в обратном порядке
-        animTimerView.setRepeatCount(Animation.INFINITE);//режим повтора (бесконечно)
-        return animTimerView;
-    }
-
 }
