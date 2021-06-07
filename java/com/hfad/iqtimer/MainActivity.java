@@ -1,16 +1,13 @@
 package com.hfad.iqtimer;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -23,25 +20,20 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.hfad.iqtimer.database.WriteCountDataIntentService;
+
 import com.hfad.iqtimer.databinding.ActivityMainBinding;
 import com.hfad.iqtimer.dialogs.DialogFragmentBreakEnded;
 import com.hfad.iqtimer.dialogs.DialogFragmentSesEnd;
 import com.hfad.iqtimer.progress.ProgressActivity;
-import com.hfad.iqtimer.progress.ProgressViewModel;
 import com.hfad.iqtimer.settings.AboutActivity;
 import com.hfad.iqtimer.settings.SettingsActivity;
 import com.hfad.iqtimer.statistic.StatisticActivity;
 import com.hfad.iqtimer.tools.StateEvent;
 import com.hfad.iqtimer.tools.TickEvent;
-import com.marcok.stepprogressbar.StepProgressBar;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnItemClickListener;
 
@@ -49,10 +41,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends FragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -94,9 +84,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         model = new ViewModelProvider(this).get(MainViewModel.class);
-        //ПОЛОЖИ ЧТО-то ДЛЯ ПРОВЕРКИ
-        //проверяем что это не после переворота, а следующий вход и что таймер не запущен
-        if (savedInstanceState == null) {model.checkState();}
+        model.checkState();
         binding.setModel(model);
 
         mTimerView = (TextView) findViewById(R.id.timer_view);
@@ -251,16 +239,16 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         }
         }
 
-   /* @Subscribe(threadMode = ThreadMode.MAIN)
+/*   @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(TickEvent event) {
-       binding.timerView.setText(event.message);
+       Log.d(TAG, "MainActivity: Tick");
     }*/
 
     @Override
     protected void onStart() {
         Log.d(TAG, "MainActivity: onStart + bindService + Registered receiver");
         super.onStart();
-        /*EventBus.getDefault().register(this);*/
+        //EventBus.getDefault().register(this);
         registerReceiver(brForSignals, new IntentFilter(BR_FOR_SIGNALS));
         if(!mBound){bindService(mIntent, mConn, 0);}
         mActive = true;
@@ -270,7 +258,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     protected void onStop() {
         Log.d(TAG, "MainActivity: onStop + unbindService");
         super.onStop();
-        /*EventBus.getDefault().unregister(this);*/
+        //EventBus.getDefault().unregister(this);
         if (!mBound) return;
         unbindService(mConn);
         mBound = false;
@@ -281,6 +269,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     public void onResume() {
         super.onResume();
         Log.d(TAG, "MainActivity: onResume");
+        //model.checkKilledState();
     }
 
     @Override

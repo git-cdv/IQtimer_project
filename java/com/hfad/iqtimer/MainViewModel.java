@@ -1,9 +1,10 @@
 package com.hfad.iqtimer;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.content.IntentFilter;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,12 +12,8 @@ import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
-import com.hfad.iqtimer.progress.GoalRepository;
 import com.hfad.iqtimer.tools.StateEvent;
-import com.hfad.iqtimer.tools.StateServiceEvent;
 import com.hfad.iqtimer.tools.TickEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -25,14 +22,13 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
 public class MainViewModel extends AndroidViewModel {
+    private static final String TAG = "MYLOGS";
 
     private static final int STATE_NEXT_ENTRY = 701;
     private static final int STATE_NEW_ENTRY = 700;
     private static final int STATE_RUN = 705;
     private static final int STATE_STOP = 706;
     private static final int STATE_PAUSE = 707;
-    private static final int STATE_A_DESTROY = 712;
-    private static final int STATE_PAUSE_SERVICE = 713;
 
     int mState=0;
 
@@ -46,33 +42,27 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull @NotNull Application application) {
         super(application);
         EventBus.getDefault().register(this);
-    }
+        }
+
+
+
     MainRepository repo = new MainRepository(getApplication());
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageTick(TickEvent event) {
         timer.set(event.message);
-        if (mState!=STATE_RUN){
-            mState = STATE_RUN;
-        }
+        Log.d(TAG, "MainViewModel: TickEvent");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageState(StateEvent event) {
-        setState(event.state);
+       setState(event.state);
+        Log.d(TAG, "MainViewModel: StateEvent - " + event.state);
     }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onMessageServiceState(StateServiceEvent event) {
-        setState(event.state);
-        timer.set(event.text);
-    }
-
 
     public void checkState() {
-        if (mState==0){
-            checkEntryState();
-        }
+        Log.d(TAG, "MainViewModel: checkState");
+        setState(repo.getState());
     }
 
 
@@ -80,52 +70,52 @@ public class MainViewModel extends AndroidViewModel {
         switch (state){
             case STATE_STOP:
                 setEmptyState();
-                isPause.set(false);
                 mState=STATE_STOP;
+                Log.d(TAG, "MainViewModel: setState - STATE_STOP");
                 break;
             case STATE_RUN:
                 isPause.set(false);
                 isNeedStop.set(true);
+                if (mState==0){//если закрывалась Активити
+                    count.set(repo.getCurrentCount());
+                }
                 mState=STATE_RUN;
+                Log.d(TAG, "MainViewModel: setState - STATE_RUN");
                 break;
             case STATE_PAUSE:
-                mState=STATE_PAUSE;
                 isPause.set(true);
-                break;
-            case STATE_PAUSE_SERVICE:
-                mState=STATE_PAUSE;
-                isPause.set(true);
-                isNeedStop.set(true);
+                if (mState==0){//если закрывалась Активити
+                    timer.set(repo.getPauseTime());
+                    isNeedStop.set(true);
                 count.set(repo.getCurrentCount());
-                plan.set(repo.getPlan());
+                }
+                mState=STATE_PAUSE;
+                Log.d(TAG, "MainViewModel: setState - STATE_PAUSE");
                 break;
-
-        }
-    }
-
-    public void checkEntryState() {
-        switch (repo.getState()){
             case STATE_NEW_ENTRY:
                 timer.set(repo.getDefaultTime());
                 count.set(0);
                 plan.set(repo.getPlan());
                 isNeedStop.set(false);
                 isPause.set(false);
+                Log.d(TAG, "MainViewModel: setState - STATE_NEW_ENTRY");
                 break;
 
             case STATE_NEXT_ENTRY:
                 setEmptyState();
+                Log.d(TAG, "MainViewModel: setState - STATE_NEXT_ENTRY");
                 break;
-
 
         }
     }
+
     public void setEmptyState() {
                 timer.set(repo.getDefaultTime());
                 count.set(repo.getCurrentCount());
                 plan.set(repo.getPlan());
                 isNeedStop.set(false);
                 isPause.set(false);
+                mState=0;
     }
 
     public void updateDefaultTime() {
@@ -135,8 +125,14 @@ public class MainViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         EventBus.getDefault().unregister(this);
-        EventBus.getDefault().post(new StateEvent(STATE_A_DESTROY));
         super.onCleared();
     }
 
+    public void checkKilledState() {
+        if (mState==STATE_RUN&timer.get()==null){
+            setEmptyState();
+            //repo.setStateStop();
+            Log.d(TAG, "MainViewModel: checkKilledState()");
+        }
+    }
 }

@@ -20,15 +20,11 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
 
 import com.hfad.iqtimer.database.ListSounds;
-import com.hfad.iqtimer.database.WriteCountDataIntentService;
 import com.hfad.iqtimer.progress.ProgressCountDataIntentService;
 import com.hfad.iqtimer.tools.StateEvent;
-import com.hfad.iqtimer.tools.StateServiceEvent;
 import com.hfad.iqtimer.tools.TickEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -47,7 +43,6 @@ public class TimerService extends Service {
     private static final String BR_FOR_SIGNALS = "iqtimer.brforsignals";
     private static final String KEY_STATE = "iqtimer.state";
     private static final int STATE_TIMER_FINISHED = 100;
-    private static final int ST_TIMER_STOPED = 200;
     private static final int STATE_BREAK_STARTED = 400;
     private static final int STATE_BREAK_ENDED = 300;
     private static final int ST_NOTIF_PAUSED = 600;
@@ -59,20 +54,21 @@ public class TimerService extends Service {
     private static final int STATE_RUN = 705;
     private static final int STATE_PAUSE = 707;
     private static final int CHANGE_INTERVAL_STICKY = 710;
-    private static final int STATE_A_DESTROY = 712;
-    private static final int STATE_PAUSE_SERVICE = 713;
+    private static final String KEY_SERVICE_STATE = "TimerService.state";
+    private static final String KEY_PAUSE_TIME = "pausetime.state";
+
 
     static private long mTimeLeftInMillis;
     static private long mBreakTimeInMillis;
     static private long mDefaultTimeInMillis;
     private static CountDownTimer mTimer;
     MyBinder mBinder = new MyBinder();
-    static SharedPreferences sPref;
+    SharedPreferences mPref;
     static SharedPreferences sPrefSettings;
+    SharedPreferences.Editor ed;
     String mNotifChannel;
     long mSeconds;
     static boolean isBreak = false;
-    Intent iTimeUpdateOnUI;
     static int mState;
     static String mTime;
 
@@ -84,12 +80,12 @@ public class TimerService extends Service {
         EventBus.getDefault().register(this);
 
         mNotifChannel = createNotificationChannel();
-        sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
+        mPref = getSharedPreferences("prefcount", MODE_PRIVATE);
+        ed = mPref.edit();
         //получаем доступ к файлу с настройками приложения
         sPrefSettings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
         mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))*60000;
-        iTimeUpdateOnUI = new Intent("TIMER_UPDATED");
         mTimeLeftInMillis = mDefaultTimeInMillis;
 
     }
@@ -108,20 +104,18 @@ public class TimerService extends Service {
                 mTimer = new Timer(mTimeLeftInMillis, 1000);
                 mTimer.start();
                 EventBus.getDefault().post(new StateEvent(STATE_RUN));
+                ed.putInt(KEY_SERVICE_STATE, STATE_RUN);
+                ed.apply();
                 break;
             case ST_NOTIF_PAUSED: //обработка интента от кнопки Пауза из Notification
                 Log.d(TAG, "TimerService: onStartCommand - ST_NOTIF_PAUSED");
                 TimerPause();
-                NotificationOnPause();
+                EventBus.getDefault().post(new StateEvent(STATE_PAUSE));
                 break;
             case ST_NOTIF_STOPED: //обработка интента от кнопки Стоп из Notification
                 Log.d(TAG, "TimerService: onStartCommand - ST_NOTIF_STOPED");
                 TimerStop();
-                stopForeground( true ); //отключаем нотификацию
-                //отправляем для отображения в mTextField MainActivity
-                Intent i = new Intent(BR_FOR_SIGNALS);
-                i.putExtra(KEY_STATE,ST_TIMER_STOPED);
-                sendBroadcast(i);
+                EventBus.getDefault().post(new StateEvent(STATE_STOP));
                 break;
             case STATE_BREAK_STARTED: //обработка интента для перерыва
                 Log.d(TAG, "TimerService: onStartCommand - ST_BREAK_STARTED");
@@ -139,14 +133,8 @@ public class TimerService extends Service {
             case ST_NOTIF_BREAK_STOPED: //обработка интента от кнопки Стоп из Break Notification
                 Log.d(TAG, "TimerService: onStartCommand - ST_NOTIF_BREAK_STOPED");
                 TimerStop();
-                stopForeground( true ); //отключаем нотификацию
                 isBreak=false;
                 mTimeLeftInMillis = mDefaultTimeInMillis;
-                //отправляем для отображения в mTextField MainActivity
-                Intent i3 = new Intent(BR_FOR_SIGNALS);
-                i3.putExtra(KEY_STATE,ST_TIMER_STOPED);
-                sendBroadcast(i3);
-
                 break;
         }
 
@@ -159,7 +147,6 @@ public class TimerService extends Service {
         case STATE_STOP:
             Log.d(TAG, "TimerService: STATE_STOP");
             TimerStop();
-            mState=STATE_STOP;
             break;
         case STATE_RUN:
             Log.d(TAG, "TimerService: STATE_RUN");
@@ -172,14 +159,6 @@ public class TimerService extends Service {
         case STATE_PAUSE:
             Log.d(TAG, "TimerService: STATE_PAUSE");
             TimerPause();
-            NotificationOnPause();
-            mState=STATE_PAUSE;
-            break;
-        case STATE_A_DESTROY:
-            Log.d(TAG, "TimerService: STATE_A_DESTROY");
-            if (mState==STATE_PAUSE){
-                //возвращает состояние паузы для ViewModel, если ее убили
-            EventBus.getDefault().postSticky(new StateServiceEvent(STATE_PAUSE_SERVICE,mTime));}
             break;
 }
     }
@@ -203,6 +182,8 @@ public class TimerService extends Service {
     public void onDestroy() {
         Log.d(TAG, "TimerService: onDestroy");
         mTimer.cancel();
+        ed.putInt(KEY_SERVICE_STATE, STATE_STOP);
+        ed.apply();
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
@@ -210,6 +191,8 @@ public class TimerService extends Service {
     public void TimerStop() {
         mTimer.cancel();
         mTimeLeftInMillis = mDefaultTimeInMillis;
+        ed.putInt(KEY_SERVICE_STATE, STATE_STOP);
+        ed.apply();
         //отключаем нотификацию
         stopForeground( true );
         Log.d(TAG, "TimerService: TimerStop()");
@@ -217,6 +200,10 @@ public class TimerService extends Service {
 
     public void TimerPause() {
         mTimer.cancel();
+        NotificationOnPause();
+        ed.putInt(KEY_SERVICE_STATE, STATE_PAUSE);
+        ed.putString(KEY_PAUSE_TIME, mTime);
+        ed.apply();
         Log.d(TAG, "TimerService: TimerPause()");
     }
 
@@ -420,7 +407,6 @@ public class TimerService extends Service {
                 mTime = String.format(Locale.getDefault(), "%02d:%02d", mSeconds  / 60, mSeconds % 60);
             }
             EventBus.getDefault().post(new TickEvent(mTime));
-
 
             if (!isBreak){
             NotificationUpdate(mTime);

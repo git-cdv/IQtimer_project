@@ -22,6 +22,11 @@ public class MainRepository {
     private static final String KEY_PREF_PLAN = "set_plan_day" ;
     private static final int STATE_NEXT_ENTRY = 701;
     private static final int STATE_NEW_ENTRY = 700;
+    private static final String KEY_SERVICE_STATE = "TimerService.state";
+    private static final int STATE_STOP = 706;
+    private static final int STATE_RUN = 705;
+    private static final int STATE_PAUSE = 707;
+    private static final String KEY_PAUSE_TIME = "pausetime.state";
 
     Context context;
     SharedPreferences mPref,mPrefSettings;
@@ -37,15 +42,19 @@ public class MainRepository {
     }
 
     public int getState() {
-        //если уже была запись в текущий день (т.е день НЕ НОВЫЙ)
-        if (mPref.getString(KEY_PREF_DATE, "empty").equals(mToday)) {
-            return STATE_NEXT_ENTRY;
+        int stateService = mPref.getInt(KEY_SERVICE_STATE, STATE_STOP);
+        //если сервис с таймером не работает
+        if(stateService==STATE_STOP) {
+            //если уже была запись в текущий день (т.е день НЕ НОВЫЙ)
+            if (mPref.getString(KEY_PREF_DATE, "empty").equals(mToday)) {
+                return STATE_NEXT_ENTRY;
 
-        } else {//если первый заход сегодня - записываем данные с прошлого дня
-            Intent mIntentService = new Intent(context, WriteCountDataIntentService.class);
-            context.startService(mIntentService);
-            return STATE_NEW_ENTRY;
-        }
+            } else {//если первый заход сегодня - записываем данные с прошлого дня
+                Intent mIntentService = new Intent(context, WriteCountDataIntentService.class);
+                context.startService(mIntentService);
+                return STATE_NEW_ENTRY;
+            }
+        } else {return stateService;}
     }
 
     public String getDefaultTime() {
@@ -68,5 +77,16 @@ public class MainRepository {
 
     public Integer getCurrentCount() {
         return mPref.getInt(KEY_PREF_COUNT, 0);
+    }
+
+    public String getPauseTime() {
+        return mPref.getString(KEY_PAUSE_TIME, " ");
+    }
+
+    public void setStateStop() {
+        ed = mPref.edit();
+        ed.putInt(KEY_SERVICE_STATE, STATE_STOP);
+        ed.apply();
+
     }
 }
