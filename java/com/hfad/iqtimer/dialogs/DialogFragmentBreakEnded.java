@@ -5,19 +5,24 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.hfad.iqtimer.MainActivity;
 import com.hfad.iqtimer.R;
+import com.hfad.iqtimer.tools.StateEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class DialogFragmentBreakEnded extends DialogFragment implements DialogInterface.OnClickListener {
 
     private static final String TAG = "MYLOGS";
-    private static final int STATE_TIMER_WORKING = 500;
-    private static final int STATE_TIMER_WAIT = 101;
+    private static final int RUN_FROM_DIALOG = 7055;
+    private static final int STATE_DIALOG_CANCEL = 726;
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder adb = new AlertDialog.Builder(getActivity())
@@ -31,12 +36,14 @@ public class DialogFragmentBreakEnded extends DialogFragment implements DialogIn
         switch (which) {
             case Dialog.BUTTON_POSITIVE:
                 Log.d(TAG, "Dialog: BUTTON_POSITIVE");
-                ((MainActivity) requireActivity()).onBreakTime(STATE_TIMER_WORKING);
+                EventBus.getDefault().post(new StateEvent(RUN_FROM_DIALOG));
                 break;
             case Dialog.BUTTON_NEGATIVE:
-                ((MainActivity) requireActivity()).onBreakTime(STATE_TIMER_WAIT);
+                EventBus.getDefault().post(new StateEvent(STATE_DIALOG_CANCEL));
+                dismiss();
                 break;
         }
            }
+
 
 }

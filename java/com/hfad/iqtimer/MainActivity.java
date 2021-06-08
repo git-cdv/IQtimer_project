@@ -1,5 +1,6 @@
 package com.hfad.iqtimer;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
@@ -48,12 +49,7 @@ import java.util.Map;
 public class MainActivity extends FragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "MYLOGS";
-    private static final String KEY_COUNT = "countup";
-    private static final String BR_FOR_SIGNALS = "iqtimer.brforsignals";
-    private static final int STATE_TIMER_WORKING = 500;
     private static final int STATE_TIMER_FINISHED = 100;
-    private static final int STATE_TIMER_WAIT = 101;
-    private static final int ST_TIMER_STOPED = 200;
     private static final int STATE_BREAK_STARTED = 400;
     private static final int STATE_BREAK_ENDED = 300;
     private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
@@ -62,15 +58,16 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     private static final int STATE_RUN = 705;
     private static final int CHANGE_INTERVAL_STICKY = 710;
     private static final int STATE_PAUSE = 707;
+    private static final int RUN_FROM_DIALOG = 7055;
+    private static final int BREAK_ENDED = 178;
+    private static final int TIMER_FINISHED = 177;
 
 
     ImageButton mButtonMenu, mStopButton;
-    Integer mCurrentCount;
     boolean mBound = false;
     boolean mActive = false;
     ServiceConnection mConn;
     Intent mIntent;
-    BroadcastReceiver brForSignals;
     SharedPreferences sPrefSettings;
     DialogFragment dlg1, dlg2;
     DialogPlus dialogMenu;
@@ -87,6 +84,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         model.checkState();
         binding.setModel(model);
 
+
         mTimerView = (TextView) findViewById(R.id.timer_view);
         mStopButton = (ImageButton) findViewById(R.id.imageButtonStop);
         mButtonMenu = (ImageButton) findViewById(R.id.imageButtonMenu);
@@ -98,42 +96,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
         //данные для меню
         dataForMenu();
-
-        //create BroadcastReceiver для сигналов
-        brForSignals = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //извлекаем и проверяпм состояние
-                int mState = intent.getExtras().getInt(KEY_STATE);
-
-                switch (mState){
-                    case STATE_TIMER_FINISHED:
-                        mCurrentCount=intent.getExtras().getInt(KEY_COUNT);
-                        /*mTextFieldCount.setText(mCurrentCount.toString());*/
-                        /*mTextField.setText(mDefaultTime);*/
-                        /*progressBarSetup();*/
-                        //создаем диалог если Активити активно
-                        if(mActive) {
-                            showMyDialog(STATE_TIMER_FINISHED);
-                        }
-                        break;
-                    case ST_TIMER_STOPED:
-                       /* mTextField.setText(mDefaultTime);*/
-                        if(dlg1!=null){dlg1.dismiss();}
-                        break;
-                    case STATE_BREAK_ENDED:
-                        /*mTextField.setText(mDefaultTime);*/
-                        //создаем диалог если Активити активно
-                        if(mActive) {
-                            showMyDialog(STATE_BREAK_ENDED);
-                        }
-                        break;
-                    case ST_BREAK_STARTED_IN_NOTIF:
-                        if(mActive) {dlg1.dismiss();}
-                        break;
-                }
-            }
-        };
 
         mConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
@@ -154,12 +116,12 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 switch (v.getId()){
 
                     case R.id.timer_view:
-                        if(model.mState==STATE_RUN){//это пауза
+                        if(model.mState==STATE_RUN|model.mState==STATE_BREAK_STARTED){//это пауза
                             Log.d(TAG, "MainActivity: Pause");
                             EventBus.getDefault().post(new StateEvent(STATE_PAUSE));
                         }else {
                             Log.d(TAG, "MainActivity: Start");
-                            mIntent.putExtra(KEY_STATE, STATE_RUN);
+                            mIntent.putExtra(KEY_STATE, STATE_RUN);//старт таймера
                             startTimeService(mIntent);
                             EventBus.getDefault().post(new StateEvent(STATE_RUN));
                         }
@@ -184,18 +146,15 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         mButtonMenu.setOnClickListener(clickListener);
         sPrefSettings.registerOnSharedPreferenceChangeListener(this);
 
-    }
-
-    private void stateViewPrepare(int state) {
-        Log.d(TAG, "MainActivity: stateViewPrepare()");
-        switch (state){
-            case STATE_TIMER_FINISHED:
+        if(savedInstanceState == null) {//проверяем что это не после переворота, а следующий вход
+            if (model.mState == TIMER_FINISHED) {
                 showMyDialog(STATE_TIMER_FINISHED);
-                break;
-            case STATE_BREAK_ENDED:
+            }
+            if (model.mState == BREAK_ENDED) {
                 showMyDialog(STATE_BREAK_ENDED);
-                break;
+            }
         }
+
     }
 
     private void showMyDialog(int State) {
@@ -203,12 +162,16 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
         switch (State){
             case STATE_TIMER_FINISHED:
+                if (dlg1==null){
                 dlg1 = new DialogFragmentSesEnd();
-                dlg1.show(getSupportFragmentManager(), "IsBreak");
+                dlg1.setCancelable(false);
+                dlg1.show(getSupportFragmentManager(), "IsBreak");}
                 break;
             case STATE_BREAK_ENDED:
+                if (dlg2==null){
                 dlg2 = new DialogFragmentBreakEnded();
-                dlg2.show(getSupportFragmentManager(), "BreakEnded");
+                dlg2.setCancelable(false);
+                dlg2.show(getSupportFragmentManager(), "BreakEnded");}
                 break;
         }
 
@@ -222,34 +185,40 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         }
     }
 
-    public void onBreakTime(int value) {
-        Log.d(TAG, "MainActivity: onBreakTime()");
-        switch (value){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageState(StateEvent event) {
+        Log.d(TAG, "MainActivity: StateEvent - " + event.state);
+        switch (event.state){
+            case STATE_TIMER_FINISHED:
+                //создаем диалог если Активити активно
+                if(mActive) {showMyDialog(STATE_TIMER_FINISHED);}
+                break;
             case STATE_BREAK_STARTED:
                 Intent mIntentBreak = new Intent(MainActivity.this, TimerService.class);
                 mIntentBreak.putExtra(KEY_STATE,STATE_BREAK_STARTED);
                 startTimeService(mIntentBreak);
                 break;
-            case STATE_TIMER_WORKING:
+           case STATE_BREAK_ENDED:
+                //создаем диалог если Активити активно
+                if(mActive) {showMyDialog(STATE_BREAK_ENDED);}
+                break;
+            case ST_BREAK_STARTED_IN_NOTIF:
+                if(mActive) {dlg1.dismiss();}
+                break;
+            case RUN_FROM_DIALOG:
+                mIntent.putExtra(KEY_STATE, STATE_RUN);
                 startTimeService(mIntent);
+                EventBus.getDefault().post(new StateEvent(STATE_RUN));
                 break;
-            case STATE_TIMER_WAIT:
-                /*mTimerService.setSTATEinService(STATE_TIMER_WAIT);*/
-                break;
-        }
         }
 
-/*   @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(TickEvent event) {
-       Log.d(TAG, "MainActivity: Tick");
-    }*/
+    }
 
     @Override
     protected void onStart() {
         Log.d(TAG, "MainActivity: onStart + bindService + Registered receiver");
         super.onStart();
-        //EventBus.getDefault().register(this);
-        registerReceiver(brForSignals, new IntentFilter(BR_FOR_SIGNALS));
+        EventBus.getDefault().register(this);
         if(!mBound){bindService(mIntent, mConn, 0);}
         mActive = true;
     }
@@ -258,7 +227,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     protected void onStop() {
         Log.d(TAG, "MainActivity: onStop + unbindService");
         super.onStop();
-        //EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         if (!mBound) return;
         unbindService(mConn);
         mBound = false;
@@ -268,8 +237,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "MainActivity: onResume");
-        //model.checkKilledState();
+        Log.d(TAG, "MainActivity: onResume - mState - "+ model.mState);
     }
 
     @Override
@@ -283,7 +251,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         Log.d(TAG, "MainActivity: onDestroy + Unregistered receiver");
         super.onDestroy();
         sPrefSettings.unregisterOnSharedPreferenceChangeListener(this);
-        unregisterReceiver(brForSignals);
     }
 
     void dataForMenu(){
@@ -353,6 +320,12 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putBoolean("key_mActive",mActive);
+    }
+
     //слушает изменение настройки и выполняет код при событии
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -369,4 +342,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 break;
         }
     }
+
+
 }

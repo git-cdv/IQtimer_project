@@ -56,6 +56,8 @@ public class TimerService extends Service {
     private static final int CHANGE_INTERVAL_STICKY = 710;
     private static final String KEY_SERVICE_STATE = "TimerService.state";
     private static final String KEY_PAUSE_TIME = "pausetime.state";
+    private static final int TIMER_FINISHED = 177;
+    private static final int BREAK_ENDED = 178;
 
 
     static private long mTimeLeftInMillis;
@@ -104,8 +106,12 @@ public class TimerService extends Service {
                 mTimer = new Timer(mTimeLeftInMillis, 1000);
                 mTimer.start();
                 EventBus.getDefault().post(new StateEvent(STATE_RUN));
+                if (!isBreak){
                 ed.putInt(KEY_SERVICE_STATE, STATE_RUN);
-                ed.apply();
+                ed.apply();} else {
+                    ed.putInt(KEY_SERVICE_STATE, STATE_BREAK_STARTED);
+                    ed.apply();
+                }
                 break;
             case ST_NOTIF_PAUSED: //обработка интента от кнопки Пауза из Notification
                 Log.d(TAG, "TimerService: onStartCommand - ST_NOTIF_PAUSED");
@@ -124,11 +130,10 @@ public class TimerService extends Service {
                 isBreak = true;
                 mTimer = new Timer(mTimeLeftInMillis, 1000);
                 mTimer.start();
-
                 //закрываем диалог
-                Intent i2 = new Intent(BR_FOR_SIGNALS);
-                i2.putExtra(KEY_STATE, ST_BREAK_STARTED_IN_NOTIF);
-                sendBroadcast(i2);
+                EventBus.getDefault().post(new StateEvent(ST_BREAK_STARTED_IN_NOTIF));
+                ed.putInt(KEY_SERVICE_STATE, STATE_BREAK_STARTED);
+                ed.apply();
                 break;
             case ST_NOTIF_BREAK_STOPED: //обработка интента от кнопки Стоп из Break Notification
                 Log.d(TAG, "TimerService: onStartCommand - ST_NOTIF_BREAK_STOPED");
@@ -141,9 +146,10 @@ public class TimerService extends Service {
         return START_STICKY;
     }
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    @Subscribe(priority = 1, sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessageEvent(StateEvent event) {
-    switch (event.state){
+
+        switch (event.state){
         case STATE_STOP:
             Log.d(TAG, "TimerService: STATE_STOP");
             TimerStop();
@@ -156,6 +162,7 @@ public class TimerService extends Service {
             mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
             mTimeLeftInMillis = mDefaultTimeInMillis;
         break;
+
         case STATE_PAUSE:
             Log.d(TAG, "TimerService: STATE_PAUSE");
             TimerPause();
@@ -193,6 +200,7 @@ public class TimerService extends Service {
         mTimeLeftInMillis = mDefaultTimeInMillis;
         ed.putInt(KEY_SERVICE_STATE, STATE_STOP);
         ed.apply();
+        isBreak=false;
         //отключаем нотификацию
         stopForeground( true );
         Log.d(TAG, "TimerService: TimerStop()");
@@ -426,16 +434,20 @@ public class TimerService extends Service {
             startSoundForNotif(STATE_TIMER_FINISHED);
             startVibrator();
             NotificationOnSessionEnd();
+            //EventBus.getDefault().post(new StateEvent(STATE_TIMER_FINISHED));
+            ed.putInt(KEY_SERVICE_STATE,TIMER_FINISHED);
+            ed.apply();
+
             } else {
                 //для окончания перерыва
-                Intent i = new Intent(BR_FOR_SIGNALS);
-                i.putExtra(KEY_STATE, STATE_BREAK_ENDED);
-                sendBroadcast(i);
                 mTimeLeftInMillis = mDefaultTimeInMillis;
                 isBreak = false;
                 NotificationOnBreakEnd();
                 startSoundForNotif(STATE_BREAK_ENDED);
                 startVibrator();
+                EventBus.getDefault().post(new StateEvent(STATE_BREAK_ENDED));
+                ed.putInt(KEY_SERVICE_STATE,BREAK_ENDED);
+                ed.apply();
             }
 
         }
