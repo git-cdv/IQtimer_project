@@ -8,6 +8,7 @@ import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
 
+
 public class ProgressRepository {
 
     private static final String KEY_ENTUZIAST_LEVEL = "ENTUZIAST.level";
@@ -24,9 +25,9 @@ public class ProgressRepository {
     private static final String KEY_LEGENDA_CURRENT = "LEGENDA.current";
     private static final String KEY_WINNER_LEVEL = "WINNER_.level";
     private static final String KEY_WINNER_CURRENT = "WINNER_.current";
+    private static final String KEY_COUNTER_CURRENT = "COUNTER.current";
     Context context;
     SharedPreferences mPref;
-    SharedPreferences.Editor ed;
 
 
     public ProgressRepository(Context context) {
@@ -63,6 +64,10 @@ public class ProgressRepository {
         int [] winnerArray = {mWinnerLevel, mPref.getInt(KEY_WINNER_CURRENT,0), 6};
 
         return new int[][]{entuziastArray,voinArray,bossArray,heroArray,pokoritelArray,legendaArray,winnerArray};
+    }
+
+    public Integer getCurrentCounter() {
+        return mPref.getInt(KEY_COUNTER_CURRENT, 0);
     }
 
 }

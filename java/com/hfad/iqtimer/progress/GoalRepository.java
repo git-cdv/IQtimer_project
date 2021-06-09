@@ -130,13 +130,13 @@ public class GoalRepository {
 
     public int getStateGoal() {
         checkDaysEnded();
-        return mPref.getInt(KEY_PREF_GOAL_STATE, 0);
+        return mPref.getInt(KEY_PREF_GOAL_STATE, STATE_GOAL_OFF);
     }
 
     private void checkDaysEnded() {
         //проверяем выполнение по времени
         LocalDate mToDay = LocalDate.now();
-        String mStartDate = mPref.getString(KEY_PREF_STARTDATE, mToDay.toString());
+        String mStartDate = mPref.getString(KEY_PREF_STARTDATE, "1985-12-31");
         int mPlanDays = Integer.parseInt(mPref.getString(KEY_PREF_DAYS_PLAN, "0"));
         LocalDate mPlanDate = (LocalDate.parse(mStartDate)).plusDays(mPlanDays);
 
@@ -166,4 +166,5 @@ public class GoalRepository {
     public boolean isPremium() {
         return mPref.getBoolean(KEY_PREMIUM, true);
     }
+
 }

@@ -67,8 +67,10 @@ public class MainViewModel extends AndroidViewModel {
 
     public void checkState() {
         Log.d(TAG, "MainViewModel: checkState");
-        setState(repo.getState());
-        count.set(repo.getCurrentCount());
+        int state = repo.getState();
+        setState(state);
+        if (state!=STATE_NEW_ENTRY){
+        count.set(repo.getCurrentCount());}
     }
 
     public void setState(int state) {

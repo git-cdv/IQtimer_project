@@ -54,7 +54,7 @@
     <string name="stat_chart_description_month">Сессий в месяц</string>
     <string name="stat_graph">График</string>
     <string name="icon_for_menu">Icon for Menu</string>
-    <string name="progress_efective_days">Эффективных дней</string>
+    <string name="progress_efective_days">Эффективных дней подряд</string>
     <string name="progress_text_title">Достижения</string>
     <string name="show_yet">Показать еще</string>
     <string name="list_stat_empty_text">Пока нет данных</string>

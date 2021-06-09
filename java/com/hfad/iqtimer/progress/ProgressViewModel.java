@@ -4,6 +4,8 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableInt;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -33,6 +35,7 @@ public class ProgressViewModel extends AndroidViewModel {
     public MutableLiveData<Boolean> isPutAdd = new MutableLiveData<>();
     public MutableLiveData<Boolean> isViewDone = new MutableLiveData<>();
     public MutableLiveData<String> textGoalDone = new MutableLiveData<>();
+    public ObservableField<Integer> counter = new ObservableField<>();
 
     public MutableLiveData<Integer> entuziast_c = new MutableLiveData<>();
     public MutableLiveData<Integer> entuziast_p = new MutableLiveData<>();
@@ -170,5 +173,9 @@ public class ProgressViewModel extends AndroidViewModel {
                 liveDataArray[i][j].setValue(stateArray[i][j]);
             }
         }
+    }
+
+    public void getCounter() {
+        counter.set(repoProgress.getCurrentCounter());
     }
 }
