@@ -62,7 +62,7 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
 
     switch (v.getId()){
     case btnCancel:
-        model.isPutAdd(false);
+        model.isPutAdd.set(false);
         this.dismiss();
         break;
     case R.id.btnOk:
@@ -92,7 +92,7 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
     @Override
     public void onCancel(@NonNull @NotNull DialogInterface dialog) {
         super.onCancel(dialog);
-        model.isPutAdd(false);
+        model.isPutAdd.set(false);
     }
 
     private boolean validateInput() {

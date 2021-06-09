@@ -21,6 +21,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -119,6 +121,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                         if(model.mState==STATE_RUN|model.mState==STATE_BREAK_STARTED){//это пауза
                             Log.d(TAG, "MainActivity: Pause");
                             EventBus.getDefault().post(new StateEvent(STATE_PAUSE));
+
                         }else {
                             Log.d(TAG, "MainActivity: Start");
                             mIntent.putExtra(KEY_STATE, STATE_RUN);//старт таймера

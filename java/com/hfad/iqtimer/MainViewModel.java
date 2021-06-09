@@ -82,6 +82,7 @@ public class MainViewModel extends AndroidViewModel {
                 isNeedStop.set(true);
                 if (mState==0){//если закрывалась Активити
                     count.set(repo.getCurrentCount());
+                    plan.set(repo.getPlan());
                 }
                 mState=STATE_RUN;
                 } else {
@@ -95,6 +96,8 @@ public class MainViewModel extends AndroidViewModel {
                 if (mState==0){//если закрывалась Активити
                     timer.set(repo.getPauseTime());
                     isNeedStop.set(true);
+                    count.set(repo.getCurrentCount());
+                    plan.set(repo.getPlan());
                 }
                 mState=STATE_PAUSE;
                 break;
@@ -152,7 +155,6 @@ public class MainViewModel extends AndroidViewModel {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 Log.d(TAG, "MainActivity: isMyServiceRunning - true");
                 return true;
-
             }
         }
         Log.d(TAG, "MainActivity: isMyServiceRunning - false");

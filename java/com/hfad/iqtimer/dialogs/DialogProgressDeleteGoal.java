@@ -36,7 +36,7 @@ public class DialogProgressDeleteGoal extends DialogFragment implements DialogIn
                     dismiss();
                     break;
                 case Dialog.BUTTON_NEGATIVE:
-                    mViewmodel.isPutAdd(true);
+                    mViewmodel.isPutAdd.set(true);
                     dismiss();
                     break;
             }
@@ -45,7 +45,7 @@ public class DialogProgressDeleteGoal extends DialogFragment implements DialogIn
     @Override
     public void onCancel(@NonNull @NotNull DialogInterface dialog) {
         super.onCancel(dialog);
-        mViewmodel.isPutAdd(true);
+        mViewmodel.isPutAdd.set(true);
         dismiss();
     }
 }

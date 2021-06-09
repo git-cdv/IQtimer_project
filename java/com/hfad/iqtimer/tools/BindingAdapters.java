@@ -2,6 +2,7 @@ package com.hfad.iqtimer.tools;
 
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
@@ -31,7 +32,7 @@ public class BindingAdapters {
             animTimerView.setRepeatCount(Animation.INFINITE);//режим повтора (бесконечно)
 
         if(value){
-            v.startAnimation(animTimerView);
+           v.startAnimation(animTimerView);
         } else {
             v.clearAnimation();
         }

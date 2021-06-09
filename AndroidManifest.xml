@@ -14,7 +14,7 @@
         android:theme="@style/Theme.IQtimer">
         <service
             android:name=".progress.ProgressCountDataIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".database.WriteCountDataIntentService"
             android:exported="false" />

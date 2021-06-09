@@ -70,12 +70,12 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
             case R.id.btnNewGoal:
                 dlgSetGoal = new DialogFragmentGoal();
                 dlgSetGoal.show(getParentFragmentManager(), "dlgSetGoal");
-                mViewmodel.isPutAdd(true);
+                mViewmodel.isPutAdd.set(true);
                 break;
             case R.id.img_btn_cancel_goal:
                 dlgDelGoal= new DialogProgressDeleteGoal();
                 dlgDelGoal.show(getParentFragmentManager(), "dlgDelGoal");
-                mViewmodel.isPutAdd(false);
+                mViewmodel.isPutAdd.set(false);
                 break;
             case R.id.viewBtnMore:
                 ((ProgressActivity) requireActivity()).toProgressList();
