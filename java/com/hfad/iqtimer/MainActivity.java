@@ -288,6 +288,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 .setExpanded(false)
                 .setCancelable(true)
                 .setPadding(8,24,8,24)
+                .setContentBackgroundResource(R.drawable.for_menu)
                 .setOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(DialogPlus dialog, Object item, View view, int position) {

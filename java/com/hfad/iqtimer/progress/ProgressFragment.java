@@ -36,8 +36,9 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         mViewmodel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
-        mViewmodel.getStateGoal();//заполняем вью ЦЕЛИ в зависимости от активности цели
         mViewmodel.getCounter();//заполняем вью Счетчика эф дней подряд
+        mViewmodel.getStateGoal();//заполняем вью ЦЕЛИ в зависимости от активности цели
+
 
         if (mViewmodel.isPremium()) {
             mViewmodel.getStateP();//заполняем вью Достижений

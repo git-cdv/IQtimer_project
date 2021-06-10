@@ -3,6 +3,8 @@ package com.hfad.iqtimer.progress;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.joda.time.LocalDate;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,6 +28,7 @@ public class ProgressRepository {
     private static final String KEY_WINNER_LEVEL = "WINNER_.level";
     private static final String KEY_WINNER_CURRENT = "WINNER_.current";
     private static final String KEY_COUNTER_CURRENT = "COUNTER.current";
+    private static final String KEY_LAST_WORKDAY = "last.workday";
     Context context;
     SharedPreferences mPref;
 
@@ -67,7 +70,21 @@ public class ProgressRepository {
     }
 
     public Integer getCurrentCounter() {
+        LocalDate mYesterday = LocalDate.now().minusDays(1);
+        String mLastWorkDay = mPref.getString(KEY_LAST_WORKDAY, mYesterday.toString());
+        LocalDate mLastWorkDayDate = LocalDate.parse(mLastWorkDay);
+
+        //если вчера было выполнение плана - то возвращаем текущее значение
+        if(mYesterday.getDayOfYear() == mLastWorkDayDate.getDayOfYear()|mYesterday.getDayOfWeek() == 6 | mYesterday.getDayOfWeek() == 7){
+
         return mPref.getInt(KEY_COUNTER_CURRENT, 0);
+
+    }else {
+            SharedPreferences.Editor ed = mPref.edit();
+            ed.putInt(KEY_ENTUZIAST_CURRENT, 0);
+            ed.apply();
+            return 0;
+        }
     }
 
 }

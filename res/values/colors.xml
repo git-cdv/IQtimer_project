@@ -8,4 +8,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green">#4CAF50</color>
+
+    <color name="brand_blue_900">#304269</color>
+    <color name="brand_blue_600">#91BED4</color>
+    <color name="brand_blue_200">#D9E8F5</color>
+    <color name="brand_orange">#F26101</color>
+
 </resources>

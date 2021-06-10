@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.preference.PreferenceManager;
 
 import com.hfad.iqtimer.database.WriteCountDataIntentService;
+import com.hfad.iqtimer.progress.ProgressCountDataIntentService;
 
 import java.time.LocalDate;
 import java.util.Locale;
@@ -24,9 +25,9 @@ public class MainRepository {
     private static final int STATE_NEW_ENTRY = 700;
     private static final String KEY_SERVICE_STATE = "TimerService.state";
     private static final int STATE_STOP = 706;
-    private static final int STATE_RUN = 705;
-    private static final int STATE_PAUSE = 707;
     private static final String KEY_PAUSE_TIME = "pausetime.state";
+    private static final int CHECK_COUNTER = 501;
+    private static final String KEY_TASK = "taskforintentservice";
 
     Context context;
     SharedPreferences mPref,mPrefSettings;
@@ -52,6 +53,7 @@ public class MainRepository {
             } else {//если первый заход сегодня - записываем данные с прошлого дня
                 Intent mIntentService = new Intent(context, WriteCountDataIntentService.class);
                 context.startService(mIntentService);
+
                 return STATE_NEW_ENTRY;
             }
         } else {return stateService;}

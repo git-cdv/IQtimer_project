@@ -19,6 +19,7 @@ public class ProgressCountDataIntentService extends IntentService {
     private static final String KEY_PREF_COUNT = "prefcount";
     private static final String KEY_PREF_PLAN = "set_plan_day" ;
     private static final int STATE_TIMER_FINISHED = 100;
+    private static final int CHECK_COUNTER = 501;
     private static final String KEY_PREF_PERIOD_TYPE = "progress.period_type";
     private static final int NEW_GOAL = 402;
     private static final String KEY_TASK = "taskforintentservice";
@@ -113,7 +114,8 @@ public class ProgressCountDataIntentService extends IntentService {
                 }
 
                 break;
-            case NEW_GOAL:
+            case CHECK_COUNTER:
+
 
                 break;
 
@@ -228,30 +230,31 @@ public class ProgressCountDataIntentService extends IntentService {
         String mLastWorkDay = mPrefProgress.getString(KEY_LAST_WORKDAY, mYesterday.toString());
         LocalDate mLastWorkDayDate = LocalDate.parse(mLastWorkDay);
 
-        //если вчера было выполнение плана - то мы добавляем сегоднешнее выполнение
-        if(mYesterday.getDayOfYear()==mLastWorkDayDate.getDayOfYear()){
-            int mCurrentCounter = mPref.getInt(KEY_COUNTER_CURRENT, 0);
-            mCurrentCounter++;
-            edProgress.putInt(KEY_COUNTER_CURRENT, mCurrentCounter);
-            if (isPremium){
-                int mCurrentDays = mPrefProgress.getInt(KEY_ENTUZIAST_CURRENT, 0);
-                mCurrentDays++;
-                edProgress.putInt(KEY_ENTUZIAST_CURRENT, mCurrentDays);
+        //проверяем что сегодня записи еще не было
+        if (mLastWorkDayDate.getDayOfYear()!=mToDay.getDayOfYear()) {
 
-                checkLevelWith365(KEY_ENTUZIAST_LEVEL,mCurrentDays);
+            //если вчера было выполнение плана или выходной - то мы добавляем сегоднешнее выполнение
+            if (mYesterday.getDayOfYear() == mLastWorkDayDate.getDayOfYear()|mYesterday.getDayOfWeek() == 6 | mYesterday.getDayOfWeek() == 7) {
+                int mCurrentCounter = mPref.getInt(KEY_COUNTER_CURRENT, 0);
+                mCurrentCounter++;
+                edProgress.putInt(KEY_COUNTER_CURRENT, mCurrentCounter);
+                if (isPremium) {
+                    int mCurrentDays = mPrefProgress.getInt(KEY_ENTUZIAST_CURRENT, 0);
+                    mCurrentDays++;
+                    edProgress.putInt(KEY_ENTUZIAST_CURRENT, mCurrentDays);
+
+                    checkLevelWith365(KEY_ENTUZIAST_LEVEL, mCurrentDays);
+                }
+
+            } else {
+                 //если не было вчера выполнения - обновляем на 1
+                    edProgress.putInt(KEY_COUNTER_CURRENT, 1);
+                    if (isPremium) {
+                        edProgress.putInt(KEY_ENTUZIAST_CURRENT, 1);
+                    }
             }
-
             edProgress.putString(KEY_LAST_WORKDAY, mToDay.toString());
             edProgress.apply();
-
-        }else {
-            //проверяем не был ли вчера выходной
-            if(mYesterday.getDayOfWeek()!=6|mYesterday.getDayOfWeek()!=7) {
-                //если не было вчера выполнения то обнуляем счетчик
-                edProgress.putInt(KEY_COUNTER_CURRENT, 0);
-                if(isPremium){edProgress.putInt(KEY_ENTUZIAST_CURRENT, 0);}
-                edProgress.apply();
-            }
         }
     }
 

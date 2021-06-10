@@ -13,7 +13,8 @@
 
 <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:elevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -25,11 +26,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="48dp"
         android:fontFamily="sans-serif-condensed-medium"
         android:text="@{viewmodel.counter.toString()}"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="@color/brand_orange"
         android:textSize="24sp"
+        tools:text="50"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,6 +53,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/progress_efective_days"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="@color/brand_blue_900"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
@@ -60,9 +64,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="48dp"
             android:text="@string/maingoal_text_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:textColor="@color/brand_blue_900"
             android:textSize="18sp"
             android:textStyle="bold"
             android:typeface="normal"
@@ -77,6 +82,7 @@
         android:layout_marginTop="40dp"
         android:text="@string/progress_text_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="@color/brand_blue_900"
         android:textSize="18sp"
         android:textStyle="bold"
         android:typeface="normal"
@@ -91,6 +97,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/rounded_border"
+            android:elevation="@dimen/cardview_default_elevation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -169,9 +176,9 @@
             android:layout_height="500dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-
             android:layout_marginEnd="16dp"
             android:background="@drawable/rounded_border"
+            android:elevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3">
@@ -184,7 +191,7 @@
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginTop="150dp"
-        android:background="@android:color/darker_gray"
+        android:background="@color/brand_blue_600"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toStartOf="@+id/viewMain"
         app:layout_constraintTop_toTopOf="@+id/viewMain" />
@@ -194,7 +201,7 @@
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginTop="150dp"
-        android:background="@android:color/darker_gray"
+        android:background="@color/brand_blue_600"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toStartOf="@+id/viewMain"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
@@ -204,7 +211,7 @@
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:layout_marginTop="150dp"
-            android:background="@android:color/darker_gray"
+            android:background="@color/brand_blue_600"
             app:layout_constraintEnd_toEndOf="@+id/viewMain"
             app:layout_constraintStart_toStartOf="@+id/viewMain"
             app:layout_constraintTop_toBottomOf="@+id/divider2" />
@@ -243,6 +250,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/p_title_entuziast"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="@color/brand_blue_900"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/image1"
@@ -261,9 +269,10 @@
             android:scaleY="4"
             app:layout_constraintBottom_toBottomOf="@+id/image1"
             app:layout_constraintEnd_toStartOf="@+id/textCount1"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/image1" />
 
-    <TextView
+        <TextView
         android:id="@+id/textDiscEntuziast"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -271,6 +280,7 @@
         android:layout_marginEnd="16dp"
         android:minLines="2"
         android:text="@{@string/p_desc_entuziast(viewmodel.entuziast_p)}"
+        android:textColor="@color/brand_blue_900"
         app:layout_constraintBottom_toTopOf="@+id/BarEntuziast"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toEndOf="@+id/image1"
@@ -282,6 +292,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:text='@{viewmodel.entuziast_c + " / " + viewmodel.entuziast_p}'
+            android:textColor="@color/brand_blue_600"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/BarEntuziast"
             app:layout_constraintEnd_toEndOf="@+id/viewMain"
@@ -322,6 +333,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/p_title_voin"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="@color/brand_blue_900"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/image2"
@@ -350,6 +362,7 @@
         android:layout_marginEnd="16dp"
         android:minLines="2"
         android:text="@{@string/p_desc_voin(viewmodel.voin_p)}"
+        android:textColor="@color/brand_blue_900"
         app:layout_constraintBottom_toTopOf="@+id/progressBar2"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toEndOf="@+id/image2"
@@ -361,6 +374,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:text='@{viewmodel.voin_c + " / " + viewmodel.voin_p}'
+            android:textColor="@color/brand_blue_600"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/progressBar2"
             app:layout_constraintEnd_toEndOf="@+id/viewMain"
@@ -401,6 +415,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/p_title_boss"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="@color/brand_blue_900"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/image3"
@@ -429,6 +444,7 @@
         android:layout_marginEnd="16dp"
         android:minLines="2"
         android:text="@{@string/p_desc_boss(viewmodel.boss_p)}"
+        android:textColor="@color/brand_blue_900"
         app:layout_constraintBottom_toTopOf="@+id/progressBar3"
         app:layout_constraintEnd_toEndOf="@+id/viewMain"
         app:layout_constraintStart_toEndOf="@+id/image3"
@@ -441,6 +457,7 @@
             android:layout_marginEnd="16dp"
             android:text='@{viewmodel.boss_c + " / " + viewmodel.boss_p}'
             android:textStyle="bold"
+            android:textColor="@color/brand_blue_600"
             app:layout_constraintBottom_toBottomOf="@+id/progressBar3"
             app:layout_constraintEnd_toEndOf="@+id/viewMain"
             app:layout_constraintTop_toTopOf="@+id/progressBar3"
@@ -453,6 +470,7 @@
         android:layout_marginStart="16dp"
         android:text="@string/show_yet"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="@color/brand_blue_900"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/viewMain"
@@ -510,7 +528,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@android:color/darker_gray"
+            android:background="@color/brand_blue_600"
             app:layout_constraintBottom_toBottomOf="@+id/viewMainGoal"
             app:layout_constraintEnd_toEndOf="@+id/viewMainGoal"
             app:layout_constraintStart_toStartOf="@+id/viewMainGoal"
@@ -522,6 +540,7 @@
             android:layout_height="wrap_content"
             android:text="@{viewmodel.textGoalDone}"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:textColor="@color/brand_blue_900"
             android:textSize="18sp"
             android:textStyle="bold"
             android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
@@ -552,8 +571,10 @@
             android:background="?attr/selectableItemBackground"
             app:layout_constraintBottom_toBottomOf="@+id/viewMain"
             app:layout_constraintEnd_toEndOf="@+id/viewMain"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/viewMain"
-            app:layout_constraintTop_toBottomOf="@+id/divider3" />
+            app:layout_constraintTop_toBottomOf="@+id/divider3"
+            app:layout_constraintVertical_bias="0.0" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

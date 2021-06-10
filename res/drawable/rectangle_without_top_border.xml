@@ -16,5 +16,5 @@
         <shape android:shape="rectangle">
             <solid android:color="@android:color/white"/>
         </shape>
-    </item>/>
+    </item>
 </layer-list>
