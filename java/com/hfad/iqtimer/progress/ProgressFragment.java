@@ -53,7 +53,7 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
                 inflater, R.layout.fragment_progress,container,false);
         View v = binding.getRoot();
 
-        (v.findViewById(R.id.viewBtnMore)).setOnClickListener(this);
+        (v.findViewById(R.id.BtnMore)).setOnClickListener(this);
         (v.findViewById(R.id.btnNewGoal)).setOnClickListener(this);
         (v.findViewById(R.id.img_btn_add_goal)).setOnClickListener(this);
         (v.findViewById(R.id.img_btn_cancel_goal)).setOnClickListener(this);
@@ -68,7 +68,7 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.img_btn_add_goal:
-            case R.id.btnNewGoal:
+           case R.id.btnNewGoal:
                 dlgSetGoal = new DialogFragmentGoal();
                 dlgSetGoal.show(getParentFragmentManager(), "dlgSetGoal");
                 mViewmodel.isPutAdd.set(true);
@@ -78,7 +78,7 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
                 dlgDelGoal.show(getParentFragmentManager(), "dlgDelGoal");
                 mViewmodel.isPutAdd.set(false);
                 break;
-            case R.id.viewBtnMore:
+            case R.id.BtnMore:
                 ((ProgressActivity) requireActivity()).toProgressList();
                 break;
             default:
