@@ -21,6 +21,10 @@
             android:layout_height="wrap_content"
             android:text="@string/obzor"
             android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,6 +35,8 @@
             android:layout_marginTop="24dp"
             android:text="@string/obzor_stat_day"
             android:textAlignment="center"
+            android:textStyle="bold"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintEnd_toStartOf="@+id/obzor_stat_week"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,6 +48,8 @@
             android:layout_height="wrap_content"
             android:text="@string/obzor_stat_week"
             android:textAlignment="center"
+            android:textStyle="bold"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintEnd_toStartOf="@+id/obzor_stat_month"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/obzor_stat_day"
@@ -53,6 +61,8 @@
             android:layout_height="wrap_content"
             android:text="@string/obzor_stat_month"
             android:textAlignment="center"
+            android:textStyle="bold"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintEnd_toStartOf="@+id/obzor_stat_total"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/obzor_stat_week"
@@ -64,6 +74,8 @@
             android:layout_height="wrap_content"
             android:text="@string/obzor_stat_total"
             android:textAlignment="center"
+            android:textStyle="bold"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/obzor_stat_month"
@@ -76,6 +88,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/obzor_stat_day"
             android:textAlignment="center"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintEnd_toEndOf="@+id/obzor_stat_day"
             app:layout_constraintStart_toStartOf="@+id/obzor_stat_day"
             app:layout_constraintTop_toBottomOf="@+id/obzor_stat_day" />
@@ -87,6 +100,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/obzor_stat_week"
             android:textAlignment="center"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintEnd_toEndOf="@+id/obzor_stat_week"
             app:layout_constraintStart_toStartOf="@+id/obzor_stat_week"
             app:layout_constraintTop_toBottomOf="@+id/obzor_stat_week" />
@@ -98,6 +112,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/obzor_stat_month"
             android:textAlignment="center"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintEnd_toEndOf="@+id/obzor_stat_month"
             app:layout_constraintStart_toStartOf="@+id/obzor_stat_month"
             app:layout_constraintTop_toBottomOf="@+id/obzor_stat_month" />
@@ -110,6 +125,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/obzor_stat_total"
             android:textAlignment="center"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintEnd_toEndOf="@+id/obzor_stat_total"
             app:layout_constraintStart_toStartOf="@+id/obzor_stat_total"
             app:layout_constraintTop_toBottomOf="@+id/obzor_stat_total" />
@@ -121,6 +137,10 @@
             android:layout_marginTop="32dp"
             android:text="@string/history"
             android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
@@ -141,6 +161,10 @@
             android:layout_marginTop="32dp"
             android:text="@string/history_month"
             android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/brand_blue_900"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/history_chart_days" />
 

@@ -235,7 +235,7 @@ public class ProgressCountDataIntentService extends IntentService {
 
             //если вчера было выполнение плана или выходной - то мы добавляем сегоднешнее выполнение
             if (mYesterday.getDayOfYear() == mLastWorkDayDate.getDayOfYear()|mYesterday.getDayOfWeek() == 6 | mYesterday.getDayOfWeek() == 7) {
-                int mCurrentCounter = mPref.getInt(KEY_COUNTER_CURRENT, 0);
+                int mCurrentCounter = mPrefProgress.getInt(KEY_COUNTER_CURRENT, 0);
                 mCurrentCounter++;
                 edProgress.putInt(KEY_COUNTER_CURRENT, mCurrentCounter);
                 if (isPremium) {

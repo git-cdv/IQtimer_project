@@ -2,6 +2,7 @@ package com.hfad.iqtimer.statistic;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -44,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -165,7 +168,7 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         //создаем через свой класс, где переопределен метод вывода цвета для бара
         MyBarDataSet barDataSet1 = new MyBarDataSet(arrayForChartDay,stringDescription);
         //назначаем цвета для баров
-        barDataSet1.setColors(new int[]{Color.RED, Color.GREEN });
+        barDataSet1.setColors(new int[]{ContextCompat.getColor(requireContext(), R.color.brand_orange), ContextCompat.getColor(requireContext(), R.color.brand_blue_600) });
         BarData barData = new BarData();
         barData.addDataSet(barDataSet1);
 
@@ -180,14 +183,21 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
         xAxis.setValueFormatter(formatter);
 
-        //добавление "линии тренда" (план)
+
+
+        //добавление "линии тренда" (план) и начала с 0
         YAxis leftAxis = mBarChartDay.getAxisLeft();
+        YAxis rightAxis = mBarChartDay.getAxisRight();
+
         LimitLine ll = new LimitLine(mPlanDefault);
-        ll.setLineColor(Color.RED);
+        ll.setLineColor(ContextCompat.getColor(requireContext(), R.color.brand_orange));
         //как пунктир
         ll.enableDashedLine(16f,4f,2f);
         ll.setLineWidth(1f);
         leftAxis.addLimitLine(ll);
+        //чтобы начиналось с 0
+        leftAxis.setAxisMinimum(0f);
+        rightAxis.setAxisMinimum(0f);
 
         mBarChartDay.setData(barData);
         //устанавливает количество Баров для отображение, если больше - скролится
@@ -197,6 +207,7 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         //убираем description
         Description description = mBarChartDay.getDescription();
         description.setEnabled(false);
+        mBarChartDay.setAutoScaleMinMaxEnabled(true);
         mBarChartDay.invalidate();
 
         if(isNeedLoad){getDataForHistoryMonth();}
@@ -213,7 +224,7 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         //создаем через свой класс, где переопределен метод вывода цвета для бара
         BarDataSet barDataSet1 = new BarDataSet(arrayForChartMonth,stringDescription);
         //назначаем цвета для баров
-        barDataSet1.setColors(Color.GREEN);
+        barDataSet1.setColors(ContextCompat.getColor(requireContext(), R.color.brand_blue_600));
         BarData barData = new BarData();
         barData.addDataSet(barDataSet1);
 
@@ -226,8 +237,16 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
 
         //настройка оси Х (шаг и формат подписей)
         XAxis xAxis = mBarChartMonth.getXAxis();
+
         xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
         xAxis.setValueFormatter(formatter);
+
+        //чтобы начиналось с 0
+        YAxis leftAxisM = mBarChartMonth.getAxisLeft();
+        YAxis rightAxisM = mBarChartMonth.getAxisRight();
+        leftAxisM.setAxisMinimum(0f);
+        rightAxisM.setAxisMinimum(0f);
+
 
         mBarChartMonth.setData(barData);
         //устанавливает количество Баров для отображение, если больше - скролится
@@ -251,8 +270,8 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         //создаем массив для значений замен на XAxis
         datesForChartDay = new String [sCursorForHistory.getCount()+1];
         //Создаем новый объект SimpleDateFormat с шаблоном, который совпадает с тем, что у нас в строке (иначе распарсить не получится)
-        SimpleDateFormat formatterIn = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        SimpleDateFormat formatterOut = new SimpleDateFormat("MMM-dd", Locale.ENGLISH);
+        SimpleDateFormat formatterIn = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat formatterOut = new SimpleDateFormat("MMMdd", Locale.getDefault());
 
         //перебор всех записей в курсоре
         while (sCursorForHistory.moveToNext()) {

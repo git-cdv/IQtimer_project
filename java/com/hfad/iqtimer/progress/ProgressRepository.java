@@ -70,16 +70,15 @@ public class ProgressRepository {
     }
 
     public Integer getCurrentCounter() {
-        LocalDate mYesterday = LocalDate.now().minusDays(1);
+        LocalDate mToday = LocalDate.now();
+        LocalDate mYesterday = mToday.minusDays(1);
         String mLastWorkDay = mPref.getString(KEY_LAST_WORKDAY, mYesterday.toString());
         LocalDate mLastWorkDayDate = LocalDate.parse(mLastWorkDay);
 
-        //если вчера было выполнение плана - то возвращаем текущее значение
-        if(mYesterday.getDayOfYear() == mLastWorkDayDate.getDayOfYear()|mYesterday.getDayOfWeek() == 6 | mYesterday.getDayOfWeek() == 7){
-
-        return mPref.getInt(KEY_COUNTER_CURRENT, 0);
-
-    }else {
+        //если сегодня уже было выполнение плана ИЛИ вчера было выполнение плана ИЛИ выходной - то возвращаем текущее значение
+        if (mLastWorkDayDate.getDayOfYear()==mToday.getDayOfYear()|mYesterday.getDayOfYear() == mLastWorkDayDate.getDayOfYear()|mYesterday.getDayOfWeek() == 6 | mYesterday.getDayOfWeek() == 7){
+            return mPref.getInt(KEY_COUNTER_CURRENT, 0);
+        } else {
             SharedPreferences.Editor ed = mPref.edit();
             ed.putInt(KEY_ENTUZIAST_CURRENT, 0);
             ed.apply();

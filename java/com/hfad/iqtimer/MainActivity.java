@@ -259,8 +259,8 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     void dataForMenu(){
 
         // массивы данных
-        String[] texts = { "IQTimer","Обновить","Достижения","Статистика", "Настройки", "О программе"};
-        int [] img = {R.drawable.ic_baseline_timer_24,R.drawable.ic_baseline_trending_up_24, R.drawable.ic_outline_cup_24, R.drawable.ic_baseline_leaderboard_24,R.drawable.ic_baseline_settings_24,R.drawable.ic_baseline_info_24};
+        String[] texts = { "Достижения","Статистика", "Настройки", "О программе"};
+        int [] img = {R.drawable.ic_outline_cup_24, R.drawable.ic_baseline_leaderboard_24,R.drawable.ic_outline_settings_24,R.drawable.ic_outline_info_24};
 
         // упаковываем данные в понятную для адаптера структуру
         ArrayList<Map<String, Object>> data = new ArrayList<>(
@@ -285,33 +285,33 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         // ДИАЛОГОВОЕ МЕНЮ
         dialogMenu = DialogPlus.newDialog(this)
                 .setAdapter(sMenuAdapter)
-                .setExpanded(false)
                 .setCancelable(true)
                 .setPadding(8,24,8,24)
                 .setContentBackgroundResource(R.drawable.for_menu)
+                .setOutAnimation(R.anim.slide_out_bottom)
                 .setOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
                         switch (position) {
-                            case (2):
+                            case (0):
                                 //открываем активити со Достижениями
                                 Intent openProgress = new Intent(getApplication(), ProgressActivity.class);
                                 startActivity(openProgress);
                                 dialogMenu.dismiss();
                                 break;
-                            case (3):
+                            case (1):
                                 //открываем активити со статистикой
                                 Intent openStat = new Intent(getApplication(), StatisticActivity.class);
                                 startActivity(openStat);
                                 dialogMenu.dismiss();
                                 break;
                             //открываем активити с настройками
-                            case (4):
+                            case (2):
                                 Intent openSettings = new Intent(getApplication(), SettingsActivity.class);
                                 startActivity(openSettings);
                                 dialogMenu.dismiss();
                                 break;
-                            case (5):
+                            case (3):
                                 //открываем активити с инфой
                                 Intent openAbout = new Intent(getApplication(), AboutActivity.class);
                                 startActivity(openAbout);
