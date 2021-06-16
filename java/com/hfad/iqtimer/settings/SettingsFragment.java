@@ -180,6 +180,9 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 }
                 break;
 
+            case "switch_count":
+                break;
+
             default:
                 mDefValue = sharedPreferences.getString(preference.getKey(), "");
                 //устанавливаем значение в описание Summary

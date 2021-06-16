@@ -42,9 +42,11 @@ public class MainViewModel extends AndroidViewModel {
     // переменная которая обновляет значение в Представлении через set
     public ObservableField<String> timer = new ObservableField<>();
     public ObservableField<Integer> count = new ObservableField<>();
+    public ObservableField<Integer> counter = new ObservableField<>();
     public ObservableInt plan = new ObservableInt();
     public ObservableBoolean isNeedStop = new ObservableBoolean();
     public ObservableBoolean isPause = new ObservableBoolean();
+    public ObservableBoolean isNeedCount = new ObservableBoolean();
 
     public MainViewModel(@NonNull @NotNull Application application) {
         super(application);
@@ -70,7 +72,10 @@ public class MainViewModel extends AndroidViewModel {
         int state = repo.getState();
         setState(state);
         if (state!=STATE_NEW_ENTRY){
-        count.set(repo.getCurrentCount());}
+        count.set(repo.getCurrentCount());
+        counter.set(repo.getCounter());
+        }
+        isNeedCount.set(repo.getIsNeedCount());
     }
 
     public void setState(int state) {
@@ -83,6 +88,7 @@ public class MainViewModel extends AndroidViewModel {
                 if (mState==0){//если закрывалась Активити
                     count.set(repo.getCurrentCount());
                     plan.set(repo.getPlan());
+                    counter.set(repo.getCounter());
                 }
                 mState=STATE_RUN;
                 } else {
@@ -98,6 +104,7 @@ public class MainViewModel extends AndroidViewModel {
                     isNeedStop.set(true);
                     count.set(repo.getCurrentCount());
                     plan.set(repo.getPlan());
+                    counter.set(repo.getCounter());
                 }
                 mState=STATE_PAUSE;
                 break;
@@ -106,6 +113,7 @@ public class MainViewModel extends AndroidViewModel {
                 timer.set(repo.getDefaultTime());
                 count.set(0);
                 plan.set(repo.getPlan());
+                counter.set(repo.getCounter());
                 isNeedStop.set(false);
                 isPause.set(false);
                 break;
@@ -141,6 +149,7 @@ public class MainViewModel extends AndroidViewModel {
                 plan.set(repo.getPlan());
                 isNeedStop.set(false);
                 isPause.set(false);
+                counter.set(repo.getCounter());
     }
 
     @Override

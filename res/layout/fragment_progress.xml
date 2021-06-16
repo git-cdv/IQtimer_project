@@ -53,7 +53,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/progress_efective_days"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-        android:textColor="@color/brand_blue_900"
+        android:textColor="?colorOnPrimary"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
@@ -67,7 +67,7 @@
             android:layout_marginTop="48dp"
             android:text="@string/maingoal_text_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-            android:textColor="@color/brand_blue_900"
+            android:textColor="?colorOnPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
             android:typeface="normal"
@@ -165,6 +165,48 @@
                     app:layout_constraintStart_toStartOf="@+id/progressBarGoal"
                     app:layout_constraintTop_toTopOf="@+id/progressBarGoal"
                     tools:text="0 / 0" />
+
+                <View
+                    android:id="@+id/viewGoalDone"
+                    android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@color/brand_blue_600"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textGoalDone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewmodel.textGoalDone}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+                    android:textColor="@color/brand_blue_900"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
+                    tools:text="Цель выполнена"
+                    app:layout_constraintBottom_toTopOf="@+id/btnNewGoal"
+                    app:layout_constraintEnd_toEndOf="@+id/viewGoalDone"
+                    app:layout_constraintStart_toStartOf="@+id/viewGoalDone"
+                    app:layout_constraintTop_toTopOf="@+id/viewGoalDone" />
+
+                <Button
+                    android:id="@+id/btnNewGoal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/new_goal"
+                    android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
+                    app:layout_constraintBottom_toBottomOf="@+id/viewGoalDone"
+                    app:layout_constraintEnd_toEndOf="@+id/viewGoalDone"
+                    app:layout_constraintStart_toStartOf="@+id/viewGoalDone" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -493,7 +535,7 @@
             android:layout_marginTop="32dp"
             android:text="@string/progress_text_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-            android:textColor="@color/brand_blue_900"
+            android:textColor="?colorOnPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
             android:typeface="normal"
@@ -544,47 +586,6 @@
             app:layout_constraintTop_toBottomOf="@+id/card_boss"
             />
 
-
-        <View
-            android:id="@+id/viewGoalDone"
-            android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/brand_blue_600"
-            app:layout_constraintBottom_toBottomOf="@+id/viewMainGoal"
-            app:layout_constraintEnd_toEndOf="@+id/viewMainGoal"
-            app:layout_constraintStart_toStartOf="@+id/viewMainGoal"
-            app:layout_constraintTop_toTopOf="@+id/viewMainGoal" />
-
-        <TextView
-            android:id="@+id/textGoalDone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{viewmodel.textGoalDone}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-            android:textColor="@color/brand_blue_900"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
-            app:layout_constraintBottom_toTopOf="@+id/btnNewGoal"
-            app:layout_constraintEnd_toEndOf="@+id/viewGoalDone"
-            app:layout_constraintStart_toStartOf="@+id/viewGoalDone"
-            app:layout_constraintTop_toTopOf="@+id/viewGoalDone" />
-
-        <Button
-            android:id="@+id/btnNewGoal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="@string/new_goal"
-            android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
-            app:layout_constraintBottom_toBottomOf="@+id/viewGoalDone"
-            app:layout_constraintEnd_toEndOf="@+id/viewGoalDone"
-            app:layout_constraintStart_toStartOf="@+id/viewGoalDone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

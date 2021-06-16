@@ -22,7 +22,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/brand_blue_900"
+            android:textColor="?colorOnPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -167,7 +167,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/brand_blue_900"
+            android:textColor="?colorOnPrimary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/viewObzor" />
 
@@ -194,7 +194,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/brand_blue_900"
+            android:textColor="?colorOnPrimary"
             app:layout_constraintBottom_toTopOf="@+id/history_chart_month"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/history_chart_days" />

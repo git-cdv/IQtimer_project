@@ -57,7 +57,7 @@ public class SettingDialogSounds extends DialogFragment implements DialogInterfa
             //записываем выбранный звукe
             ed.putInt(KEY_PREF_SOUND_NUM,lv.getCheckedItemPosition());
             ed.putInt(KEY_PREF_SOUND_RES,ListSounds[lv.getCheckedItemPosition()]);
-            ed.commit();
+            ed.apply();
 
             }
         else if (which == Dialog.BUTTON_NEGATIVE){

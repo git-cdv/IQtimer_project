@@ -43,6 +43,9 @@
     <string name="starwars">Звездные Войны</string>
     <string name="set_category_timer">Таймер и план</string>
     <string name="set_category_notif">Уведомления</string>
+    <string name="set_category_mainscreen">Главный экран</string>
+    <string name="set_swith_count">Показывать счетчик сессий</string>
+    <string name="set_swith_counter">Показывать счетчик эффективных дней</string>
     <string name="set_swith_notif">Звук уведомления</string>
     <string name="history">История, дни</string>
     <string name="stat_list">Список</string>
@@ -85,6 +88,7 @@
     <string name="p_desc_pobeditel">Выполните все достижения</string>
     <string name="p_desc_boss">Выполните %1$d Главных целей</string>
     <string name="level">Уровень %1$d</string>
+    <string name="onback">Для выхода нажмите \"назад\" еще раз</string>
     <string-array name="goals">
         <item>Сессий</item>
         <item>Ударных дней</item>

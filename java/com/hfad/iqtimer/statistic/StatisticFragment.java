@@ -25,6 +25,7 @@ import androidx.preference.PreferenceManager;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -32,6 +33,7 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.material.color.MaterialColors;
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.database.SessionDatabaseHelper;
 
@@ -68,6 +70,7 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
     ArrayList<BarEntry> arrayForChartMonth;
     ArrayList<String> datesForChartMonth;
     boolean isNeedLoad = true;
+    int mColorOnPrimary;
 
     private static final String TAG = "MYLOGS";
     private static final String KEY_PREF_COUNT = "prefcount";
@@ -82,6 +85,7 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         //получаем ссылку на БД
         DatabaseHelper = new SessionDatabaseHelper(getActivity());
         db = DatabaseHelper.getReadableDatabase();//разрешаем чтение
+        mColorOnPrimary = MaterialColors.getColor(requireContext(),R.attr.colorOnPrimary,Color.GRAY);
 
         if(savedInstanceState == null){
             Log.d(TAG, "savedInstanceState == null");
@@ -169,6 +173,7 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         MyBarDataSet barDataSet1 = new MyBarDataSet(arrayForChartDay,stringDescription);
         //назначаем цвета для баров
         barDataSet1.setColors(new int[]{ContextCompat.getColor(requireContext(), R.color.brand_orange), ContextCompat.getColor(requireContext(), R.color.brand_blue_600) });
+        barDataSet1.setValueTextColor(mColorOnPrimary);
         BarData barData = new BarData();
         barData.addDataSet(barDataSet1);
 
@@ -182,7 +187,7 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         XAxis xAxis = mBarChartDay.getXAxis();
         xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
         xAxis.setValueFormatter(formatter);
-
+        xAxis.setTextColor(mColorOnPrimary);
 
 
         //добавление "линии тренда" (план) и начала с 0
@@ -198,6 +203,8 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         //чтобы начиналось с 0
         leftAxis.setAxisMinimum(0f);
         rightAxis.setAxisMinimum(0f);
+        leftAxis.setTextColor(mColorOnPrimary);
+        rightAxis.setTextColor(mColorOnPrimary);
 
         mBarChartDay.setData(barData);
         //устанавливает количество Баров для отображение, если больше - скролится
@@ -208,6 +215,9 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         Description description = mBarChartDay.getDescription();
         description.setEnabled(false);
         mBarChartDay.setAutoScaleMinMaxEnabled(true);
+        mBarChartDay.setNoDataTextColor(ContextCompat.getColor(requireContext(), R.color.brand_orange));
+        Legend legend = mBarChartDay.getLegend();
+        legend.setTextColor(mColorOnPrimary);
         mBarChartDay.invalidate();
 
         if(isNeedLoad){getDataForHistoryMonth();}
@@ -225,6 +235,7 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         BarDataSet barDataSet1 = new BarDataSet(arrayForChartMonth,stringDescription);
         //назначаем цвета для баров
         barDataSet1.setColors(ContextCompat.getColor(requireContext(), R.color.brand_blue_600));
+        barDataSet1.setValueTextColor(mColorOnPrimary);
         BarData barData = new BarData();
         barData.addDataSet(barDataSet1);
 
@@ -240,13 +251,15 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
 
         xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
         xAxis.setValueFormatter(formatter);
+        xAxis.setTextColor(mColorOnPrimary);
 
         //чтобы начиналось с 0
         YAxis leftAxisM = mBarChartMonth.getAxisLeft();
         YAxis rightAxisM = mBarChartMonth.getAxisRight();
         leftAxisM.setAxisMinimum(0f);
         rightAxisM.setAxisMinimum(0f);
-
+        leftAxisM.setTextColor(mColorOnPrimary);
+        rightAxisM.setTextColor(mColorOnPrimary);
 
         mBarChartMonth.setData(barData);
         //устанавливает количество Баров для отображение, если больше - скролится
@@ -256,6 +269,8 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         //убираем description
         Description description = mBarChartMonth.getDescription();
         description.setEnabled(false);
+        Legend legend = mBarChartMonth.getLegend();
+        legend.setTextColor(mColorOnPrimary);
         mBarChartMonth.invalidate();
     }
 

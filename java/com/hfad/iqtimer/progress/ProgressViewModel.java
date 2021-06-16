@@ -33,9 +33,8 @@ public class ProgressViewModel extends AndroidViewModel {
     public ObservableField<String> days_current = new ObservableField<>();
     public ObservableField<String> days_plan = new ObservableField<>();
     public ObservableBoolean isPutAdd = new ObservableBoolean();
-
-    public MutableLiveData<Boolean> isViewDone = new MutableLiveData<>();
-    public MutableLiveData<String> textGoalDone = new MutableLiveData<>();
+    public ObservableBoolean isViewDone = new ObservableBoolean();
+    public ObservableField<String> textGoalDone = new ObservableField<>();
     public ObservableField<Integer> counter = new ObservableField<>();
 
     public MutableLiveData<Integer> entuziast_c = new MutableLiveData<>();
@@ -63,9 +62,6 @@ public class ProgressViewModel extends AndroidViewModel {
     GoalRepository repo = new GoalRepository(getApplication());
     ProgressRepository repoProgress = new ProgressRepository(getApplication());
 
-    public void isViewDone(Boolean value) {
-        this.isViewDone.setValue(value);
-    }
 
     void getStateGoal(){
         Log.d(TAG, "ProgressViewModel: getState");
@@ -80,14 +76,14 @@ public class ProgressViewModel extends AndroidViewModel {
             case STATE_GOAL_DONE:
                 setGoal(repo.readGoal());
                 isPutAdd.set(false);
-                isViewDone(true);
-                textGoalDone.setValue(repo.getTextGoalDone(STATE_GOAL_DONE));
+                isViewDone.set(true);
+                textGoalDone.set(repo.getTextGoalDone(STATE_GOAL_DONE));
                 break;
             case STATE_DAYS_ENDED:
                 setGoal(repo.readGoal());
                 isPutAdd.set(false);
-                isViewDone(true);
-                textGoalDone.setValue(repo.getTextGoalDone(STATE_DAYS_ENDED));
+                isViewDone.set(true);
+                textGoalDone.set(repo.getTextGoalDone(STATE_DAYS_ENDED));
                 break;
         }
     }
@@ -108,7 +104,7 @@ public class ProgressViewModel extends AndroidViewModel {
         q_current.set(String.valueOf(repo.getCurrentCount()));
         q_plan.set(Q_plan);
         days_current.set("1");
-        isViewDone(false);
+        isViewDone.set(false);
         repo.createNewGoalSes(Name,Desc,Q_plan,Days_plan);
 
 //ДЕРНУТЬ БАИНДИНГ ДЛЯ ПЕРЕРИСОВКИ ПРОГОРЕСС БАРА
@@ -122,7 +118,7 @@ public class ProgressViewModel extends AndroidViewModel {
         q_plan.set(Q_plan);
         q_current.set(mCurrentPower);
         days_current.set(mCurrentPower);
-        isViewDone(false);
+        isViewDone.set(false);
     }
 
     public void deleteGoal(){

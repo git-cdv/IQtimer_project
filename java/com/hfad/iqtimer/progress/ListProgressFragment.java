@@ -1,23 +1,32 @@
 package com.hfad.iqtimer.progress;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NavUtils;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.ui.NavigationUI;
 
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.databinding.FragmentProgressListBinding;
+import com.hfad.iqtimer.statistic.StatisticFragment;
+import com.hfad.iqtimer.statistic.StatisticListDaysFragment;
+
+import java.util.Objects;
 
 
 public class ListProgressFragment extends Fragment {
 
     ProgressViewModel mViewmodel;
     FragmentProgressListBinding binding;
+    private static final String TAG = "MYLOGS";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

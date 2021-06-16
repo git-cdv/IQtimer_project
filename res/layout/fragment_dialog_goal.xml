@@ -16,7 +16,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="@color/brand_blue_900"
+        android:textColor="?colorOnPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -97,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/dlg_progress_q_days"
-            android:textColorHint="@color/brand_blue_900"
+            android:textColor="?colorOnPrimary"
             android:imeOptions="actionDone"
             android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -109,7 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="за"
-        android:textColor="@color/brand_blue_900"
+        android:textColor="?colorOnPrimary"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -133,7 +133,7 @@
             android:focusable="auto"
             android:hint="Название цели"
             android:textColorHint="@color/brand_blue_600"
-            android:textColor="@color/brand_blue_900"
+            android:textColor="?colorOnPrimary"
             android:inputType="text"
             android:text="Цель #1" />
     </com.google.android.material.textfield.TextInputLayout>

@@ -26,11 +26,10 @@ public class MainRepository {
     private static final String KEY_SERVICE_STATE = "TimerService.state";
     private static final int STATE_STOP = 706;
     private static final String KEY_PAUSE_TIME = "pausetime.state";
-    private static final int CHECK_COUNTER = 501;
-    private static final String KEY_TASK = "taskforintentservice";
+    private static final String KEY_COUNTER_CURRENT = "COUNTER.current";
 
     Context context;
-    SharedPreferences mPref,mPrefSettings;
+    SharedPreferences mPref,mPrefSettings,mPrefProgress;
     SharedPreferences.Editor ed;
     String mToday;
 
@@ -38,6 +37,7 @@ public class MainRepository {
     public MainRepository(Context context) {
         this.context = context;
         mPref = context.getSharedPreferences("prefcount", MODE_PRIVATE);
+        mPrefProgress = context.getSharedPreferences("progress_pref", MODE_PRIVATE);
         mPrefSettings = PreferenceManager.getDefaultSharedPreferences(context);
         mToday = (LocalDate.now()).toString();
     }
@@ -90,5 +90,13 @@ public class MainRepository {
         ed.putInt(KEY_SERVICE_STATE, STATE_STOP);
         ed.apply();
 
+    }
+
+    public Integer getCounter() {
+        return mPrefProgress.getInt(KEY_COUNTER_CURRENT, 0);
+    }
+
+    public boolean getIsNeedCount() {
+        return mPrefSettings.getBoolean("switch_count", true);
     }
 }

@@ -177,7 +177,7 @@ public class ProgressCountDataIntentService extends IntentService {
                 edProgress.putInt(keyLevel, ++mCurrentLevel);
                 edProgress.apply();
             }
-            if(keyLevel.equals(KEY_HERO_LEVEL)) {checkLegenda();}
+            if(keyLevel.equals(KEY_HERO_LEVEL)) {checkLegenda(KEY_HERO_LEVEL);}
         } else {
             //ЗДЕСЬ ОБРАБОТКА ЗОЛОТОГО ЗНАЧКА И ОСТАНОВКИ ПОДСЧЕТА И СТАТУС ВЫПОЛНЕНИЯ ПОБЕДИТЕЛЯ
             switch (keyLevel) {
@@ -194,7 +194,7 @@ public class ProgressCountDataIntentService extends IntentService {
         }
     }
 
-    private void checkLegenda() {
+    private void checkLegenda(String keyLevel) {
 
         int mLevelLegenda = mPrefProgress.getInt(KEY_LEGENDA_LEVEL, 0);
         int mLevelEntuziast = mPrefProgress.getInt(KEY_ENTUZIAST_LEVEL, 0);
@@ -202,9 +202,18 @@ public class ProgressCountDataIntentService extends IntentService {
         int mLevelPokoritel = mPrefProgress.getInt(KEY_POKORITEL_LEVEL, 0);
 
         if (mLevelLegenda<10) {
-            if (mLevelEntuziast == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
-            if (mLevelHero == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
-            if (mLevelPokoritel == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
+
+            switch (keyLevel){
+                case KEY_ENTUZIAST_LEVEL:
+                    if (mLevelEntuziast == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
+                    break;
+                case KEY_HERO_LEVEL:
+                    if (mLevelHero == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
+                    break;
+                case KEY_POKORITEL_LEVEL:
+                    if (mLevelPokoritel == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
+                    break;
+            }
         }
     }
 
@@ -213,6 +222,7 @@ public class ProgressCountDataIntentService extends IntentService {
         mCurrent++;
         edProgress.putInt(KEY_LEGENDA_CURRENT, mCurrent);
         edProgress.apply();
+
         if(mCurrent==3){
             int mLevel = legendaLevel+1;
             edProgress.putInt(KEY_LEGENDA_LEVEL, mLevel);
@@ -271,7 +281,7 @@ public class ProgressCountDataIntentService extends IntentService {
                 edProgress.apply();
             }
             if(keyLevel.equals(KEY_ENTUZIAST_LEVEL) | keyLevel.equals(KEY_POKORITEL_LEVEL))
-            {checkLegenda();}
+            {checkLegenda(keyLevel);}
         } else {
             //ЗДЕСЬ ОБРАБОТКА ЗОЛОТОГО ЗНАЧКА И ОСТАНОВКИ ПОДСЧЕТА И СТАТУС ВЫПОЛНЕНИЯ ПОБЕДИТЕЛЯ
             switch (keyLevel){

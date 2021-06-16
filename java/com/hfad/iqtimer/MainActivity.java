@@ -26,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.hfad.iqtimer.databinding.ActivityMainBinding;
@@ -76,6 +77,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     MainViewModel model;
     ActivityMainBinding binding;
     TextView mTimerView;
+    private static long back_pressed;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -344,7 +346,28 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 //установка количества точек из плана в настройках
                 binding.stepProgressBar.setNumDots(model.repo.getPlan());
                 break;
+            case ("switch_count"):
+                if(model.repo.getIsNeedCount()){
+                binding.imageCount.setVisibility(View.VISIBLE);
+                binding.countSes.setVisibility(View.VISIBLE);
+                } else{
+                    binding.imageCount.setVisibility(View.INVISIBLE);
+                    binding.countSes.setVisibility(View.INVISIBLE);
+                }
+                break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "MainActivity: onBackPressed");
+
+        if (back_pressed + 2000 > System.currentTimeMillis()) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(getBaseContext(), getResources().getText(R.string.onback), Toast.LENGTH_SHORT).show();
+        }
+        back_pressed = System.currentTimeMillis();
     }
 
 
