@@ -8,12 +8,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
-import android.app.ActivityManager;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -21,8 +17,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -37,7 +31,6 @@ import com.hfad.iqtimer.settings.AboutActivity;
 import com.hfad.iqtimer.settings.SettingsActivity;
 import com.hfad.iqtimer.statistic.StatisticActivity;
 import com.hfad.iqtimer.tools.StateEvent;
-import com.hfad.iqtimer.tools.TickEvent;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnItemClickListener;
 
@@ -265,7 +258,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
         // массивы данных
         String[] texts = { "Достижения","Статистика", "Настройки", "О программе"};
-        int [] img = {R.drawable.ic_outline_cup_24, R.drawable.ic_baseline_leaderboard_24,R.drawable.ic_outline_settings_24,R.drawable.ic_outline_info_24};
+        int [] img = {R.drawable.ic_outline_cup_24, R.drawable.menu_leaderboard_24,R.drawable.ic_outline_settings_24,R.drawable.ic_outline_info_24};
 
         // упаковываем данные в понятную для адаптера структуру
         ArrayList<Map<String, Object>> data = new ArrayList<>(

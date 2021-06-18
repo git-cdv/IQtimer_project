@@ -36,6 +36,7 @@ public class MainViewModel extends AndroidViewModel {
     private static final int STATE_BREAK_STARTED = 400;
     private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
     private static final int STATE_DIALOG_CANCEL = 726;
+    private static final int STATE_COUNTER_UP = 777;
 
     int mState=0;
 
@@ -140,6 +141,7 @@ public class MainViewModel extends AndroidViewModel {
             case STATE_STOP:setEmptyState();mState=STATE_STOP;break;
             case BREAK_ENDED:setEmptyState();mState=BREAK_ENDED;break;
             case STATE_NEXT_ENTRY: setEmptyState();break;
+            case STATE_COUNTER_UP: counter.set(repo.getCounter());break;
         }
 
     }

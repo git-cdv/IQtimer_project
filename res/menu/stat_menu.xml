@@ -8,7 +8,7 @@
     app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/stat_graph"
-        android:icon="@drawable/ic_baseline_leaderboard_24"
+        android:icon="@drawable/stat_leaderboard_24"
         android:title="@string/stat_graph"
         app:showAsAction="ifRoom|withText"
         android:visible="false"/>

@@ -47,6 +47,7 @@ public class ProgressCountDataIntentService extends IntentService {
     private static final String KEY_LEGENDA_CURRENT = "LEGENDA.current";
     private static final String KEY_COUNT_WINNER = "winner.count";
     private static final String KEY_COUNTER_CURRENT = "COUNTER.current";
+    private static final int STATE_COUNTER_UP = 777;
 
     SharedPreferences mPref,sPrefSettings,mPrefProgress;
     SharedPreferences.Editor ed,edProgress;
@@ -248,6 +249,7 @@ public class ProgressCountDataIntentService extends IntentService {
                 int mCurrentCounter = mPrefProgress.getInt(KEY_COUNTER_CURRENT, 0);
                 mCurrentCounter++;
                 edProgress.putInt(KEY_COUNTER_CURRENT, mCurrentCounter);
+                EventBus.getDefault().post(new StateEvent(STATE_COUNTER_UP));
                 if (isPremium) {
                     int mCurrentDays = mPrefProgress.getInt(KEY_ENTUZIAST_CURRENT, 0);
                     mCurrentDays++;
