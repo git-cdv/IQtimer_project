@@ -81,14 +81,14 @@
 
     <ImageView
         android:id="@+id/imageCount"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
         android:layout_marginBottom="4dp"
-        android:src="@drawable/ic_baseline_circle_24"
+        android:src="@drawable/ring_blue"
         android:visibility="@{model.isNeedCount ? View.VISIBLE : View.INVISIBLE}"
         app:layout_constraintBottom_toTopOf="@+id/imageCounter"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/imageCounter"
+        app:layout_constraintStart_toStartOf="@+id/imageCounter" />
 
     <TextView
         android:id="@+id/count_ses"
@@ -97,6 +97,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Large"
         android:textSize="14sp"
+        android:textColor="@color/brand_blue_900"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/imageCount"
         app:layout_constraintEnd_toEndOf="@+id/imageCount"
         app:layout_constraintStart_toStartOf="@+id/imageCount"
@@ -107,11 +109,10 @@
 
     <ImageView
         android:id="@+id/imageCounter"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="16dp"
-        android:alpha="0.6"
-        android:src="@drawable/ic_baseline_circle_counter_24"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginEnd="24dp"
+        android:src="@drawable/ring_orange"
         app:layout_constraintBottom_toBottomOf="@+id/imageButtonMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageButtonMenu" />
@@ -123,6 +124,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Large"
         android:textSize="14sp"
+        android:textColor="@color/brand_orange"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
         app:layout_constraintEnd_toEndOf="@+id/imageCounter"
         app:layout_constraintStart_toStartOf="@+id/imageCounter"

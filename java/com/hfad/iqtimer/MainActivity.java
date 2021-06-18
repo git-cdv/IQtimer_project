@@ -232,6 +232,9 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     protected void onStop() {
         Log.d(TAG, "MainActivity: onStop + unbindService");
         super.onStop();
+        if (dialogMenu.isShowing()){
+            dialogMenu.dismiss();
+        }
         EventBus.getDefault().unregister(this);
         if (!mBound) return;
         unbindService(mConn);
@@ -299,25 +302,21 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                                 //открываем активити со Достижениями
                                 Intent openProgress = new Intent(getApplication(), ProgressActivity.class);
                                 startActivity(openProgress);
-                                dialogMenu.dismiss();
                                 break;
                             case (1):
                                 //открываем активити со статистикой
                                 Intent openStat = new Intent(getApplication(), StatisticActivity.class);
                                 startActivity(openStat);
-                                dialogMenu.dismiss();
                                 break;
                             //открываем активити с настройками
                             case (2):
                                 Intent openSettings = new Intent(getApplication(), SettingsActivity.class);
                                 startActivity(openSettings);
-                                dialogMenu.dismiss();
                                 break;
                             case (3):
                                 //открываем активити с инфой
                                 Intent openAbout = new Intent(getApplication(), AboutActivity.class);
                                 startActivity(openAbout);
-                                dialogMenu.dismiss();
                                 break;
                         }
                     }
