@@ -21,8 +21,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.hfad.iqtimer.R;
 
-import org.jetbrains.annotations.NotNull;
-
 import static com.hfad.iqtimer.R.id.btnCancel;
 
 public class DialogFragmentGoal extends DialogFragment implements View.OnClickListener {
@@ -90,7 +88,7 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
     }
 
     @Override
-    public void onCancel(@NonNull @NotNull DialogInterface dialog) {
+    public void onCancel(@NonNull DialogInterface dialog) {
         super.onCancel(dialog);
         model.isPutAdd.set(false);
     }

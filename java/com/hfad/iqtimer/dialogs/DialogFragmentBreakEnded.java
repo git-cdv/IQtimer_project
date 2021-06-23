@@ -5,18 +5,13 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import com.hfad.iqtimer.MainActivity;
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.tools.StateEvent;
 
 import org.greenrobot.eventbus.EventBus;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class DialogFragmentBreakEnded extends DialogFragment implements DialogInterface.OnClickListener {
 

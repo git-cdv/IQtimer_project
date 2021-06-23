@@ -13,8 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.progress.ProgressViewModel;
 
-import org.jetbrains.annotations.NotNull;
-
 public class DialogProgressDeleteGoal extends DialogFragment implements DialogInterface.OnClickListener {
 
     ProgressViewModel mViewmodel;
@@ -45,7 +43,7 @@ public class DialogProgressDeleteGoal extends DialogFragment implements DialogIn
         }
 
     @Override
-    public void onCancel(@NonNull @NotNull DialogInterface dialog) {
+    public void onCancel(@NonNull DialogInterface dialog) {
         super.onCancel(dialog);
         mViewmodel.isPutAdd.set(true);
         dismiss();

@@ -17,7 +17,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
@@ -35,7 +37,14 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.android.material.color.MaterialColors;
 import com.hfad.iqtimer.R;
+import com.hfad.iqtimer.database.App;
+import com.hfad.iqtimer.database.AppDatabase;
+import com.hfad.iqtimer.database.Session;
+import com.hfad.iqtimer.database.SessionDao;
 import com.hfad.iqtimer.database.SessionDatabaseHelper;
+import com.hfad.iqtimer.databinding.FragmentProgressBinding;
+import com.hfad.iqtimer.databinding.FragmentStatisticBinding;
+import com.hfad.iqtimer.progress.ProgressViewModel;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
@@ -57,6 +66,8 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
     TextView mTextObzorDay, mTextObzorWeek, mTextObzorMonth, mTextObzorTotal;
     SQLiteDatabase db;
     SessionDatabaseHelper DatabaseHelper;
+    StatisticViewModel mViewmodel;
+    FragmentStatisticBinding binding;
     static Cursor sCursorForObzor, sCursorForHistory;
     SharedPreferences sPref;
     Integer mPrefCount;
@@ -77,10 +88,20 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
     private static final String KEY_PREF_PLAN = "set_plan_day";
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mViewmodel = new ViewModelProvider(requireActivity()).get(StatisticViewModel.class);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "StatisticFragment: onCreateView");
-        View v = inflater.inflate(R.layout.fragment_statistic, null);
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_progress,container,false);
+        View v = binding.getRoot();
 
         //получаем ссылку на БД
         DatabaseHelper = new SessionDatabaseHelper(getActivity());
@@ -89,6 +110,9 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
 
         if(savedInstanceState == null){
             Log.d(TAG, "savedInstanceState == null");
+
+            mViewmodel.setDataObzor();
+
         // создаем лоадер для Обзора
         LoaderManager.getInstance(this).initLoader(0, null, this);
         // создаем лоадер для Истории
@@ -130,6 +154,9 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
             setupHistoryChart();
 
         }
+
+        binding.setViewmodel(mViewmodel);
+        binding.setLifecycleOwner(this);
 
         return v;
     }
@@ -399,6 +426,35 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         mCountMonth = 0;
         mCountTotal = 0;
 
+
+        /*AppDatabase db = App.getInstance().getDatabase();
+        SessionDao sesDao = db.sessionDao();
+        List<Session> sessionList = sesDao.getAll();
+
+        //перебираем все строки в sessionList
+        for (Session item : sessionList) {
+            int strCountSession = item.count;
+            String strCountDate = item.date;
+
+            LocalDate mDate = LocalDate.parse(strCountDate);
+
+            if (isCountWeek){
+                mCountWeek = mCountWeek+strCountSession;
+                if (mDate.getDayOfWeek() == DateTimeConstants.MONDAY){
+                    isCountWeek =false;
+                }
+            }
+
+            if (isCountMonth){
+                mCountMonth = mCountMonth+strCountSession;
+                if (mDate.getDayOfMonth() == 1){
+                    isCountMonth =false;
+                }
+            }
+
+            //считаем сумму сессий Total
+            mCountTotal = mCountTotal+strCountSession;
+        }*/
 
         //перебор всех записей в курсоре
         while (sCursorForObzor.moveToNext()) {

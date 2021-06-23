@@ -11,6 +11,8 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.List;
+
 public class WriteCountDataIntentService extends IntentService {
     private static final String KEY_PREF_COUNT = "prefcount";
     private static final String KEY_PREF_DATE = "prefdate";
@@ -44,46 +46,38 @@ public class WriteCountDataIntentService extends IntentService {
             int mPrefCount = sPref.getInt(KEY_PREF_COUNT, 500);
             String mPrefDate = sPref.getString(KEY_PREF_DATE, "default");
             //получаем текущую дату из sPref
-            LocalDate mDateFromsPref = LocalDate.parse(mPrefDate);
-            //подготавливааем формат
+            LocalDate mDateFromPref = LocalDate.parse(mPrefDate);
+            //подготавливааем формат для date_full
             DateTimeFormatter fmtOut = DateTimeFormat.forPattern("E, MMM d, yyyy");
-            String strOutput = fmtOut.print(mDateFromsPref);
+            String strOutput = fmtOut.print(mDateFromPref);
 
             //получаем ссылку на БД
-            SessionDatabaseHelper DatabaseHelper = new SessionDatabaseHelper(getApplication());
-            SQLiteDatabase db = DatabaseHelper.getWritableDatabase();//разрешаем чтение и запись
-            DatabaseHelper.insertSession(db, mPrefDate, mPrefCount, strOutput);//записываем последние данные
+            AppDatabase db = App.getInstance().getDatabase();
+            //получаем Dao для операций с БД
+            SessionDao sessionDao = db.sessionDao();
+            //записываем последние данные
+            sessionDao.insert(new Session(mPrefDate,mPrefCount,strOutput));
 
             //обновляем дату и обнуляем счетчик в sPref
             ed.putString(KEY_PREF_DATE, mToday.toString());
             ed.putInt(KEY_PREF_COUNT, 0);
             ed.apply();
 
-            Cursor mCursor = db.query("SESSIONS",
-                    new String[]{"DATE", "SESSION_COUNT"},
-                    null, null, null, null, null);
-
-            //получаем и парсим последнюю дату в курсоре
-            mCursor.moveToLast();
-            String strDate = mCursor.getString(0);
-            LocalDate mDateFromCursor = LocalDate.parse(strDate);
-
-            // получаем следующую дату
-            LocalDate mNextDateFromCursor = mDateFromCursor.plusDays(1);
+            // получаем следующую дату от крайней
+            LocalDate mNextDateFromPref = mDateFromPref.plusDays(1);
 
             //пока дата не равна текущему дню - проставляем 0
-            while (mNextDateFromCursor.getDayOfYear() != mToday.getDayOfYear()) {
+            while (mNextDateFromPref.getDayOfYear() != mToday.getDayOfYear()) {
 
-                String mNextDate = mNextDateFromCursor.toString("yyyy-MM-dd");
-                String mNextDateFull = mNextDateFromCursor.toString("E, MMM d, yyyy");
+                String mNextDate = mNextDateFromPref.toString("yyyy-MM-dd");
+                String mNextDateFull = mNextDateFromPref.toString("E, MMM d, yyyy");
 
-                DatabaseHelper.insertSession(db, mNextDate, 0, mNextDateFull);
+                sessionDao.insert(new Session(mNextDate,0,mNextDateFull));
                 // получаем следующую дату
-                mNextDateFromCursor = mNextDateFromCursor.plusDays(1);
+                mNextDateFromPref = mNextDateFromPref.plusDays(1);
             }
 
             db.close();//закрывает БД
-            mCursor.close();
         }
     }
 

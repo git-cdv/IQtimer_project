@@ -2,6 +2,7 @@ package com.hfad.iqtimer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SimpleAdapter;
@@ -66,7 +68,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     Intent mIntent;
     SharedPreferences sPrefSettings;
     DialogFragment dlg1, dlg2;
-    DialogPlus dialogMenu;
     MainViewModel model;
     ActivityMainBinding binding;
     TextView mTimerView;
@@ -90,9 +91,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
         //получаем доступ к файлу с настройками приложения
         sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        //данные для меню
-        dataForMenu();
 
         mConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
@@ -132,7 +130,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                         break;
                     case R.id.imageButtonMenu:
                         Log.d(TAG, "MainActivity: btn_Menu");
-                        dialogMenu.show();
+                        showMenu(v);
                         break;
 
                 }
@@ -152,6 +150,44 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 showMyDialog(STATE_BREAK_ENDED);
             }
         }
+
+    }
+
+    private void showMenu(View v) {
+        PopupMenu popup = new PopupMenu(this,v);
+        popup.inflate(R.menu.popup_menu);
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case (R.id.option_progress):
+                        //открываем активити со Достижениями
+                        Intent openProgress = new Intent(getApplication(), ProgressActivity.class);
+                        startActivity(openProgress);
+                        break;
+                    case (R.id.option_statistic):
+                        //открываем активити со статистикой
+                        Intent openStat = new Intent(getApplication(), StatisticActivity.class);
+                        startActivity(openStat);
+                        break;
+                    //открываем активити с настройками
+                    case (R.id.option_setting):
+                        Intent openSettings = new Intent(getApplication(), SettingsActivity.class);
+                        startActivity(openSettings);
+                        break;
+                    case (R.id.option_about):
+                        //открываем активити с инфой
+                        Intent openAbout = new Intent(getApplication(), AboutActivity.class);
+                        startActivity(openAbout);
+                        break;
+                }
+                return true;
+
+            }
+        });
+
+        popup.show();
 
     }
 
@@ -225,9 +261,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     protected void onStop() {
         Log.d(TAG, "MainActivity: onStop + unbindService");
         super.onStop();
-        if (dialogMenu.isShowing()){
-            dialogMenu.dismiss();
-        }
         EventBus.getDefault().unregister(this);
         if (!mBound) return;
         unbindService(mConn);
@@ -252,70 +285,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         Log.d(TAG, "MainActivity: onDestroy + Unregistered receiver");
         super.onDestroy();
         sPrefSettings.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    void dataForMenu(){
-
-        // массивы данных
-        String[] texts = { "Достижения","Статистика", "Настройки", "О программе"};
-        int [] img = {R.drawable.ic_outline_cup_24, R.drawable.menu_leaderboard_24,R.drawable.ic_outline_settings_24,R.drawable.ic_outline_info_24};
-
-        // упаковываем данные в понятную для адаптера структуру
-        ArrayList<Map<String, Object>> data = new ArrayList<>(
-                texts.length);
-        Map<String, Object> m;
-        for (int i = 0; i < texts.length; i++) {
-            m = new HashMap<>();
-            m.put("text", texts[i]);
-            m.put("image", img[i]);
-            data.add(m);
-        }
-
-        // массив имен атрибутов, из которых будут читаться данные
-        String[] from = {"text","image"};
-        // массив ID View-компонентов, в которые будут вставлять данные
-        int[] to = {R.id.tvText, R.id.ivImg};
-
-        // создаем адаптер
-        SimpleAdapter sMenuAdapter = new SimpleAdapter(this, data, R.layout.item_list_menu,
-                from, to);
-
-        // ДИАЛОГОВОЕ МЕНЮ
-        dialogMenu = DialogPlus.newDialog(this)
-                .setAdapter(sMenuAdapter)
-                .setCancelable(true)
-                .setPadding(8,24,8,24)
-                .setContentBackgroundResource(R.drawable.for_menu)
-                .setOutAnimation(R.anim.slide_out_bottom)
-                .setOnItemClickListener(new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
-                        switch (position) {
-                            case (0):
-                                //открываем активити со Достижениями
-                                Intent openProgress = new Intent(getApplication(), ProgressActivity.class);
-                                startActivity(openProgress);
-                                break;
-                            case (1):
-                                //открываем активити со статистикой
-                                Intent openStat = new Intent(getApplication(), StatisticActivity.class);
-                                startActivity(openStat);
-                                break;
-                            //открываем активити с настройками
-                            case (2):
-                                Intent openSettings = new Intent(getApplication(), SettingsActivity.class);
-                                startActivity(openSettings);
-                                break;
-                            case (3):
-                                //открываем активити с инфой
-                                Intent openAbout = new Intent(getApplication(), AboutActivity.class);
-                                startActivity(openAbout);
-                                break;
-                        }
-                    }
-                })
-                .create();
-
     }
 
     @Override

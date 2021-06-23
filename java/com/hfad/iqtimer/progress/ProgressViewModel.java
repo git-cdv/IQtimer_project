@@ -6,11 +6,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
-import androidx.databinding.ObservableInt;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-
-import java.util.Set;
 
 
 public class ProgressViewModel extends AndroidViewModel {
@@ -22,7 +19,7 @@ public class ProgressViewModel extends AndroidViewModel {
     private static final int STATE_DAYS_ENDED = -1;
     private static final int STATE_GOAL_OFF = 0;
 
-    public ProgressViewModel(@NonNull @org.jetbrains.annotations.NotNull Application application) {
+    public ProgressViewModel(@NonNull Application application) {
         super(application);
     }
 

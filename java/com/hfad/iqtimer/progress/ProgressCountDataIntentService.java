@@ -21,7 +21,6 @@ public class ProgressCountDataIntentService extends IntentService {
     private static final int STATE_TIMER_FINISHED = 100;
     private static final int CHECK_COUNTER = 501;
     private static final String KEY_PREF_PERIOD_TYPE = "progress.period_type";
-    private static final int NEW_GOAL = 402;
     private static final String KEY_TASK = "taskforintentservice";
     private static final String KEY_PREF_CURRENT_Q = "progress.q_current";
     private static final String KEY_PREF_QPLAN = "progress.q_plan";
@@ -32,22 +31,23 @@ public class ProgressCountDataIntentService extends IntentService {
 
     private static final String KEY_ENTUZIAST_LEVEL = "ENTUZIAST.level";
     private static final String KEY_ENTUZIAST_CURRENT = "ENTUZIAST.current";
-    private static final String KEY_LASTDAY_VOIN = "voin.lastday";
     private static final String KEY_VOIN_LEVEL = "VOIN.level";
     private static final String KEY_VOIN_CURRENT = "VOIN.current";
+    private static final String KEY_VOIN_LASTDAY = "VOIN.lastday";
     private static final String KEY_BOSS_LEVEL = "BOSS.level";
     private static final String KEY_BOSS_CURRENT = "BOSS.current";
     private static final String KEY_LASTDAY_POKOR = "pokoritel.lastday";
     private static final String KEY_POKORITEL_LEVEL = "POKORITEL.level";
     private static final String KEY_POKORITEL_CURRENT = "POKORITEL.current";
-    private static final String KEY_LASTDAY_HERO = "hero.lastday";
     private static final String KEY_HERO_LEVEL = "HERO.level";
     private static final String KEY_HERO_CURRENT = "HERO.current";
+    private static final String KEY_HERO_LASTDAY = "HERO.lastday";
     private static final String KEY_LEGENDA_LEVEL = "LEGENDA.level";
     private static final String KEY_LEGENDA_CURRENT = "LEGENDA.current";
     private static final String KEY_COUNT_WINNER = "winner.count";
     private static final String KEY_COUNTER_CURRENT = "COUNTER.current";
     private static final int STATE_COUNTER_UP = 777;
+
 
     SharedPreferences mPref,sPrefSettings,mPrefProgress;
     SharedPreferences.Editor ed,edProgress;
@@ -84,7 +84,7 @@ public class ProgressCountDataIntentService extends IntentService {
 
                 EventBus.getDefault().post(new StateEvent(STATE_TIMER_FINISHED));
 
-                if(isPremium){countPokoritel();}
+                if(isPremium){countPokoritel();countVoin();}
 
                 int mPlan = Integer.parseInt(sPrefSettings.getString(KEY_PREF_PLAN,"6"));
 
@@ -95,7 +95,6 @@ public class ProgressCountDataIntentService extends IntentService {
                     ed.putInt(KEY_PREF_CURRENT_Q, mCurrentQ);
                     ed.apply();
                     isGoalFinished(mCurrentQ);
-                    if(isPremium){countVoin();}
                     } else {
                         if(mPrefCount==mPlan) {
                             int mCurrentQ = mPref.getInt(KEY_PREF_CURRENT_Q, 0);
@@ -109,9 +108,7 @@ public class ProgressCountDataIntentService extends IntentService {
 
                 if(mPrefCount==mPlan) {
                     countMainCounterAndEntuziast();
-                    if (isPremium) {
-                        countHero();
-                    }
+                    if (isPremium) {countHero();}
                 }
 
                 break;
@@ -125,16 +122,16 @@ public class ProgressCountDataIntentService extends IntentService {
     }
 
     private void countHero() {
-        LocalDate mLastDay = LocalDate.parse(mPrefProgress.getString(KEY_LASTDAY_HERO, mToDay.toString()));
         if(mToDay.getDayOfWeek()==6|mToDay.getDayOfWeek()==7) {
-            if (mLastDay.getDayOfYear()!=mToDay.getDayOfYear()) {
+            LocalDate mLastDay = LocalDate.parse(mPrefProgress.getString(KEY_HERO_LASTDAY, "2020-01-01"));
+            if(mToDay.getDayOfYear()!=mLastDay.getDayOfYear()) {
                 int mCurrentDays = mPrefProgress.getInt(KEY_HERO_CURRENT, 0);
                 mCurrentDays++;
                 edProgress.putInt(KEY_HERO_CURRENT, mCurrentDays);
-                edProgress.putString(KEY_LASTDAY_HERO, mToDay.toString());
+                edProgress.putString(KEY_HERO_LASTDAY, mToDay.toString());
                 edProgress.apply();
 
-                checkLevelWith100(KEY_HERO_LEVEL,mCurrentDays);
+                checkLevelWith100(KEY_HERO_LEVEL, mCurrentDays);
             }
         }
     }
@@ -153,16 +150,16 @@ public class ProgressCountDataIntentService extends IntentService {
     }
 
     private void countVoin() {
-        LocalDate mLastDay = LocalDate.parse(mPrefProgress.getString(KEY_LASTDAY_VOIN, mToDay.toString()));
         if(mToDay.getDayOfWeek()==6|mToDay.getDayOfWeek()==7) {
-            if (mLastDay.getDayOfYear()!=mToDay.getDayOfYear()) {
+            LocalDate mLastDay = LocalDate.parse(mPrefProgress.getString(KEY_VOIN_LASTDAY, "2020-01-01"));
+            if(mToDay.getDayOfYear()!=mLastDay.getDayOfYear()) {
                 int mCurrentDays = mPrefProgress.getInt(KEY_VOIN_CURRENT, 0);
                 mCurrentDays++;
                 edProgress.putInt(KEY_VOIN_CURRENT, mCurrentDays);
-                edProgress.putString(KEY_LASTDAY_VOIN, mToDay.toString());
+                edProgress.putString(KEY_VOIN_LASTDAY,mToDay.toString());
                 edProgress.apply();
 
-                checkLevelWith100(KEY_VOIN_LEVEL,mCurrentDays);
+                checkLevelWith100(KEY_VOIN_LEVEL, mCurrentDays);
             }
         }
     }

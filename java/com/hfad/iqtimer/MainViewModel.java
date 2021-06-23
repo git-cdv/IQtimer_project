@@ -20,7 +20,6 @@ import com.hfad.iqtimer.tools.TickEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.jetbrains.annotations.NotNull;
 
 public class MainViewModel extends AndroidViewModel {
     private static final String TAG = "MYLOGS";
@@ -49,7 +48,7 @@ public class MainViewModel extends AndroidViewModel {
     public ObservableBoolean isPause = new ObservableBoolean();
     public ObservableBoolean isNeedCount = new ObservableBoolean();
 
-    public MainViewModel(@NonNull @NotNull Application application) {
+    public MainViewModel(@NonNull Application application) {
         super(application);
         EventBus.getDefault().register(this);
         }

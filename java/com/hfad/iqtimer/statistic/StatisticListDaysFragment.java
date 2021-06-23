@@ -20,6 +20,9 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
 import com.hfad.iqtimer.R;
+import com.hfad.iqtimer.database.App;
+import com.hfad.iqtimer.database.AppDatabase;
+import com.hfad.iqtimer.database.SessionDao;
 import com.hfad.iqtimer.database.SessionDatabaseHelper;
 
 public class StatisticListDaysFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -28,19 +31,19 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
 
     SimpleCursorAdapter listAdapter;
     static Cursor sCursor;
-    SQLiteDatabase db;
-    SessionDatabaseHelper DatabaseHelper;
+    AppDatabase db;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_stat_list_days, null);
 
-         // создаем лоадер для чтения данных (работает только с фрагментами)
+        // создаем лоадер для чтения данных (работает только с фрагментами)
         LoaderManager.getInstance(this).initLoader(0, null, this);
 
         // формируем столбцы сопоставления
-        String[] from = new String[]{"DATEFULL", "SESSION_COUNT"};
+        String[] from = new String[]{"date_full", "count"};
         int[] to = new int[]{R.id.stat_date, R.id.stat_count};
 
         listAdapter = new SimpleCursorAdapter(getContext(),
@@ -66,15 +69,13 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         Log.d(TAG, "StatisticListDaysFragment: onCreateLoader");
         //получаем ссылку на БД
-        DatabaseHelper = new SessionDatabaseHelper(getContext());
-        db = DatabaseHelper.getReadableDatabase();//разрешаем чтение
+        db = App.getInstance().getDatabase();
         return new MyCursorLoader(getContext(), db);
     }
 
     @Override
     //мы получаем результат работы лоадера – новый курсор с данными. Этот курсор мы отдаем адаптеру методом swapCursor.
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-
         Log.d(TAG, "StatisticListDaysFragment: onLoadFinished");
         //передаем адаптеру для отображения в листе
         listAdapter.swapCursor(data);
@@ -88,20 +89,20 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
 
     //наш лоадер, наследник класса CursorLoader. У него мы переопределяем метод loadInBackground, в котором просто получаем курсор с данными БД
     static class MyCursorLoader extends CursorLoader {
-        SQLiteDatabase db;
+        AppDatabase db;
 
-        public MyCursorLoader(Context context, SQLiteDatabase db) {
+        public MyCursorLoader(Context context, AppDatabase db) {
             super(context);
             this.db = db;
         }
 
         @Override
         public Cursor loadInBackground() {
-            Log.d(TAG, "StatisticListDaysFragment: onLoadReset");
-            //Курсор возвращает значения "_id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
-            sCursor = db.query("SESSIONS",
-                    new String[]{"_id","SESSION_COUNT","DATEFULL"},
-                    null, null, null, null, "_id DESC");
+            Log.d(TAG, "StatisticListDaysFragment: loadInBackground");
+            //получаем Dao для операций с БД
+            SessionDao sessionDao = db.sessionDao();
+            //Курсор возвращает значения "id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
+            sCursor = sessionDao.getListCursor();
             return sCursor;
         }
     }
