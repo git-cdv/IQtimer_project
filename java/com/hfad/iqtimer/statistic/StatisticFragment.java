@@ -63,17 +63,12 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class StatisticFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    TextView mTextObzorDay, mTextObzorWeek, mTextObzorMonth, mTextObzorTotal;
     SQLiteDatabase db;
     SessionDatabaseHelper DatabaseHelper;
     StatisticViewModel mViewmodel;
     FragmentStatisticBinding binding;
-    static Cursor sCursorForObzor, sCursorForHistory;
-    SharedPreferences sPref;
-    Integer mPrefCount;
-    Integer mCountWeek;
-    Integer mCountMonth;
-    Integer mCountTotal;
+    static Cursor sCursorForHistory;
+    int mPrefCount;
     int mPlanDefault;
     BarChart mBarChartDay,mBarChartMonth;
     ArrayList<BarEntry> arrayForChartDay;
@@ -90,6 +85,8 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences mPref = getContext().getSharedPreferences("prefcount", MODE_PRIVATE);
+        mPrefCount = mPref.getInt(KEY_PREF_COUNT, 0);
 
         mViewmodel = new ViewModelProvider(requireActivity()).get(StatisticViewModel.class);
 
@@ -100,7 +97,7 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
                              Bundle savedInstanceState) {
         Log.d(TAG, "StatisticFragment: onCreateView");
         binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_progress,container,false);
+                inflater, R.layout.fragment_statistic,container,false);
         View v = binding.getRoot();
 
         //получаем ссылку на БД
@@ -113,8 +110,6 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
 
             mViewmodel.setDataObzor();
 
-        // создаем лоадер для Обзора
-        LoaderManager.getInstance(this).initLoader(0, null, this);
         // создаем лоадер для Истории
         LoaderManager.getInstance(this).initLoader(1, null, this);
         }
@@ -126,26 +121,8 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         mBarChartDay = (BarChart) v.findViewById(R.id.history_chart_days);
         mBarChartMonth = (BarChart) v.findViewById(R.id.history_chart_month);
 
-        //получаем доступ к файлу с данными по дате и сессиям
-        sPref = getActivity().getSharedPreferences("prefcount", MODE_PRIVATE);
-        mPrefCount = sPref.getInt(KEY_PREF_COUNT, 0);
-        mTextObzorDay = (TextView) v.findViewById(R.id.obzor_stat_day);
-        mTextObzorWeek = (TextView) v.findViewById(R.id.obzor_stat_week);
-        mTextObzorMonth = (TextView) v.findViewById(R.id.obzor_stat_month);
-        mTextObzorTotal = (TextView) v.findViewById(R.id.obzor_stat_total);
-
-        mTextObzorDay.setText(mPrefCount.toString());
-
         if(savedInstanceState != null){//проверяем что это после переворота
             Log.d(TAG, "StatisticFragment: savedInstanceState != null");
-            mCountWeek = savedInstanceState.getInt("mCountWeek");
-            mCountMonth = savedInstanceState.getInt("mCountMonth");
-            mCountTotal = savedInstanceState.getInt("mCountTotal");
-            mPrefCount = savedInstanceState.getInt("mPrefCount");
-            mTextObzorDay.setText(mPrefCount.toString());
-            mTextObzorWeek.setText(mCountWeek.toString());
-            mTextObzorMonth.setText(mCountMonth.toString());
-            mTextObzorTotal.setText(mCountTotal.toString());
             arrayForChartDay=savedInstanceState.getParcelableArrayList("arrayForChartDay");
             datesForChartDay=savedInstanceState.getStringArray("datesForChartDay");
             arrayForChartMonth=savedInstanceState.getParcelableArrayList("arrayForChartMonth");
@@ -165,28 +142,10 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         Log.d(TAG, "StatisticFragment: onSaveInstanceState");
-        savedInstanceState.putInt("mPrefCount",mPrefCount);
-        savedInstanceState.putInt("mCountWeek",mCountWeek);
-        savedInstanceState.putInt("mCountMonth",mCountMonth);
-        savedInstanceState.putInt("mCountTotal",mCountTotal);
         savedInstanceState.putParcelableArrayList("arrayForChartDay",arrayForChartDay);
         savedInstanceState.putStringArray("datesForChartDay",datesForChartDay);
         savedInstanceState.putParcelableArrayList("arrayForChartMonth",arrayForChartMonth);
         savedInstanceState.putStringArrayList("datesForChartMonth",datesForChartMonth);
-    }
-
-    void setupObzorChart() {
-        Log.d(TAG, "StatisticFragment: setupObzorChart()");
-        getDataForObzor();
-
-        mCountWeek = mCountWeek+mPrefCount;
-        mCountMonth = mCountMonth+mPrefCount;
-        mCountTotal = mCountTotal+mPrefCount;
-
-        mTextObzorWeek.setText(mCountWeek.toString());
-        mTextObzorMonth.setText(mCountMonth.toString());
-        mTextObzorTotal.setText(mCountTotal.toString());
-
     }
 
     void setupHistoryChart() {
@@ -417,78 +376,11 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         }
     }
 
-    void getDataForObzor() {
-
-        Log.d(TAG, "StatisticActivity: getDataForChart");
-        boolean isCountWeek =true;
-        boolean isCountMonth =true;
-        mCountWeek =0;
-        mCountMonth = 0;
-        mCountTotal = 0;
-
-
-        /*AppDatabase db = App.getInstance().getDatabase();
-        SessionDao sesDao = db.sessionDao();
-        List<Session> sessionList = sesDao.getAll();
-
-        //перебираем все строки в sessionList
-        for (Session item : sessionList) {
-            int strCountSession = item.count;
-            String strCountDate = item.date;
-
-            LocalDate mDate = LocalDate.parse(strCountDate);
-
-            if (isCountWeek){
-                mCountWeek = mCountWeek+strCountSession;
-                if (mDate.getDayOfWeek() == DateTimeConstants.MONDAY){
-                    isCountWeek =false;
-                }
-            }
-
-            if (isCountMonth){
-                mCountMonth = mCountMonth+strCountSession;
-                if (mDate.getDayOfMonth() == 1){
-                    isCountMonth =false;
-                }
-            }
-
-            //считаем сумму сессий Total
-            mCountTotal = mCountTotal+strCountSession;
-        }*/
-
-        //перебор всех записей в курсоре
-        while (sCursorForObzor.moveToNext()) {
-            int strCountSession = sCursorForObzor.getInt(2);
-            String strCountDate = sCursorForObzor.getString(1);
-
-            LocalDate mDateFromCursor = LocalDate.parse(strCountDate);
-
-            if (isCountWeek){
-                mCountWeek = mCountWeek+strCountSession;
-                if (mDateFromCursor.getDayOfWeek() == DateTimeConstants.MONDAY){
-                    isCountWeek =false;
-                }
-            }
-
-            if (isCountMonth){
-                mCountMonth = mCountMonth+strCountSession;
-                if (mDateFromCursor.getDayOfMonth() == 1){
-                    isCountMonth =false;
-                }
-            }
-
-            //считаем сумму сессий Total
-            mCountTotal = mCountTotal+strCountSession;
-        }
-
-    }
-
     @Override
     public void onStop() {
         super.onStop();
         Log.d(TAG, "StatisticFragment: onStop + destroyLoader");
         //убиваю лоадер, потому что он перезапускается после onStop()
-        LoaderManager.getInstance(this).destroyLoader(0);
         LoaderManager.getInstance(this).destroyLoader(1);
     }
 
@@ -496,7 +388,6 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "StatisticFragment: onDestroy");
-        sCursorForObzor.close();
         sCursorForHistory.close();
         db.close();
     }
@@ -506,52 +397,21 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
     //создаем Loader и даем ему на вход объект для работы с БД
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         Log.d(TAG, "StatisticFragment: onCreateLoader");
-        if(id == 0) {
-            return new MyLoaderForObzor(getActivity(), db);
-        } else {
-            return new MyLoaderForHistory(getActivity(), db);
-        }
-
+         return new MyLoaderForHistory(getActivity(), db);
     }
 
     @Override
     //мы получаем результат работы лоадера – новый курсор с данными. Этот курсор мы отдаем адаптеру методом swapCursor.
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "StatisticFragment: onLoadFinished");
-        if(loader.getId()==0) {
-            sCursorForObzor = data;
-            setupObzorChart();//запускаем загрузку обзора, как готов курсор
-        } else {
             sCursorForHistory = data;
             setupHistoryChart();//запускаем загрузку графика, как готов курсор
-        }
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         Log.d(TAG, "StatisticFragment: onLoadReset");
 
-    }
-
-    //наш лоадер, наследник класса CursorLoader. У него мы переопределяем метод loadInBackground, в котором просто получаем курсор с данными БД
-    static class MyLoaderForObzor extends CursorLoader {
-        SQLiteDatabase db;
-
-        public MyLoaderForObzor(Context context, SQLiteDatabase db) {
-            super(context);
-            this.db = db;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            Log.d(TAG, "StatisticFragment: MyLoaderForObzor loadInBackground");
-            //Курсор возвращает значения "_id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
-            //с сортировкой по убыванию ИД
-            sCursorForObzor = db.query("SESSIONS",
-                    new String[]{"_id","DATE", "SESSION_COUNT"},
-                    null, null, null, null, "_id DESC");
-            return sCursorForObzor;
-        }
     }
 
     //наш лоадер, наследник класса CursorLoader. У него мы переопределяем метод loadInBackground, в котором просто получаем курсор с данными БД
