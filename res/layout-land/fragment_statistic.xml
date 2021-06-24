@@ -38,111 +38,148 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/obzor_stat_day"
-            android:layout_width="70dp"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/viewObzor"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            android:text="@{viewmodel.countToday.toString()}"
-            tools:text="5"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:textColor="@color/brand_blue_900"
-            app:layout_constraintEnd_toStartOf="@+id/obzor_stat_week"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/obzor" />
-
-        <TextView
-            android:id="@+id/obzor_stat_week"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:text="@{viewmodel.countWeek.toString()}"
-            tools:text="15"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:textColor="@color/brand_blue_900"
-            app:layout_constraintEnd_toStartOf="@+id/obzor_stat_month"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/obzor_stat_day"
-            app:layout_constraintTop_toTopOf="@+id/obzor_stat_day" />
-
-        <TextView
-            android:id="@+id/obzor_stat_month"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:text="@{viewmodel.countMonth.toString()}"
-            tools:text="50"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:textColor="@color/brand_blue_900"
-            app:layout_constraintEnd_toStartOf="@+id/obzor_stat_total"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/obzor_stat_week"
-            app:layout_constraintTop_toTopOf="@+id/obzor_stat_week" />
-
-        <TextView
-            android:id="@+id/obzor_stat_total"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:text="@{viewmodel.countTotal.toString()}"
-            tools:text="150"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:textColor="@color/brand_blue_900"
+            android:layout_marginEnd="16dp"
+            app:cardBackgroundColor="@color/brand_blue_200"
+            app:cardCornerRadius="4dp"
+            app:cardElevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/obzor_stat_month"
-            app:layout_constraintTop_toTopOf="@+id/obzor_stat_month" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/obzor">
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/obzor_stat_day"
-            android:textAlignment="center"
-            android:textColor="@color/brand_blue_900"
-            app:layout_constraintEnd_toEndOf="@+id/obzor_stat_day"
-            app:layout_constraintStart_toStartOf="@+id/obzor_stat_day"
-            app:layout_constraintTop_toBottomOf="@+id/obzor_stat_day" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/obzor_stat_week"
-            android:textAlignment="center"
-            android:textColor="@color/brand_blue_900"
-            app:layout_constraintEnd_toEndOf="@+id/obzor_stat_week"
-            app:layout_constraintStart_toStartOf="@+id/obzor_stat_week"
-            app:layout_constraintTop_toBottomOf="@+id/obzor_stat_week" />
+                <TextView
+                    android:id="@+id/obzor_stat_day"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@{viewmodel.countToday.toString()}"
+                    tools:text="5"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/brand_blue_900"
+                    app:layout_constraintEnd_toStartOf="@+id/obzor_stat_week"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/obzor_stat_month"
-            android:textAlignment="center"
-            android:textColor="@color/brand_blue_900"
-            app:layout_constraintEnd_toEndOf="@+id/obzor_stat_month"
-            app:layout_constraintStart_toStartOf="@+id/obzor_stat_month"
-            app:layout_constraintTop_toBottomOf="@+id/obzor_stat_month" />
+                <TextView
+                    android:id="@+id/obzor_stat_week"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewmodel.countWeek.toString()}"
+                    tools:text="15"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/brand_blue_900"
+                    app:layout_constraintEnd_toStartOf="@+id/obzor_stat_month"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/obzor_stat_day"
+                    app:layout_constraintTop_toTopOf="@+id/obzor_stat_day" />
+
+                <TextView
+                    android:id="@+id/obzor_stat_month"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewmodel.countMonth.toString()}"
+                    tools:text="50"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/brand_blue_900"
+                    app:layout_constraintEnd_toStartOf="@+id/obzor_stat_total"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/obzor_stat_week"
+                    app:layout_constraintTop_toTopOf="@+id/obzor_stat_week" />
+
+                <TextView
+                    android:id="@+id/obzor_stat_total"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewmodel.countTotal.toString()}"
+                    tools:text="150"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/brand_blue_900"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/obzor_stat_month"
+                    app:layout_constraintTop_toTopOf="@+id/obzor_stat_month" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/obzor_stat_day"
+                    android:textAlignment="center"
+                    android:textColor="@color/brand_blue_900"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/obzor_stat_day"
+                    app:layout_constraintStart_toStartOf="@+id/obzor_stat_day"
+                    app:layout_constraintTop_toBottomOf="@+id/obzor_stat_day" />
+
+                <TextView
+                    android:id="@+id/textView7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/obzor_stat_week"
+                    android:textAlignment="center"
+                    android:textColor="@color/brand_blue_900"
+                    app:layout_constraintEnd_toEndOf="@+id/obzor_stat_week"
+                    app:layout_constraintStart_toStartOf="@+id/obzor_stat_week"
+                    app:layout_constraintTop_toBottomOf="@+id/obzor_stat_week" />
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/obzor_stat_month"
+                    android:textAlignment="center"
+                    android:textColor="@color/brand_blue_900"
+                    app:layout_constraintEnd_toEndOf="@+id/obzor_stat_month"
+                    app:layout_constraintStart_toStartOf="@+id/obzor_stat_month"
+                    app:layout_constraintTop_toBottomOf="@+id/obzor_stat_month" />
 
 
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/obzor_stat_total"
-            android:textAlignment="center"
-            android:textColor="@color/brand_blue_900"
-            app:layout_constraintEnd_toEndOf="@+id/obzor_stat_total"
-            app:layout_constraintStart_toStartOf="@+id/obzor_stat_total"
-            app:layout_constraintTop_toBottomOf="@+id/obzor_stat_total" />
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/obzor_stat_total"
+                    android:textAlignment="center"
+                    android:textColor="@color/brand_blue_900"
+                    app:layout_constraintEnd_toEndOf="@+id/obzor_stat_total"
+                    app:layout_constraintStart_toStartOf="@+id/obzor_stat_total"
+                    app:layout_constraintTop_toBottomOf="@+id/obzor_stat_total" />
+
+                <ProgressBar
+                    android:id="@+id/BarDataObzor"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:visibility="@{viewmodel.isDataObzorDone ? View.INVISIBLE : View.VISIBLE}"
+                    app:layout_constraintBottom_toTopOf="@+id/textView7"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/history_text"
@@ -156,7 +193,7 @@
             android:textStyle="bold"
             android:textColor="?colorOnPrimary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+            app:layout_constraintTop_toBottomOf="@+id/viewObzor" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/history_chart_days"
@@ -167,6 +204,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/history_text" />
+
+        <ProgressBar
+            android:id="@+id/BarDataDays"
+            android:visibility="@{viewmodel.isDataDaysDone ? View.INVISIBLE : View.VISIBLE}"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/history_chart_days"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/history_chart_days" />
 
         <TextView
             android:id="@+id/history_text_month"
@@ -192,6 +240,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/history_text_month" />
+
+        <ProgressBar
+            android:id="@+id/BarDataMonth"
+            android:visibility="@{viewmodel.isDataMonthDone ? View.INVISIBLE : View.VISIBLE}"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/history_chart_month"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/history_chart_month" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

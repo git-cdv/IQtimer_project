@@ -163,6 +163,16 @@
                     app:layout_constraintStart_toStartOf="@+id/obzor_stat_total"
                     app:layout_constraintTop_toBottomOf="@+id/obzor_stat_total" />
 
+                <ProgressBar
+                    android:id="@+id/BarDataObzor"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:visibility="@{viewmodel.isDataObzorDone ? View.INVISIBLE : View.VISIBLE}"
+                    app:layout_constraintBottom_toTopOf="@+id/textView7"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -196,7 +206,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/history_text"
-            />
+            >
+
+        </com.github.mikephil.charting.charts.BarChart>
+
+        <ProgressBar
+            android:id="@+id/BarDataDays"
+            android:visibility="@{viewmodel.isDataDaysDone ? View.INVISIBLE : View.VISIBLE}"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/history_chart_days"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/history_chart_days" />
 
         <TextView
             android:id="@+id/history_text_month"
@@ -223,6 +246,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/history_text_month" />
+
+        <ProgressBar
+            android:id="@+id/BarDataMonth"
+            android:visibility="@{viewmodel.isDataMonthDone ? View.INVISIBLE : View.VISIBLE}"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/history_chart_month"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/history_chart_month" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

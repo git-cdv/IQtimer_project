@@ -19,6 +19,9 @@ public interface SessionDao {
     @Query("SELECT _id,count,date_full FROM session ORDER BY _id DESC")
     Cursor getListCursor();
 
+    @Query("SELECT _id,date,count FROM session")
+    Cursor getHistoryCursor();
+
     @Query("SELECT * FROM session WHERE _id = :id")
     Session getById(long id);
 

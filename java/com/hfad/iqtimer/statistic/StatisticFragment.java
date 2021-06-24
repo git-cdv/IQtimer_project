@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -61,36 +63,43 @@ import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class StatisticFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class StatisticFragment extends Fragment {
 
-    SQLiteDatabase db;
-    SessionDatabaseHelper DatabaseHelper;
     StatisticViewModel mViewmodel;
     FragmentStatisticBinding binding;
-    static Cursor sCursorForHistory;
-    int mPrefCount;
-    int mPlanDefault;
     BarChart mBarChartDay,mBarChartMonth;
-    ArrayList<BarEntry> arrayForChartDay;
-    String[] datesForChartDay;
-    ArrayList<BarEntry> arrayForChartMonth;
-    ArrayList<String> datesForChartMonth;
-    boolean isNeedLoad = true;
     int mColorOnPrimary;
+    int mPlanDefault;
 
     private static final String TAG = "MYLOGS";
-    private static final String KEY_PREF_COUNT = "prefcount";
-    private static final String KEY_PREF_PLAN = "set_plan_day";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences mPref = getContext().getSharedPreferences("prefcount", MODE_PRIVATE);
-        mPrefCount = mPref.getInt(KEY_PREF_COUNT, 0);
 
         mViewmodel = new ViewModelProvider(requireActivity()).get(StatisticViewModel.class);
+        //обновляет график после загрузки данных
+        LiveData<String []> liveDataDays = mViewmodel.getDaysDates();
+        liveDataDays.observe(this, new Observer<String[]>() {
+            @Override
+            public void onChanged(String[] strings) {
+                Log.d(TAG, "StatisticFragment: liveDataDays");
+                    setDaysChart();
+            }
+        });
+
+        LiveData <ArrayList<String>> liveDataMonth = mViewmodel.getMonthDates();
+        liveDataMonth.observe(this, new Observer<ArrayList<String>>() {
+            @Override
+            public void onChanged(ArrayList<String> arrayList) {
+                Log.d(TAG, "StatisticFragment: liveDataMonth");
+                   setMonthChart();
+
+            }
+        });
 
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,37 +109,10 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
                 inflater, R.layout.fragment_statistic,container,false);
         View v = binding.getRoot();
 
-        //получаем ссылку на БД
-        DatabaseHelper = new SessionDatabaseHelper(getActivity());
-        db = DatabaseHelper.getReadableDatabase();//разрешаем чтение
         mColorOnPrimary = MaterialColors.getColor(requireContext(),R.attr.colorOnPrimary,Color.GRAY);
 
-        if(savedInstanceState == null){
-            Log.d(TAG, "savedInstanceState == null");
-
-            mViewmodel.setDataObzor();
-
-        // создаем лоадер для Истории
-        LoaderManager.getInstance(this).initLoader(1, null, this);
-        }
-
-        //получаем доступ к файлу с настройками приложения
-        SharedPreferences sPrefSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        //вытаскиваем дефолтную значение плана из настроек и присваем переменной
-        mPlanDefault = Integer.valueOf(sPrefSettings.getString(KEY_PREF_PLAN, "5"));
         mBarChartDay = (BarChart) v.findViewById(R.id.history_chart_days);
         mBarChartMonth = (BarChart) v.findViewById(R.id.history_chart_month);
-
-        if(savedInstanceState != null){//проверяем что это после переворота
-            Log.d(TAG, "StatisticFragment: savedInstanceState != null");
-            arrayForChartDay=savedInstanceState.getParcelableArrayList("arrayForChartDay");
-            datesForChartDay=savedInstanceState.getStringArray("datesForChartDay");
-            arrayForChartMonth=savedInstanceState.getParcelableArrayList("arrayForChartMonth");
-            datesForChartMonth=savedInstanceState.getStringArrayList("datesForChartMonth");
-            isNeedLoad = false;
-            setupHistoryChart();
-
-        }
 
         binding.setViewmodel(mViewmodel);
         binding.setLifecycleOwner(this);
@@ -138,20 +120,11 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         return v;
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        Log.d(TAG, "StatisticFragment: onSaveInstanceState");
-        savedInstanceState.putParcelableArrayList("arrayForChartDay",arrayForChartDay);
-        savedInstanceState.putStringArray("datesForChartDay",datesForChartDay);
-        savedInstanceState.putParcelableArrayList("arrayForChartMonth",arrayForChartMonth);
-        savedInstanceState.putStringArrayList("datesForChartMonth",datesForChartMonth);
-    }
+    void setDaysChart() {
 
-    void setupHistoryChart() {
-        Log.d(TAG, "StatisticFragment: setupHistoryChart()");
-
-        if(isNeedLoad){getDataForHistoryDay();}
+        ArrayList<BarEntry> arrayForChartDay = mViewmodel.getBarDaysEntries().getValue();
+        String[] datesForChartDay = mViewmodel.getDaysDates().getValue();
+        mPlanDefault = mViewmodel.getPlanDefault().getValue();
 
         String stringDescription = getResources().getString(R.string.stat_chart_description);
 
@@ -174,7 +147,6 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
         xAxis.setValueFormatter(formatter);
         xAxis.setTextColor(mColorOnPrimary);
-
 
         //добавление "линии тренда" (план) и начала с 0
         YAxis leftAxis = mBarChartDay.getAxisLeft();
@@ -205,15 +177,13 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         Legend legend = mBarChartDay.getLegend();
         legend.setTextColor(mColorOnPrimary);
         mBarChartDay.invalidate();
-
-        if(isNeedLoad){getDataForHistoryMonth();}
-
-        setupHistoryChartMonth();
-
+        mViewmodel.isDataDaysDone.set(true);
     }
 
-    void setupHistoryChartMonth(){
-        Log.d(TAG, "StatisticFragment: setupHistoryChartMonth()");
+    private void setMonthChart() {
+
+        ArrayList<BarEntry> arrayForChartMonth = mViewmodel.getBarMonthEntries().getValue();
+        ArrayList<String> datesForChartMonth = mViewmodel.getMonthDates().getValue();
 
         String stringDescription = getResources().getString(R.string.stat_chart_description_month);
 
@@ -258,182 +228,9 @@ public class StatisticFragment extends Fragment implements LoaderManager.LoaderC
         Legend legend = mBarChartMonth.getLegend();
         legend.setTextColor(mColorOnPrimary);
         mBarChartMonth.invalidate();
+        mViewmodel.isDataMonthDone.set(true);
     }
 
-    void getDataForHistoryDay(){
-
-        Log.d(TAG, "StatisticFragment: getDataForHistoryDay");
-
-        int mCountArray =0;
-
-        //создаем массив для графика
-        arrayForChartDay = new ArrayList<>();
-        //создаем массив для значений замен на XAxis
-        datesForChartDay = new String [sCursorForHistory.getCount()+1];
-        //Создаем новый объект SimpleDateFormat с шаблоном, который совпадает с тем, что у нас в строке (иначе распарсить не получится)
-        SimpleDateFormat formatterIn = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        SimpleDateFormat formatterOut = new SimpleDateFormat("MMMdd", Locale.getDefault());
-
-        //перебор всех записей в курсоре
-        while (sCursorForHistory.moveToNext()) {
-            String strDate = sCursorForHistory.getString(1);
-            int strCountSession = sCursorForHistory.getInt(2);
-            Date date=null;
-
-            try {
-                //Создаём дату с помощью форматтера, который в свою очередь парсит её из входной строки
-                date = formatterIn.parse(strDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            //Добавляем индекс и счетчик в массив
-            arrayForChartDay.add(new BarEntry(mCountArray,strCountSession));
-
-            //Добавляем дату в формате formatterOut в массив для замен на XAxis
-            datesForChartDay[mCountArray] = formatterOut.format(date);
-            mCountArray++;
-
-        }
-        if (sCursorForHistory.getCount()==0) {//если 0-вой вход
-            //Добавляем сегоднешнюю дату
-            datesForChartDay[0] = formatterOut.format(new Date());
-            //Добавляем индекс и счетчик в массив с сегоднешним значением
-            arrayForChartDay.add(new BarEntry(0, mPrefCount));
-        }else {
-             //Добавляем сегоднешнюю дату
-            datesForChartDay[mCountArray] = formatterOut.format(new Date());
-            //Добавляем индекс и счетчик в массив с сегоднешним значением
-            arrayForChartDay.add(new BarEntry(mCountArray, mPrefCount));
-        }
-
-    }
-
-    void getDataForHistoryMonth(){
-
-        Log.d(TAG, "StatisticFragment: getDataForHistoryMonth");
-        // создаем лоадер для чтения данных (работает только с фрагментами)
-
-        int mCountArray =0;
-        int mCheck=0;
-        int mCountMonth=0;
-        int mCurrentMonth=0;
-        int mMonth=0;
-
-
-        //создаем массив для графика
-        arrayForChartMonth = new ArrayList<BarEntry>();
-        //создаем массив для значений замен на XAxis
-        datesForChartMonth = new ArrayList<String>();;
-        //Создаем новый объект SimpleDateFormat с шаблоном, который совпадает с тем, что у нас в строке (иначе распарсить не получится)
-        DateTimeFormatter fmtOut = DateTimeFormat.forPattern("MMM");
-
-        //перемещение на 0 позицию
-        sCursorForHistory.moveToPosition(-1);
-
-        //перебор всех записей в курсоре
-        while (sCursorForHistory.moveToNext()) {
-            String strDate = sCursorForHistory.getString(1);
-            int strCountSession = sCursorForHistory.getInt(2);
-
-            //получаем текущую дату с курсора
-            LocalDate mDateFromCursor = LocalDate.parse(strDate);
-
-            if(mCheck==0){//проверяем что это первый проход
-                mMonth=mDateFromCursor.getMonthOfYear();
-                mCheck=1;
-            }
-            mCurrentMonth =mDateFromCursor.getMonthOfYear();
-
-            if(mMonth==mCurrentMonth){
-
-                mCountMonth = strCountSession+mCountMonth;
-            } else {
-                //Добавляем индекс и счетчик в массив
-                arrayForChartMonth.add(new BarEntry(mCountArray,mCountMonth));
-
-                String strOutputDateTime = fmtOut.print(mDateFromCursor.minusMonths(1));
-                //Добавляем месяц в формате fmtOut в массив для замен на XAxis
-                datesForChartMonth.add(strOutputDateTime);
-                mCountArray++;
-                mCheck=0;
-                mCountMonth = strCountSession;
-            }
-            if(sCursorForHistory.isLast()){
-                //Добавляем индекс и счетчик в массив
-                arrayForChartMonth.add(new BarEntry(mCountArray,mCountMonth+mPrefCount));
-
-                String strOutputDateTime = fmtOut.print(mDateFromCursor);
-                //Добавляем месяц в формате fmtOut в массив для замен на XAxis
-                datesForChartMonth.add(strOutputDateTime);
-            }
-        }
-        if (sCursorForHistory.getCount()==0) {//если 0-вой вход
-            //Добавляем сегоднешнюю дату
-            datesForChartMonth.add(fmtOut.print(LocalDate.now()));
-            //Добавляем индекс и счетчик в массив
-            arrayForChartMonth.add(new BarEntry(0,mPrefCount));
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "StatisticFragment: onStop + destroyLoader");
-        //убиваю лоадер, потому что он перезапускается после onStop()
-        LoaderManager.getInstance(this).destroyLoader(1);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "StatisticFragment: onDestroy");
-        sCursorForHistory.close();
-        db.close();
-    }
-
-    @NonNull
-    @Override
-    //создаем Loader и даем ему на вход объект для работы с БД
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        Log.d(TAG, "StatisticFragment: onCreateLoader");
-         return new MyLoaderForHistory(getActivity(), db);
-    }
-
-    @Override
-    //мы получаем результат работы лоадера – новый курсор с данными. Этот курсор мы отдаем адаптеру методом swapCursor.
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        Log.d(TAG, "StatisticFragment: onLoadFinished");
-            sCursorForHistory = data;
-            setupHistoryChart();//запускаем загрузку графика, как готов курсор
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        Log.d(TAG, "StatisticFragment: onLoadReset");
-
-    }
-
-    //наш лоадер, наследник класса CursorLoader. У него мы переопределяем метод loadInBackground, в котором просто получаем курсор с данными БД
-    static class MyLoaderForHistory extends CursorLoader {
-        SQLiteDatabase db;
-
-        public MyLoaderForHistory(Context context, SQLiteDatabase db) {
-            super(context);
-            this.db = db;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            Log.d(TAG, "StatisticFragment: MyLoaderForHistory loadInBackground");
-            //Курсор возвращает значения "_id", "DATE","SESSION_COUNT" каждой записи в таблице SESSIONS
-            //с сортировкой по убыванию ИД
-            sCursorForHistory = db.query("SESSIONS",
-                    new String[]{"_id","DATE", "SESSION_COUNT"},
-                    null, null, null, null, null);
-            return sCursorForHistory;
-        }
-    }
     class MyBarDataSet extends BarDataSet {
 
         public MyBarDataSet(List<BarEntry> yVals, String label) {
