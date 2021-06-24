@@ -101,12 +101,6 @@ public class StatisticRepository {
                 }
                 int [] array = {mPrefCount,mCountWeek,mCountMonth,mCountTotal};
 
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
                 callback.onComplete(array);
             }
         });
@@ -168,12 +162,6 @@ public class StatisticRepository {
                     datesForChartDay[mCountArray] = formatterOut.format(new Date());
                     //Добавляем индекс и счетчик в массив с сегоднешним значением
                     arrayForChartDay.add(new BarEntry(mCountArray, mPrefCount));
-                }
-
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
 
                 daysCallback.onComplete(arrayForChartDay,datesForChartDay,mPlanDefault);
@@ -251,15 +239,12 @@ public class StatisticRepository {
                     arrayForChartMonth.add(new BarEntry(0,mPrefCount));
                 }
 
-                try {
-                    Thread.sleep(8000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
                 monthCallback.onComplete(arrayForChartMonth,datesForChartMonth);
             }
         });
+        //закрываем потоки после выполнения
+        executor.shutdown();
     }
+
 }
 
