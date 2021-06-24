@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainDialogLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Моя цель:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="?colorOnPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/btnCancel"
+        style="@style/Widget.IQtimer.Button.TextButton.Dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/cancel"
+        app:layout_constraintBottom_toBottomOf="@+id/btnOk"
+        app:layout_constraintEnd_toStartOf="@+id/btnOk" />
+
+    <Button
+        android:id="@+id/btnOk"
+        style="@style/Widget.IQtimer.Button.TextButton.Dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="@string/ok"
+        app:layout_constraintEnd_toEndOf="@+id/textGoalName"
+        app:layout_constraintTop_toBottomOf="@+id/textGoalName" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/DropdownMenuSession"
+        style="@style/Widget.IQtimer.TextInputLayout.ExposedDropdownMenu"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/textInputSession"
+        app:layout_constraintTop_toTopOf="@+id/textInputSession">
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextViewSes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:inputType="none"
+            android:text="Сессий" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputSession"
+        style="@style/Widget.IQtimer.TextInputLayout"
+        android:layout_width="72dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:errorEnabled="true"
+        app:layout_constraintStart_toStartOf="@+id/textView1"
+        app:layout_constraintTop_toBottomOf="@+id/textView1">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dlgEditTextSession"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Количество"
+            android:textColorHint="@color/brand_blue_600"
+            android:imeOptions="actionDone"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputDays"
+        style="@style/Widget.IQtimer.TextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="@+id/DropdownMenuSession"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/DropdownMenuSession">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dlgEditTextPeriod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/dlg_progress_q_days"
+            android:textColor="?colorOnPrimary"
+            android:imeOptions="actionDone"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/textView6"
+        style="@style/Widget.MaterialComponents.TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="за"
+        android:textColor="?colorOnPrimary"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/textInputDays"
+        app:layout_constraintStart_toStartOf="@+id/textInputSession" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textGoalName"
+        style="@style/Widget.IQtimer.TextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/textInputDays"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputDays">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dlgEditTextNameGoal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="auto"
+            android:hint="Название цели"
+            android:textColorHint="@color/brand_blue_600"
+            android:textColor="?colorOnPrimary"
+            android:inputType="text"
+            android:text="Цель #1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

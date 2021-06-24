@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="obzor">Обзор</string>
+    <string name="obzor_stat_day">Сегодня</string>
+    <string name="obzor_stat_week">Неделя</string>
+    <string name="obzor_stat_month">Месяц</string>
+    <string name="obzor_stat_total">Итого</string>
+    <string name="stat_chart_description">Сессий в день</string>
+    <string name="stat_chart_planday">План</string>
+    <string name="dialog_break_end">Перерыв закончен</string>
+    <string name="dialog_work_start">Приступить к работе</string>
+    <string name="yes">Да</string>
+    <string name="cancel">Отмена</string>
+    <string name="dialog_rest_reset">Пропустить перерыв</string>
+    <string name="dialog_continue">Продолжить?</string>
+    <string name="break_time">Перерыв</string>
+    <string name="dialog_rest_end">Приступить к работе</string>
+    <string name="dowork">Работаем</string>
+    <string name="on_pause">На паузе</string>
+    <string name="qest_break">Начать перерыв?</string>
+    <string name="minut">мин.</string>
+    <string name="sessiy">сессий</string>
+    <string name="days">дней</string>
+    <string name="pref_sounds">Уведомление о окончании сессии</string>
+    <string name="pref_def_sound">Звук по умолчанию</string>
+    <string name="ok">Ok</string>
+    <string name="pref_sounds_break">Уведомление о окончании перерыва</string>
+    <string name="pref_vibrator">Вибрация</string>
+    <string name="no">Нет</string>
+    <string name="delicate">Слабая</string>
+    <string name="strong">Сильная</string>
+    <string name="fanfare">Фанфары</string>
+    <string name="starwars">Звездные Войны</string>
+    <string name="set_category_timer">Таймер и план</string>
+    <string name="set_category_notif">Уведомления</string>
+    <string name="set_category_mainscreen">Главный экран</string>
+    <string name="set_swith_count">Показывать счетчик сессий</string>
+    <string name="set_swith_counter">Показывать счетчик эффективных дней</string>
+    <string name="set_swith_notif">Звук уведомления</string>
+    <string name="history">История, дни</string>
+    <string name="stat_list">Список</string>
+    <string name="stat_actionbar_title">Статистика</string>
+    <string name="sett_actionbar_title">Настройки</string>
+    <string name="about">О приложении</string>
+    <string name="sett_e_tost">Пожалуйста введите число от 1 до 30</string>
+    <string name="history_month">История, месяцы</string>
+    <string name="stat_chart_description_month">Сессий в месяц</string>
+    <string name="stat_graph">График</string>
+    <string name="icon_for_menu">Icon for Menu</string>
+    <string name="progress_efective_days">Эффективных дней подряд</string>
+    <string name="progress_text_title">Достижения</string>
+    <string name="show_yet">Показать еще</string>
+    <string name="list_stat_empty_text">Пока нет данных</string>
+    <string name="maingoal_text_title">Главная цель</string>
+    <string name="progress_name">Достижения</string>
+    <string name="set_goal">Поставить цель</string>
+    <string name="empty">Пусто</string>
+    <string name="dlg_progress_q_days">Количество дней</string>
+    <string name="powerdays">ударных дней</string>
+    <string name="dlg_delete_goal_title">Удалить цель?</string>
+    <string name="textGoalDone">Поздравляем, вы выполнили цель!</string>
+    <string name="new_goal">Новая цель</string>
+    <string name="textDaysEnded">"Вы выполнили цель на "</string>
+    <string name="p_title_entuziast">Энтузиаст</string>
+    <string name="p_title_voin">Воин выходного дня</string>
+    <string name="p_title_hero">Герой выходного дня</string>
+    <string name="p_title_pokoritel">Покоритель</string>
+    <string name="p_title_legenda">Легенда</string>
+    <string name="p_title_pobeditel">Победитель</string>
+    <string name="p_title_boss">Босс</string>
+    <string name="p_desc_entuziast">Удержите эффективный режим %1$d рабочих дней подряд</string>
+    <string name="p_desc_voin">Выполните работу в %1$d выходных дня</string>
+    <string name="p_desc_hero">Выполните план по сессиям в %1$d выходных дня</string>
+    <string name="p_desc_pokoritel">Отработайте подряд %1$d рабочих дней</string>
+    <string name="p_desc_legenda">Выполните достижения Энтузиаст, Герой выходного дня и Покоритель до %1$d уровня</string>
+    <string name="p_desc_pobeditel">Выполните все достижения</string>
+    <string name="p_desc_boss">Выполните %1$d Главных целей</string>
+    <string name="level">Уровень %1$d</string>
+    <string name="onback">Для выхода нажмите \"назад\" еще раз</string>
+
+    <string-array name="goals">
+        <item>Сессий</item>
+        <item>Ударных дней</item>
+    </string-array>
+</resources>

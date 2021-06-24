@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <PreferenceCategory
+        android:key="categ1"
+        android:title="@string/set_category_timer">
+    <EditTextPreference
+        android:title="Время сессии"
+        android:key="default_interval"
+        android:summary="Время сессии по умолчанию"
+        android:defaultValue="45"
+        />
+    <EditTextPreference
+        android:title="Время перерыва"
+        android:key="break_time"
+        android:summary="Время перерыва по умолчанию"
+        android:defaultValue="15"
+        />
+    <EditTextPreference
+        android:title="План на день"
+        android:key="set_plan_day"
+        android:summary="План на день по умолчанию"
+        android:defaultValue="8"
+        />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="categ2"
+        android:title="@string/set_category_notif">
+        <SwitchPreference
+            android:key="switch_notif"
+            android:title="@string/set_swith_notif"
+            android:icon="@drawable/ic_outline_notifications_black"
+            android:defaultValue="true"
+          />
+    <Preference
+        android:key="set_dialog_sounds"
+        android:title="@string/pref_sounds"
+        android:summary="Звук по умолчанию"
+        android:defaultValue="0"
+        />
+    <Preference
+        android:key="set_dialog_sounds_break"
+        android:title="@string/pref_sounds_break"
+        android:summary="Звук по умолчанию"
+        android:defaultValue="0"
+        />
+    <Preference
+        android:key="set_dialog_vibro"
+        android:title="@string/pref_vibrator"
+        android:summary="Вибрация по умолчанию"
+        android:defaultValue="0"
+        android:icon="@drawable/ic_baseline_vibration_black"
+        />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="categ3"
+        android:title="@string/set_category_mainscreen"
+        >
+
+        <SwitchPreference
+            android:key="switch_count"
+            android:title="@string/set_swith_count"
+            android:defaultValue="true"
+            />
+
+    </PreferenceCategory>
+</PreferenceScreen>

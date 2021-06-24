@@ -1,0 +1,42 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.IQtimer" parent="Theme.MaterialComponents.DayNight">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/brand_blue_900</item>
+        <item name="colorPrimaryVariant">@color/brand_blue_600</item>
+        <item name="colorOnPrimary">@color/brand_blue_200</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:textColorPrimary">@color/brand_blue_200</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/brand_orange</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/brand_blue_900</item>
+        <!-- Status bar color. -->
+        <item name="statusBarBackground" tools:targetApi="l">?attr/colorPrimary</item>
+        <!-- Customize your theme here. -->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="alertDialogTheme">@style/CustomMaterialDialog</item>
+    </style>
+
+    <style name="CustomMaterialDialog" parent="@style/ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <!-- Text Color for buttons -->
+        <item name="colorPrimary">@color/brand_orange</item>
+    </style>
+
+    <!-- Customize TextInputLayout. -->
+    <style name="Widget.IQtimer.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextAppearance">@color/brand_blue_200</item>
+        <item name="hintTextColor">@color/brand_blue_200</item>
+        <item name="boxStrokeColor">@color/brand_blue_200</item>
+    </style>
+
+    <style name="Widget.IQtimer.TextInputLayout.ExposedDropdownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="hintTextAppearance">@color/brand_blue_200</item>
+        <item name="hintTextColor">@color/brand_blue_200</item>
+        <item name="boxStrokeColor">@color/brand_blue_200</item>
+    </style>
+
+    <style name="Widget.IQtimer.Button.TextButton.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/brand_blue_200</item>
+    </style>
+</resources>
