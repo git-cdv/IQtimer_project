@@ -79,8 +79,6 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
             if (isGoalSessions){
                 model.createNewGoalSes(mName,mTextDisc,mQnum,mPeriodNum);
             }else {model.createNewGoalPower(mName,mTextDisc,mQnum,mPeriodNum);}
-
-
         this.dismiss();
         }
         break;

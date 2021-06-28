@@ -239,17 +239,26 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
-                    android:background="#3F51B5"
+                    app:backgroundProgress="@{viewmodel.entuziast_l.intValue()}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@tools:sample/avatars" />
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageEntuziast"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/enthusiast"
+                    app:layout_constraintBottom_toTopOf="@+id/LevelEnt"
+                    app:layout_constraintEnd_toEndOf="@+id/image1"
+                    app:layout_constraintStart_toStartOf="@+id/image1"
+                    app:layout_constraintTop_toTopOf="@+id/image1" />
 
                 <TextView
                     android:id="@+id/LevelEnt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@{@string/level(viewmodel.entuziast_l)}"
                     android:textColor="@color/white"
                     android:textStyle="bold"
@@ -345,17 +354,27 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
-                    android:background="#3F51B5"
+                    app:backgroundProgress="@{viewmodel.voin_l.intValue()}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@tools:sample/avatars" />
+                     />
+
+                <ImageView
+                    android:id="@+id/imageVoin"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/voin"
+                    app:layout_constraintBottom_toTopOf="@+id/LevelVoin"
+                    app:layout_constraintEnd_toEndOf="@+id/image2"
+                    app:layout_constraintStart_toStartOf="@+id/image2"
+                    app:layout_constraintTop_toTopOf="@+id/image2" />
 
                 <TextView
                     android:id="@+id/LevelVoin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@{@string/level(viewmodel.voin_l)}"
                     android:textColor="@color/white"
                     android:textStyle="bold"
@@ -449,17 +468,27 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
-                    android:background="#3F51B5"
+                    app:backgroundProgress="@{viewmodel.boss_l.intValue()}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@tools:sample/avatars" />
+                     />
+
+                <ImageView
+                    android:id="@+id/imageBoss"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/boss"
+                    app:layout_constraintBottom_toTopOf="@+id/LevelBoss"
+                    app:layout_constraintEnd_toEndOf="@+id/image3"
+                    app:layout_constraintStart_toStartOf="@+id/image3"
+                    app:layout_constraintTop_toTopOf="@+id/image3" />
 
                 <TextView
                     android:id="@+id/LevelBoss"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="8dp"
                     android:text="@{@string/level(viewmodel.boss_l)}"
                     android:textColor="@color/white"
                     android:textStyle="bold"
@@ -554,6 +583,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
+            android:padding="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:visibility="@{viewmodel.isPutAdd ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="@+id/textView4"
@@ -566,6 +596,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
+            android:padding="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:visibility="@{viewmodel.isPutAdd ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintBottom_toBottomOf="@+id/textView4"

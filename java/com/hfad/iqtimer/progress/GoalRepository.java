@@ -116,6 +116,7 @@ public class GoalRepository {
             return "1";
         } else {
             ed.putString(KEY_PREF_CURRENTDATE, "0");
+            ed.putInt(KEY_PREF_CURRENT_Q, 0);
             ed.apply();
             return "0";
         }

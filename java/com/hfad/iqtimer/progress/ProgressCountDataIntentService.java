@@ -46,6 +46,7 @@ public class ProgressCountDataIntentService extends IntentService {
     private static final String KEY_LEGENDA_CURRENT = "LEGENDA.current";
     private static final String KEY_COUNT_WINNER = "winner.count";
     private static final String KEY_COUNTER_CURRENT = "COUNTER.current";
+    private static final String KEY_WINNER_LEVEL = "WINNER_.level";
     private static final int STATE_COUNTER_UP = 777;
 
 
@@ -122,7 +123,8 @@ public class ProgressCountDataIntentService extends IntentService {
     }
 
     private void countHero() {
-        if(mToDay.getDayOfWeek()==6|mToDay.getDayOfWeek()==7) {
+        ////НУЖНО ИСПРАВИТЬ
+        if(mToDay.getDayOfWeek()!=6|mToDay.getDayOfWeek()==7) {
             LocalDate mLastDay = LocalDate.parse(mPrefProgress.getString(KEY_HERO_LASTDAY, "2020-01-01"));
             if(mToDay.getDayOfYear()!=mLastDay.getDayOfYear()) {
                 int mCurrentDays = mPrefProgress.getInt(KEY_HERO_CURRENT, 0);
@@ -150,7 +152,8 @@ public class ProgressCountDataIntentService extends IntentService {
     }
 
     private void countVoin() {
-        if(mToDay.getDayOfWeek()==6|mToDay.getDayOfWeek()==7) {
+        ////НУЖНО ИСПРАВИТЬ
+        if(mToDay.getDayOfWeek()!=6|mToDay.getDayOfWeek()==7) {
             LocalDate mLastDay = LocalDate.parse(mPrefProgress.getString(KEY_VOIN_LASTDAY, "2020-01-01"));
             if(mToDay.getDayOfYear()!=mLastDay.getDayOfYear()) {
                 int mCurrentDays = mPrefProgress.getInt(KEY_VOIN_CURRENT, 0);
@@ -170,14 +173,16 @@ public class ProgressCountDataIntentService extends IntentService {
         //int [] mPlan = {2,6,10,14,20,30,40,50,60,80,100};
         int [] mPlan = {2,3,4,5,6,7,8,9,10,11,12};
         //проверяем на повышение уровня и на его конец
-        if (currentValue!=100){
+
+        //ДОЛЖНО БЫТЬ 100
+        if (currentValue<12){
             if (currentValue==mPlan[mCurrentLevel]){
                 edProgress.putInt(keyLevel, ++mCurrentLevel);
                 edProgress.apply();
             }
             if(keyLevel.equals(KEY_HERO_LEVEL)) {checkLegenda(KEY_HERO_LEVEL);}
-        } else {
-            //ЗДЕСЬ ОБРАБОТКА ЗОЛОТОГО ЗНАЧКА И ОСТАНОВКИ ПОДСЧЕТА И СТАТУС ВЫПОЛНЕНИЯ ПОБЕДИТЕЛЯ
+            //ДОЛЖНО БЫТЬ 100
+        } else if (currentValue==12){
             switch (keyLevel) {
                 case KEY_VOIN_LEVEL:
                     countWinner();
@@ -195,23 +200,10 @@ public class ProgressCountDataIntentService extends IntentService {
     private void checkLegenda(String keyLevel) {
 
         int mLevelLegenda = mPrefProgress.getInt(KEY_LEGENDA_LEVEL, 0);
-        int mLevelEntuziast = mPrefProgress.getInt(KEY_ENTUZIAST_LEVEL, 0);
-        int mLevelHero = mPrefProgress.getInt(KEY_HERO_LEVEL, 0);
-        int mLevelPokoritel = mPrefProgress.getInt(KEY_POKORITEL_LEVEL, 0);
+        int mLevel = mPrefProgress.getInt(keyLevel, 0);
 
         if (mLevelLegenda<10) {
-
-            switch (keyLevel){
-                case KEY_ENTUZIAST_LEVEL:
-                    if (mLevelEntuziast == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
-                    break;
-                case KEY_HERO_LEVEL:
-                    if (mLevelHero == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
-                    break;
-                case KEY_POKORITEL_LEVEL:
-                    if (mLevelPokoritel == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
-                    break;
-            }
+            if (mLevel == mLevelLegenda + 1){legendaCurrentUp(mLevelLegenda);}
         }
     }
 
@@ -222,12 +214,23 @@ public class ProgressCountDataIntentService extends IntentService {
         edProgress.apply();
 
         if(mCurrent==3){
+            //увеличиваем левел Легенды
             int mLevel = legendaLevel+1;
+
+            //проверяем текущие уровни других Достижений
+            int mCount = 0;
+            int mLevelEntuz = mPrefProgress.getInt(KEY_ENTUZIAST_LEVEL, 0);
+            if(mLevelEntuz>mLevel){mCount++;};
+            int mLevelHero = mPrefProgress.getInt(KEY_HERO_LEVEL, 0);
+            if(mLevelHero>mLevel){mCount++;};
+            int mLevelPokor = mPrefProgress.getInt(KEY_POKORITEL_LEVEL, 0);
+            if(mLevelPokor>mLevel){mCount++;};
+
             edProgress.putInt(KEY_LEGENDA_LEVEL, mLevel);
+            edProgress.putInt(KEY_LEGENDA_CURRENT, mCount);
             edProgress.apply();
 
             if(mLevel==10){
-                //ЗДЕСЬ ОБРАБОТКА ЗОЛОТОГО ЗНАЧКА
                 countWinner();
             }
         }
@@ -274,16 +277,19 @@ public class ProgressCountDataIntentService extends IntentService {
         int [] mPlan = {2,3,4,5,6,7,8,9,10,11,12};
 
         //проверяем на повышение уровня и на его конец
-        if (currentValue!=365){
+
+        //ДОЛЖНО БЫТЬ 365
+
+        if (currentValue<12){
             if (currentValue==mPlan[mCurrentLevel]){
                 edProgress.putInt(keyLevel, ++mCurrentLevel);
                 edProgress.apply();
             }
             if(keyLevel.equals(KEY_ENTUZIAST_LEVEL) | keyLevel.equals(KEY_POKORITEL_LEVEL))
             {checkLegenda(keyLevel);}
-        } else {
-            //ЗДЕСЬ ОБРАБОТКА ЗОЛОТОГО ЗНАЧКА И ОСТАНОВКИ ПОДСЧЕТА И СТАТУС ВЫПОЛНЕНИЯ ПОБЕДИТЕЛЯ
-            switch (keyLevel){
+        }
+        if (currentValue==12){
+             switch (keyLevel){
                 case KEY_ENTUZIAST_LEVEL:
                      countWinner();
                      break;
@@ -299,6 +305,11 @@ public class ProgressCountDataIntentService extends IntentService {
         int mCurrent = mPrefProgress.getInt(KEY_COUNT_WINNER, 0);
         edProgress.putInt(KEY_COUNT_WINNER, ++mCurrent);
         edProgress.apply();
+
+        if(mCurrent==6){
+            edProgress.putInt(KEY_WINNER_LEVEL,10);
+            edProgress.apply();
+        }
     }
 
     private void isGoalFinished(int mCurrentQ) {

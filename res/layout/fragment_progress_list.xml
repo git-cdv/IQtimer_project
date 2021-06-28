@@ -64,17 +64,27 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#3F51B5"
+                        app:backgroundProgress="@{viewmodel.entuziast_l.intValue()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/avatars" />
+                         />
+
+                    <ImageView
+                        android:id="@+id/imageEntuziast"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/enthusiast"
+                        app:layout_constraintBottom_toTopOf="@+id/LevelEnt"
+                        app:layout_constraintEnd_toEndOf="@+id/image1"
+                        app:layout_constraintStart_toStartOf="@+id/image1"
+                        app:layout_constraintTop_toTopOf="@+id/image1" />
 
                     <TextView
                         android:id="@+id/LevelEnt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="8dp"
                         android:text="@{@string/level(viewmodel.entuziast_l)}"
                         android:textColor="@color/white"
                         android:textStyle="bold"
@@ -171,17 +181,26 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#3F51B5"
+                        app:backgroundProgress="@{viewmodel.voin_l.intValue()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/avatars" />
+                         />
+                    <ImageView
+                        android:id="@+id/imageVoin"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/voin"
+                        app:layout_constraintBottom_toTopOf="@+id/LevelVoin"
+                        app:layout_constraintEnd_toEndOf="@+id/image2"
+                        app:layout_constraintStart_toStartOf="@+id/image2"
+                        app:layout_constraintTop_toTopOf="@+id/image2" />
 
                     <TextView
                         android:id="@+id/LevelVoin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="8dp"
                         android:text="@{@string/level(viewmodel.voin_l)}"
                         android:textColor="@color/white"
                         android:textStyle="bold"
@@ -275,17 +294,27 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#3F51B5"
+                        app:backgroundProgress="@{viewmodel.boss_l.intValue()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/avatars" />
+                       />
+
+                    <ImageView
+                        android:id="@+id/imageBoss"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/boss"
+                        app:layout_constraintBottom_toTopOf="@+id/LevelBoss"
+                        app:layout_constraintEnd_toEndOf="@+id/image3"
+                        app:layout_constraintStart_toStartOf="@+id/image3"
+                        app:layout_constraintTop_toTopOf="@+id/image3" />
 
                     <TextView
                         android:id="@+id/LevelBoss"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="8dp"
                         android:text="@{@string/level(viewmodel.boss_l)}"
                         android:textColor="@color/white"
                         android:textStyle="bold"
@@ -379,17 +408,27 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#3F51B5"
+                        app:backgroundProgress="@{viewmodel.pokoritel_l.intValue()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/avatars" />
+                         />
+
+                    <ImageView
+                        android:id="@+id/imagePok"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/pokoritel"
+                        app:layout_constraintBottom_toTopOf="@+id/LevelPok"
+                        app:layout_constraintEnd_toEndOf="@+id/image4"
+                        app:layout_constraintStart_toStartOf="@+id/image4"
+                        app:layout_constraintTop_toTopOf="@+id/image4" />
 
                     <TextView
                         android:id="@+id/LevelPok"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="8dp"
                         android:text="@{@string/level(viewmodel.pokoritel_l)}"
                         android:textColor="@color/white"
                         android:textStyle="bold"
@@ -483,17 +522,26 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#3F51B5"
+                        app:backgroundProgress="@{viewmodel.hero_l.intValue()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/avatars" />
+                       />
+                    <ImageView
+                        android:id="@+id/imageHero"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/hero"
+                        app:layout_constraintBottom_toTopOf="@+id/LevelHero"
+                        app:layout_constraintEnd_toEndOf="@+id/image5"
+                        app:layout_constraintStart_toStartOf="@+id/image5"
+                        app:layout_constraintTop_toTopOf="@+id/image5" />
 
                     <TextView
                         android:id="@+id/LevelHero"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="8dp"
                         android:text="@{@string/level(viewmodel.hero_l)}"
                         android:textColor="@color/white"
                         android:textStyle="bold"
@@ -587,17 +635,26 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#3F51B5"
+                        app:backgroundProgress="@{viewmodel.legenda_l.intValue()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/avatars" />
+                         />
+                    <ImageView
+                        android:id="@+id/imageLeg"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/legenda"
+                        app:layout_constraintBottom_toTopOf="@+id/LevelLegenda"
+                        app:layout_constraintEnd_toEndOf="@+id/image6"
+                        app:layout_constraintStart_toStartOf="@+id/image6"
+                        app:layout_constraintTop_toTopOf="@+id/image6" />
 
                     <TextView
                         android:id="@+id/LevelLegenda"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="8dp"
                         android:text="@{@string/level(viewmodel.legenda_l)}"
                         android:textColor="@color/white"
                         android:textStyle="bold"
@@ -691,24 +748,22 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#3F51B5"
+                        app:backgroundProgress="@{viewmodel.winner_l.intValue()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/avatars" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/LevelWin"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="@{@string/level(viewmodel.winner_l)}"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
+                    <ImageView
+                        android:id="@+id/imageWinner"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/winner"
                         app:layout_constraintBottom_toBottomOf="@+id/image7"
                         app:layout_constraintEnd_toEndOf="@+id/image7"
                         app:layout_constraintStart_toStartOf="@+id/image7"
-                        tools:text="Уровень 0" />
+                        app:layout_constraintTop_toTopOf="@+id/image7" />
+
+
 
                     <TextView
                         android:id="@+id/title7"

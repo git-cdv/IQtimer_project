@@ -1,6 +1,7 @@
 package com.hfad.iqtimer.database;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.room.Room;
 
@@ -13,6 +14,7 @@ public class App extends Application {
 
     private AppDatabase database;
     private ExecutorService executor;
+    private Context context;
 
     @Override
     public void onCreate() {
@@ -21,6 +23,7 @@ public class App extends Application {
         database = Room.databaseBuilder(this, AppDatabase.class, "database")
                 .build();
         executor = Executors.newFixedThreadPool(3);
+        context = getApplicationContext();
     }
 
     public static App getInstance() {
@@ -33,4 +36,5 @@ public class App extends Application {
     public ExecutorService getExecutor() {
         return executor;
     }
+    public Context getContext(){return context;}
 }

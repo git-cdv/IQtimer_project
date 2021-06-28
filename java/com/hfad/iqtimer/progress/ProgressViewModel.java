@@ -144,6 +144,7 @@ public class ProgressViewModel extends AndroidViewModel {
                 liveDataArray[i][j].setValue(stateArray[i][j]);
             }
         }
+
     }
 
     public void getCounter() {

@@ -242,8 +242,6 @@ public class StatisticRepository {
                 monthCallback.onComplete(arrayForChartMonth,datesForChartMonth);
             }
         });
-        //закрываем потоки после выполнения
-        executor.shutdown();
     }
 
 }

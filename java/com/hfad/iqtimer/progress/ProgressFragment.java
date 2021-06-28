@@ -1,5 +1,6 @@
 package com.hfad.iqtimer.progress;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;

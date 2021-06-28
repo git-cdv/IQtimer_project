@@ -1,12 +1,18 @@
 package com.hfad.iqtimer.tools;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.databinding.BindingAdapter;
 
+import com.hfad.iqtimer.R;
+import com.hfad.iqtimer.database.App;
 import com.marcok.stepprogressbar.StepProgressBar;
 
 public class BindingAdapters {
@@ -35,6 +41,15 @@ public class BindingAdapters {
            v.startAnimation(animTimerView);
         } else {
             v.clearAnimation();
+        }
+    }
+    @BindingAdapter("app:backgroundProgress")
+    public static void setBackgroundProgress(ImageView v, int value) {
+        Context context = App.getInstance().getContext();
+        if (value<10){
+            v.setBackground(context.getDrawable(R.drawable.rounded_border_900));
+        } else {
+            v.setBackground(context.getDrawable(R.drawable.rounded_border_gold));
         }
     }
 
