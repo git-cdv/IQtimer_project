@@ -39,6 +39,7 @@ public class ProgressRepository {
     }
 
     public int [][] getStateP (){
+        int[] bossArray;
         /*int [] mPlan1 = {2,6,10,14,20,30,40,50,60,80,100};
         int [] mPlan2 = {5,10,30,50,75,100,150,200,250,300,365};*/
 
@@ -52,7 +53,9 @@ public class ProgressRepository {
         int [] voinArray = {mVoinLevel, mPref.getInt(KEY_VOIN_CURRENT,0), mPlan1[mVoinLevel]};
 
         int mBossLevel = mPref.getInt(KEY_BOSS_LEVEL,0);
-        int [] bossArray = {mBossLevel, mPref.getInt(KEY_BOSS_CURRENT,0), mPlan1[mBossLevel]};
+        if (mBossLevel<11) {
+            bossArray = new int[]{mBossLevel, mPref.getInt(KEY_BOSS_CURRENT, 0), mPlan1[mBossLevel]};
+        } else {bossArray = new int[]{11, mPref.getInt(KEY_BOSS_CURRENT, 0), mPlan1[10]};}
 
         int mHeroLevel = mPref.getInt(KEY_HERO_LEVEL,0);
         int [] heroArray = {mHeroLevel, mPref.getInt(KEY_HERO_CURRENT,0), mPlan1[mHeroLevel]};

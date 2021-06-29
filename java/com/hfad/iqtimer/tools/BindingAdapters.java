@@ -2,11 +2,13 @@ package com.hfad.iqtimer.tools;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.ColorRes;
 import androidx.databinding.BindingAdapter;
@@ -46,13 +48,12 @@ public class BindingAdapters {
     @BindingAdapter("app:backgroundProgress")
     public static void setBackgroundProgress(ImageView v, int value) {
         Context context = App.getInstance().getContext();
-        if (value<10){
+        if (value<11){
             v.setBackground(context.getDrawable(R.drawable.rounded_border_900));
         } else {
             v.setBackground(context.getDrawable(R.drawable.rounded_border_gold));
         }
     }
-
 
 
 }

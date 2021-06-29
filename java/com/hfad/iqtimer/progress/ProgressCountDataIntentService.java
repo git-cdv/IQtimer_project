@@ -44,7 +44,7 @@ public class ProgressCountDataIntentService extends IntentService {
     private static final String KEY_HERO_LASTDAY = "HERO.lastday";
     private static final String KEY_LEGENDA_LEVEL = "LEGENDA.level";
     private static final String KEY_LEGENDA_CURRENT = "LEGENDA.current";
-    private static final String KEY_COUNT_WINNER = "winner.count";
+    private static final String KEY_WINNER_CURRENT = "WINNER_.current";
     private static final String KEY_COUNTER_CURRENT = "COUNTER.current";
     private static final String KEY_WINNER_LEVEL = "WINNER_.level";
     private static final int STATE_COUNTER_UP = 777;
@@ -182,18 +182,11 @@ public class ProgressCountDataIntentService extends IntentService {
             }
             if(keyLevel.equals(KEY_HERO_LEVEL)) {checkLegenda(KEY_HERO_LEVEL);}
             //ДОЛЖНО БЫТЬ 100
+            //когда дошло до последнего значения - назначаем лвл 11 для золотого значка и убрать надпись с Уровнем
         } else if (currentValue==12){
-            switch (keyLevel) {
-                case KEY_VOIN_LEVEL:
-                    countWinner();
-                    break;
-                case KEY_BOSS_LEVEL:
-                    countWinner();
-                    break;
-                case KEY_HERO_LEVEL:
-                    countWinner();
-                    break;
-            }
+            countWinner();
+            edProgress.putInt(keyLevel, 11);
+            edProgress.apply();
         }
     }
 
@@ -289,21 +282,16 @@ public class ProgressCountDataIntentService extends IntentService {
             {checkLegenda(keyLevel);}
         }
         if (currentValue==12){
-             switch (keyLevel){
-                case KEY_ENTUZIAST_LEVEL:
-                     countWinner();
-                     break;
-                case KEY_POKORITEL_LEVEL:
-                    countWinner();
-                    break;
-
-            }
+            edProgress.putInt(keyLevel, 11);
+            edProgress.apply();
+            countWinner();
         }
     }
 
     private void countWinner() {
-        int mCurrent = mPrefProgress.getInt(KEY_COUNT_WINNER, 0);
-        edProgress.putInt(KEY_COUNT_WINNER, ++mCurrent);
+        int mCurrent = mPrefProgress.getInt(KEY_WINNER_CURRENT, 0);
+        mCurrent++;
+        edProgress.putInt(KEY_WINNER_CURRENT, mCurrent);
         edProgress.apply();
 
         if(mCurrent==6){

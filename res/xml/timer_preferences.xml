@@ -21,7 +21,7 @@
         android:title="План на день"
         android:key="set_plan_day"
         android:summary="План на день по умолчанию"
-        android:defaultValue="8"
+        android:defaultValue="6"
         />
     </PreferenceCategory>
     <PreferenceCategory

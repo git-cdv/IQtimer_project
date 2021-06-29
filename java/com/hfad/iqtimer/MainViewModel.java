@@ -58,7 +58,6 @@ public class MainViewModel extends AndroidViewModel {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageTick(TickEvent event) {
         timer.set(event.message);
-        //Log.d(TAG, "MainViewModel: TickEvent");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -73,8 +72,7 @@ public class MainViewModel extends AndroidViewModel {
         setState(state);
         if (state!=STATE_NEW_ENTRY){
         count.set(repo.getCurrentCount());
-        counter.set(repo.getCounter());
-        }
+        counter.set(repo.getCounter());}
         isNeedCount.set(repo.getIsNeedCount());
     }
 

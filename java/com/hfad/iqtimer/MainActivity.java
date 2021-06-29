@@ -114,14 +114,11 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                         if(model.mState==STATE_RUN|model.mState==STATE_BREAK_STARTED){//это пауза
                             Log.d(TAG, "MainActivity: Pause");
                             EventBus.getDefault().post(new StateEvent(STATE_PAUSE));
-
                         }else {
                             Log.d(TAG, "MainActivity: Start");
                             mIntent.putExtra(KEY_STATE, STATE_RUN);//старт таймера
                             startTimeService(mIntent);
-                            EventBus.getDefault().post(new StateEvent(STATE_RUN));
-                        }
-
+                            EventBus.getDefault().post(new StateEvent(STATE_RUN));}
                         break;
 
                     case R.id.imageButtonStop:

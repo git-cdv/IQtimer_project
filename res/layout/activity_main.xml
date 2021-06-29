@@ -21,18 +21,17 @@
         android:id="@+id/timer_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:text="@{model.timer}"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-        android:textSize="88sp"
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:textColor="?colorOnPrimary"
+        android:textSize="88sp"
         app:animationOnPause="@{model.isPause}"
-        tools:text="00:00"
         app:layout_constraintBottom_toTopOf="@+id/imageButtonMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        tools:text="00:00" />
 
     <com.marcok.stepprogressbar.StepProgressBar
         android:id="@+id/stepProgressBar"
@@ -115,7 +114,9 @@
         android:src="@drawable/ring_orange"
         app:layout_constraintBottom_toBottomOf="@+id/imageButtonMenu"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageButtonMenu" />
+        app:layout_constraintTop_toTopOf="@+id/imageButtonMenu"
+
+        />
 
     <TextView
         android:id="@+id/counter"
