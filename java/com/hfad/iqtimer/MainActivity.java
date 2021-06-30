@@ -320,13 +320,21 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     public void onBackPressed() {
         Log.d(TAG, "MainActivity: onBackPressed");
 
-        if (back_pressed + 2000 > System.currentTimeMillis()) {
-            super.onBackPressed();
+        if (model.mState == STATE_RUN) {
+            moveTaskToBack(true);
         } else {
-            Toast.makeText(getBaseContext(), getResources().getText(R.string.onback), Toast.LENGTH_SHORT).show();
+            if (back_pressed + 2000 > System.currentTimeMillis()) {
+                super.onBackPressed();
+            } else {
+                try {
+                    Toast.makeText(getBaseContext(), R.string.onback, Toast.LENGTH_SHORT)
+                            .show();
+                } catch (Throwable th) {
+                    // ignoring this exception
+                }
+            }
+            back_pressed = System.currentTimeMillis();
         }
-        back_pressed = System.currentTimeMillis();
+
     }
-
-
 }

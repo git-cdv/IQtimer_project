@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -15,6 +16,8 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 
@@ -24,6 +27,7 @@ import androidx.preference.PreferenceManager;
 
 import com.hfad.iqtimer.database.ListSounds;
 import com.hfad.iqtimer.progress.ProgressCountDataIntentService;
+import com.hfad.iqtimer.tools.RingtoneAndVibro;
 import com.hfad.iqtimer.tools.StateEvent;
 import com.hfad.iqtimer.tools.TickEvent;
 
@@ -40,7 +44,6 @@ public class TimerService extends Service {
     private static final String KEY_PREF_SOUND_RES = "prefsoundres";
     private static final String KEY_PREF_SOUND_BREAK_RES = "prefsoundbreakres";
     private static final String KEY_PREF_VIBRO_NUM = "prefvibrochoice";
-    private static final String BR_FOR_SIGNALS = "iqtimer.brforsignals";
     private static final String KEY_STATE = "iqtimer.state";
     private static final int STATE_TIMER_FINISHED = 100;
     private static final int STATE_BREAK_STARTED = 400;
@@ -69,6 +72,7 @@ public class TimerService extends Service {
     static SharedPreferences sPrefSettings;
     SharedPreferences.Editor ed;
     String mNotifChannel;
+    RingtoneAndVibro mRingtoneAndVibro;
     long mSeconds;
     static boolean isBreak = false;
     static int mState;
@@ -80,6 +84,8 @@ public class TimerService extends Service {
         Log.d(TAG, "TimerService: onCreate");
         super.onCreate();
         EventBus.getDefault().register(this);
+
+        mRingtoneAndVibro = new RingtoneAndVibro(getBaseContext());
 
         mNotifChannel = createNotificationChannel();
         mPref = getSharedPreferences("prefcount", MODE_PRIVATE);
@@ -392,7 +398,6 @@ public class TimerService extends Service {
         NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
         // omitted the LED color
         channel.setImportance(NotificationManager.IMPORTANCE_NONE);
-        channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
         notificationManager.createNotificationChannel(channel);
         return channelId;
     }
@@ -431,8 +436,7 @@ public class TimerService extends Service {
                 startService(mIntentService);
 
             mTimeLeftInMillis = mDefaultTimeInMillis;
-            startSoundForNotif(STATE_TIMER_FINISHED);
-            startVibrator();
+            startSoundNotif(STATE_TIMER_FINISHED);
             NotificationOnSessionEnd();
             //EventBus.getDefault().post(new StateEvent(STATE_TIMER_FINISHED));
             ed.putInt(KEY_SERVICE_STATE,TIMER_FINISHED);
@@ -443,8 +447,7 @@ public class TimerService extends Service {
                 mTimeLeftInMillis = mDefaultTimeInMillis;
                 isBreak = false;
                 NotificationOnBreakEnd();
-                startSoundForNotif(STATE_BREAK_ENDED);
-                startVibrator();
+                startSoundNotif(STATE_BREAK_ENDED);
                 EventBus.getDefault().post(new StateEvent(STATE_BREAK_ENDED));
                 ed.putInt(KEY_SERVICE_STATE,BREAK_ENDED);
                 ed.apply();
@@ -453,38 +456,31 @@ public class TimerService extends Service {
         }
     }
 
-
-
-    private void startSoundForNotif(int State) {
-        if (sPrefSettings.getBoolean("switch_notif",true)) {
-            int mSoundRes;
-            if (State == STATE_TIMER_FINISHED) {
-                mSoundRes = sPrefSettings.getInt(KEY_PREF_SOUND_RES, 0);
-            } else {
-                mSoundRes = sPrefSettings.getInt(KEY_PREF_SOUND_BREAK_RES, 0);
-            }
-
-            if (mSoundRes == 0) {
-                //получаем дефолтную мелодию
-                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                MediaPlayer mPlayer = MediaPlayer.create(getApplication(), defaultSoundUri);
-                mPlayer.start();
-            } else {
-                MediaPlayer mPlayer = MediaPlayer.create(getApplication(), mSoundRes);
-                mPlayer.start();
-            }
-        }
+    private void startSoundNotif(int state) {
+        acquireScreenLock();
+        bringActivityToFront();
+        mRingtoneAndVibro.play(state);
     }
 
-    private void startVibrator() {
-        int mVibroNum = sPrefSettings.getInt(KEY_PREF_VIBRO_NUM,0);
-        if (mVibroNum!=0){
-        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        ListSounds mListSounds = new ListSounds();
-        long [][] ListVibro = mListSounds.getListVibro();
-        if (vibrator.hasVibrator()) {
-            vibrator.vibrate(ListVibro[mVibroNum], -1);}
+    private void bringActivityToFront() {
+        Intent activityIntent = new Intent(this, MainActivity.class);
+        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activityIntent.putExtra("42", 42);
+        getApplication().startActivity(activityIntent);
+    }
+
+    private void acquireScreenLock() {
+
+        //FULL_WAKE_LOCK - CPU - on, Экран - Яркие сохраняют яркость, Клавиатура - Яркие сохраняют яркость
+        //ACQUIRE_CAUSES_WAKEUP - Как только будет получена блокировка wake lock, экран и клавиатура будут немедленно открыты
+        //ON_AFTER_RELEASE - При снятии блокировки включения таймер активности сбрасывается, и экран становится ярче, чем обычно.
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        //проверяем активность устройства
+        boolean isScreenOn = Build.VERSION.SDK_INT >= 23 ? powerManager.isInteractive() : powerManager.isScreenOn(); // check if screen is on
+        if (!isScreenOn) {
+            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "myApp:notificationLock");
+            wakeLock.acquire(5000);
         }
     }
-        }
+}
 
