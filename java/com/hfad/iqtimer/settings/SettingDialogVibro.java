@@ -53,7 +53,7 @@ public class SettingDialogVibro extends DialogFragment implements DialogInterfac
             SharedPreferences.Editor ed = sPrefSettings.edit();
             //записываем выбранный вариант вибро
             ed.putInt(KEY_PREF_VIBRO_NUM,lv.getCheckedItemPosition());
-            ed.commit();
+            ed.apply();
 
             }
         else if (which == Dialog.BUTTON_NEGATIVE){
@@ -65,7 +65,7 @@ public class SettingDialogVibro extends DialogFragment implements DialogInterfac
                 mVibro.cancel();
             }
 
-            if (mVibro.hasVibrator()||which!=0) {
+            if (mVibro.hasVibrator()&&which!=0) {
                 mVibro.vibrate(ListVibro[which], -1);
             }
 

@@ -39,10 +39,14 @@ public class RingtoneAndVibro extends ContextWrapper {
     public void play(int State) {
         try {
             mVibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
-            boolean isRingerModeSilent = mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_SILENT;
+            //AudioManager.RINGER_MODE_SILENT - ВКЛ режим "без звука" и ВЫКЛ вибрация
+            //AudioManager.RINGER_MODE_VIBRATE - ВКЛ режим "без звука" и ВКЛ вибрация
+            //AudioManager.RINGER_MODE_NORMAL - ВЫКЛ режим "без звука"
+
+            boolean isRingerModeNormal = mAudioManager.getRingerMode()==AudioManager.RINGER_MODE_NORMAL;
 
             //если включен звук в настройках приложения и телефона
-            if (sPrefSettings.getBoolean("switch_notif",true)&&!isRingerModeSilent) {
+            if (sPrefSettings.getBoolean("switch_notif",true)&&isRingerModeNormal) {
 
                 int mSoundRes;
                 Uri SoundUri;
