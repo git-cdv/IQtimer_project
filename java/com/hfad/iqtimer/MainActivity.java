@@ -13,18 +13,26 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+import com.hfad.iqtimer.database.PrefHelper;
 import com.hfad.iqtimer.databinding.ActivityMainBinding;
 import com.hfad.iqtimer.dialogs.DialogFragmentBreakEnded;
 import com.hfad.iqtimer.dialogs.DialogFragmentSesEnd;
@@ -41,7 +49,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends FragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -71,6 +81,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     MainViewModel model;
     ActivityMainBinding binding;
     TextView mTimerView;
+    private ImageView mTutorialDot,mTutorialDot2;
     private static long back_pressed;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -82,10 +93,11 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         model.checkState();
         binding.setModel(model);
 
-
-        mTimerView = (TextView) findViewById(R.id.timer_view);
-        mStopButton = (ImageButton) findViewById(R.id.imageButtonStop);
-        mButtonMenu = (ImageButton) findViewById(R.id.imageButtonMenu);
+        mTimerView = binding.timerView;
+        mStopButton = binding.imageButtonStop;
+        mButtonMenu = binding.imageButtonMenu;
+        mTutorialDot = binding.tutorialDot;
+        mTutorialDot2 = binding.tutorialDot2;
 
         mIntent = new Intent(MainActivity.this, TimerService.class);
 
@@ -245,6 +257,62 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
     }
 
+    private void showTutorialSnackbars() {
+
+        final int MESSAGE_SIZE = 3;
+        int i = PrefHelper.getLastIntroStep();
+
+        if (i < MESSAGE_SIZE) {
+
+            final List<String> messages = Arrays.asList(
+                    getString(R.string.tutorial_mess1),
+                    getString(R.string.tutorial_mess2),
+                    getString(R.string.tutorial_mess3));
+
+            final Animation animTap = AnimationUtils.loadAnimation(this, R.anim.tutorial_tap);
+
+            if (i==0) {
+            mTutorialDot.setVisibility(View.VISIBLE);
+            mTutorialDot.setAnimation(animTap);
+            }
+
+            if (i==1) {
+                mTutorialDot.setVisibility(View.VISIBLE);
+                mTutorialDot.animate().translationY(180f);
+                mTutorialDot.clearAnimation();
+                mTutorialDot.setAnimation(animTap);
+            }
+
+            if (i==2) {
+                mTutorialDot.clearAnimation();
+                mTutorialDot.setVisibility(View.GONE);
+                mTutorialDot2.setVisibility(View.VISIBLE);
+                mTutorialDot2.setAnimation(animTap);
+            }
+
+            Snackbar s = Snackbar.make(mButtonMenu, messages.get(PrefHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
+                    .setAction("OK", view -> {
+                        int nextStep = i + 1;
+                        PrefHelper.setLastIntroStep(nextStep);
+                        showTutorialSnackbars();
+                    })
+                    .setAnchorView(mButtonMenu)
+                    .setActionTextColor(Color.WHITE)
+                    .setBackgroundTint(getResources().getColor(R.color.brand_blue_900));
+
+            s.setBehavior(new BaseTransientBottomBar.Behavior() {
+                @Override
+                public boolean canSwipeDismissView(View child) {
+                    return false;
+                }
+            });
+            s.show();
+        }else {
+            mTutorialDot2.clearAnimation();
+            mTutorialDot2.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     protected void onStart() {
         Log.d(TAG, "MainActivity: onStart + bindService + Registered receiver");
@@ -269,6 +337,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     public void onResume() {
         super.onResume();
         Log.d(TAG, "MainActivity: onResume - mState - "+ model.mState);
+        showTutorialSnackbars();
     }
 
     @Override

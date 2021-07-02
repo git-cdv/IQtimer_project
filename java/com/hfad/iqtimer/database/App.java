@@ -2,6 +2,7 @@ package com.hfad.iqtimer.database;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.room.Room;
 
@@ -15,6 +16,7 @@ public class App extends Application {
     private AppDatabase database;
     private ExecutorService executor;
     private Context context;
+    private static SharedPreferences mPref;
 
     @Override
     public void onCreate() {
@@ -24,6 +26,7 @@ public class App extends Application {
                 .build();
         executor = Executors.newFixedThreadPool(3);
         context = getApplicationContext();
+        mPref = getSharedPreferences("data_preferences", MODE_PRIVATE);
     }
 
     public static App getInstance() {
@@ -37,4 +40,5 @@ public class App extends Application {
         return executor;
     }
     public Context getContext(){return context;}
+    public static SharedPreferences getPref(){return mPref;}
 }

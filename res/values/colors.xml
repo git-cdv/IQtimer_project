@@ -14,5 +14,6 @@
     <color name="brand_blue_200">#FFD9E8F5</color>
     <color name="brand_orange">#FFF26101</color>
     <color name="brand_gold">#FFFFD700</color>
+    <color name="transparent">#00000000</color>
 
    </resources>

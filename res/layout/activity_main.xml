@@ -68,26 +68,25 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_margin="16dp"
-        android:layout_marginEnd="8dp"
-        android:padding="10dp"
+        android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="10dp"
         android:src="@drawable/ic_baseline_stop_24"
-        app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
-        app:layout_constraintEnd_toStartOf="@+id/imageCounter"
-        app:layout_constraintTop_toTopOf="@+id/imageCounter"
         android:visibility="@{model.isNeedStop ? View.VISIBLE : View.INVISIBLE}"
-         />
+        app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
+        app:layout_constraintEnd_toStartOf="@+id/imageCount"
+        app:layout_constraintTop_toTopOf="@+id/imageCounter" />
 
     <ImageView
         android:id="@+id/imageCount"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:layout_marginBottom="4dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="16dp"
         android:src="@drawable/ring_blue"
-        android:visibility="@{model.isNeedCount ? View.VISIBLE : View.INVISIBLE}"
-        app:layout_constraintBottom_toTopOf="@+id/imageCounter"
-        app:layout_constraintEnd_toEndOf="@+id/imageCounter"
-        app:layout_constraintStart_toStartOf="@+id/imageCounter" />
+        android:visibility="@{model.isNeedCount ? View.VISIBLE : View.GONE}"
+        app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
+        app:layout_constraintEnd_toStartOf="@+id/imageCounter"
+        app:layout_constraintTop_toTopOf="@+id/imageCounter" />
 
     <TextView
         android:id="@+id/count_ses"
@@ -102,14 +101,14 @@
         app:layout_constraintEnd_toEndOf="@+id/imageCount"
         app:layout_constraintStart_toStartOf="@+id/imageCount"
         app:layout_constraintTop_toTopOf="@+id/imageCount"
-        android:visibility="@{model.isNeedCount ? View.VISIBLE : View.INVISIBLE}"
+        android:visibility="@{model.isNeedCount ? View.VISIBLE : View.GONE}"
         tools:text="5"
         />
 
     <ImageView
         android:id="@+id/imageCounter"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginEnd="24dp"
         android:src="@drawable/ring_orange"
         app:layout_constraintBottom_toBottomOf="@+id/imageButtonMenu"
@@ -133,6 +132,33 @@
         app:layout_constraintTop_toTopOf="@+id/imageCounter"
         tools:text="5"
         />
+
+    <ImageView
+        android:id="@+id/tutorialDot"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:gravity="center"
+        android:src="@drawable/shape_tutorial_dot"
+        app:layout_constraintBottom_toBottomOf="@+id/timer_view"
+        app:layout_constraintEnd_toEndOf="@+id/timer_view"
+        app:layout_constraintStart_toStartOf="@+id/timer_view"
+        app:layout_constraintTop_toTopOf="@+id/timer_view"
+        android:visibility="gone"
+        />
+
+    <ImageView
+        android:id="@+id/tutorialDot2"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:gravity="center"
+        android:src="@drawable/shape_tutorial_dot"
+        app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
+        app:layout_constraintEnd_toStartOf="@+id/imageCounter"
+        app:layout_constraintStart_toEndOf="@+id/imageCount"
+        app:layout_constraintTop_toTopOf="@+id/imageCounter"
+        android:visibility="gone"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
