@@ -1,9 +1,9 @@
 package com.hfad.iqtimer.tools;
 
 public class StateEvent {
-    public final int state;
+    public final TimerState state;
 
-    public StateEvent(int state) {
+    public StateEvent(TimerState state) {
         this.state = state;
     }
 }

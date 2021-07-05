@@ -14,11 +14,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class WriteCountDataIntentService extends IntentService {
-    private static final String KEY_PREF_COUNT = "prefcount";
-    private static final String KEY_PREF_DATE = "prefdate";
     private static final String TAG = "MYLOGS";
-    SharedPreferences sPref;
-    SharedPreferences.Editor ed;
     LocalDate mToday;
 
     public WriteCountDataIntentService() {
@@ -28,23 +24,16 @@ public class WriteCountDataIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "IntentService: onHandleIntent");
-        //получаем доступ к файлу с данными по дате и сессиям
-        sPref = getSharedPreferences("prefcount", MODE_PRIVATE);
-        ed = sPref.edit();
-        // текущая дата
         mToday = LocalDate.now();
 
         //проверяем что это не первый вход
-        if (sPref.getBoolean("firstrun", true)) {
-            Log.d(TAG, "WriteCountDataIntentService: checkFirstRun()");
-            ed.putString(KEY_PREF_DATE, mToday.toString());
-            ed.putInt(KEY_PREF_COUNT, 0);
-            ed.putBoolean("firstrun", false);
-            ed.apply();
+        if (PrefHelper.isFirstRun()) {
+            PrefHelper.setDateAndCount(mToday.toString(),0);
+            PrefHelper.setFirstRun(false);
         } else {
             //берем текущие значения за крайний день
-            int mPrefCount = sPref.getInt(KEY_PREF_COUNT, 500);
-            String mPrefDate = sPref.getString(KEY_PREF_DATE, "default");
+            int mPrefCount = PrefHelper.getCount();
+            String mPrefDate = PrefHelper.getWorkDate();
             //получаем текущую дату из sPref
             LocalDate mDateFromPref = LocalDate.parse(mPrefDate);
             //подготавливааем формат для date_full
@@ -59,9 +48,7 @@ public class WriteCountDataIntentService extends IntentService {
             sessionDao.insert(new Session(mPrefDate,mPrefCount,strOutput));
 
             //обновляем дату и обнуляем счетчик в sPref
-            ed.putString(KEY_PREF_DATE, mToday.toString());
-            ed.putInt(KEY_PREF_COUNT, 0);
-            ed.apply();
+            PrefHelper.setDateAndCount(mToday.toString(),0);
 
             // получаем следующую дату от крайней
             LocalDate mNextDateFromPref = mDateFromPref.plusDays(1);

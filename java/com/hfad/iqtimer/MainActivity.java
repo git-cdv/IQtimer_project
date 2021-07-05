@@ -1,15 +1,17 @@
 package com.hfad.iqtimer;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.preference.PreferenceManager;
 
+import android.app.Dialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -20,150 +22,146 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.hfad.iqtimer.database.App;
 import com.hfad.iqtimer.database.PrefHelper;
 import com.hfad.iqtimer.databinding.ActivityMainBinding;
-import com.hfad.iqtimer.dialogs.DialogFragmentBreakEnded;
-import com.hfad.iqtimer.dialogs.DialogFragmentSesEnd;
+import com.hfad.iqtimer.dialogs.DialogSession;
 import com.hfad.iqtimer.progress.ProgressActivity;
 import com.hfad.iqtimer.settings.AboutActivity;
 import com.hfad.iqtimer.settings.SettingsActivity;
 import com.hfad.iqtimer.statistic.StatisticActivity;
 import com.hfad.iqtimer.tools.StateEvent;
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.OnItemClickListener;
+import com.hfad.iqtimer.tools.TimerState;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class MainActivity extends FragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+public class MainActivity extends FragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener,
+        DialogSession.DialogSessionListener {
 
     private static final String TAG = "MYLOGS";
-    private static final int STATE_TIMER_FINISHED = 100;
     private static final int STATE_BREAK_STARTED = 400;
-    private static final int STATE_BREAK_ENDED = 300;
-    private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
     private static final String KEY_STATE = "iqtimer.state";
-    private static final int STATE_STOP = 706;
     private static final int STATE_RUN = 705;
-    private static final int CHANGE_INTERVAL_STICKY = 710;
-    private static final int STATE_PAUSE = 707;
-    private static final int RUN_FROM_DIALOG = 7055;
-    private static final int BREAK_ENDED = 178;
-    private static final int TIMER_FINISHED = 177;
+    private static final int CHANGE_INTERVAL = 710;
 
 
-    ImageButton mButtonMenu, mStopButton;
+    ImageButton mButtonMenu;
     boolean mBound = false;
     boolean mActive = false;
     ServiceConnection mConn;
     Intent mIntent;
-    SharedPreferences sPrefSettings;
-    DialogFragment dlg1, dlg2;
-    MainViewModel model;
+    DialogFragment dlg;
     ActivityMainBinding binding;
-    TextView mTimerView;
-    private ImageView mTutorialDot,mTutorialDot2;
+    private ImageView mTutorialDot, mTutorialDot2;
     private static long back_pressed;
+    private final CurrentSession mCurrentSession = App.getSession();
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        model = new ViewModelProvider(this).get(MainViewModel.class);
-        model.checkState();
-        binding.setModel(model);
+        binding.setSession(mCurrentSession);
 
-        mTimerView = binding.timerView;
-        mStopButton = binding.imageButtonStop;
         mButtonMenu = binding.imageButtonMenu;
         mTutorialDot = binding.tutorialDot;
         mTutorialDot2 = binding.tutorialDot2;
 
         mIntent = new Intent(MainActivity.this, TimerService.class);
 
-        //получаем доступ к файлу с настройками приложения
-        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(this);
-
         mConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
-                Log.d(TAG, "MainActivity: onServiceConnected");
                 mBound = true;
             }
 
             public void onServiceDisconnected(ComponentName name) {
-                Log.d(TAG, "MainActivity: onServiceDisconnected");
                 mBound = false;
             }
         };
 
-        View.OnClickListener clickListener = new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()){
-
-                    case R.id.timer_view:
-                        if(model.mState==STATE_RUN|model.mState==STATE_BREAK_STARTED){//это пауза
-                            Log.d(TAG, "MainActivity: Pause");
-                            EventBus.getDefault().post(new StateEvent(STATE_PAUSE));
-                        }else {
-                            Log.d(TAG, "MainActivity: Start");
-                            mIntent.putExtra(KEY_STATE, STATE_RUN);//старт таймера
-                            startTimeService(mIntent);
-                            EventBus.getDefault().post(new StateEvent(STATE_RUN));}
-                        break;
-
-                    case R.id.imageButtonStop:
-                        Log.d(TAG, "MainActivity: btn_Stop");
-                        EventBus.getDefault().post(new StateEvent(STATE_STOP));
-                        break;
-                    case R.id.imageButtonMenu:
-                        Log.d(TAG, "MainActivity: btn_Menu");
-                        showMenu(v);
-                        break;
-
-                }
-            }
-        };
-        //регистрируем слушателей кнопок и настроек
-        mTimerView.setOnClickListener(clickListener);
-        mStopButton.setOnClickListener(clickListener);
-        mButtonMenu.setOnClickListener(clickListener);
-        sPrefSettings.registerOnSharedPreferenceChangeListener(this);
-
-        if(savedInstanceState == null) {//проверяем что это не после переворота, а следующий вход
-            if (model.mState == TIMER_FINISHED) {
-                showMyDialog(STATE_TIMER_FINISHED);
-            }
-            if (model.mState == BREAK_ENDED) {
-                showMyDialog(STATE_BREAK_ENDED);
-            }
-        }
+        //регистрируем слушателя настроек
+        App.getPrefSettings().registerOnSharedPreferenceChangeListener(this);
 
     }
 
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(StateEvent e) {
+        switch (e.state) {
+            case TIMER_FINISHED:
+            case BREAK_FINISHED:
+                //создаем диалог если Активити активно
+                showMyDialog();
+                break;
+            case BREAK:
+            case ACTIVE:
+                //если запущенно из Нотиф - убираем диалог
+                if(dlg != null){dlg.dismiss();}
+                break;
+        }
+    }
+
+    private void showMyDialog() {
+        if (dlg == null) {
+            dlg = new DialogSession();
+            dlg.setCancelable(false);
+            dlg.show(getSupportFragmentManager(), "UniversalDialogSession");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showTutorialSnackbars();
+        if(mCurrentSession.getState().get() == TimerState.TIMER_FINISHED||mCurrentSession.getState().get() == TimerState.BREAK_FINISHED){
+            showMyDialog();
+        }
+    }
+
+    public void toClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.timer_view:
+                if (mCurrentSession.getState().get() == TimerState.ACTIVE) {//это пауза
+                    Log.d(TAG, "MainActivity: Pause");
+                    mCurrentSession.setState(TimerState.PAUSED);
+                    EventBus.getDefault().post(new StateEvent(TimerState.PAUSED));//для TimerService
+                } else {
+                    Log.d(TAG, "MainActivity: Start");
+                    mIntent.putExtra(KEY_STATE, STATE_RUN);
+                    startTimeService(mIntent);
+                    mCurrentSession.setState(TimerState.ACTIVE);
+                }
+                break;
+
+            case R.id.imageButtonStop:
+                Log.d(TAG, "MainActivity: btn_Stop");
+                mCurrentSession.setState(TimerState.STOPED);
+                EventBus.getDefault().post(new StateEvent(TimerState.STOPED));//для TimerService
+                break;
+            case R.id.imageButtonMenu:
+                Log.d(TAG, "MainActivity: btn_Menu");
+                showMenu(v);
+                break;
+
+        }
+    }
+
     private void showMenu(View v) {
-        PopupMenu popup = new PopupMenu(this,v);
+        PopupMenu popup = new PopupMenu(this, v);
         popup.inflate(R.menu.popup_menu);
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -200,61 +198,12 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
     }
 
-    private void showMyDialog(int State) {
-        Log.d(TAG, "MainActivity: showMyDialog()");
-
-        switch (State){
-            case STATE_TIMER_FINISHED:
-                if (dlg1==null){
-                dlg1 = new DialogFragmentSesEnd();
-                dlg1.setCancelable(false);
-                dlg1.show(getSupportFragmentManager(), "IsBreak");}
-                break;
-            case STATE_BREAK_ENDED:
-                if (dlg2==null){
-                dlg2 = new DialogFragmentBreakEnded();
-                dlg2.setCancelable(false);
-                dlg2.show(getSupportFragmentManager(), "BreakEnded");}
-                break;
-        }
-
-    }
-
     private void startTimeService(Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent);
         } else {
             startService(intent);
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageState(StateEvent event) {
-        Log.d(TAG, "MainActivity: StateEvent - " + event.state);
-        switch (event.state){
-            case STATE_TIMER_FINISHED:
-                //создаем диалог если Активити активно
-                if(mActive) {showMyDialog(STATE_TIMER_FINISHED);}
-                break;
-            case STATE_BREAK_STARTED:
-                Intent mIntentBreak = new Intent(MainActivity.this, TimerService.class);
-                mIntentBreak.putExtra(KEY_STATE,STATE_BREAK_STARTED);
-                startTimeService(mIntentBreak);
-                break;
-           case STATE_BREAK_ENDED:
-                //создаем диалог если Активити активно
-                if(mActive) {showMyDialog(STATE_BREAK_ENDED);}
-                break;
-            case ST_BREAK_STARTED_IN_NOTIF:
-                if(mActive) {dlg1.dismiss();}
-                break;
-            case RUN_FROM_DIALOG:
-                mIntent.putExtra(KEY_STATE, STATE_RUN);
-                startTimeService(mIntent);
-                EventBus.getDefault().post(new StateEvent(STATE_RUN));
-                break;
-        }
-
     }
 
     private void showTutorialSnackbars() {
@@ -271,19 +220,19 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
             final Animation animTap = AnimationUtils.loadAnimation(this, R.anim.tutorial_tap);
 
-            if (i==0) {
-            mTutorialDot.setVisibility(View.VISIBLE);
-            mTutorialDot.setAnimation(animTap);
+            if (i == 0) {
+                mTutorialDot.setVisibility(View.VISIBLE);
+                mTutorialDot.setAnimation(animTap);
             }
 
-            if (i==1) {
+            if (i == 1) {
                 mTutorialDot.setVisibility(View.VISIBLE);
                 mTutorialDot.animate().translationY(180f);
                 mTutorialDot.clearAnimation();
                 mTutorialDot.setAnimation(animTap);
             }
 
-            if (i==2) {
+            if (i == 2) {
                 mTutorialDot.clearAnimation();
                 mTutorialDot.setVisibility(View.GONE);
                 mTutorialDot2.setVisibility(View.VISIBLE);
@@ -307,7 +256,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 }
             });
             s.show();
-        }else {
+        } else {
             mTutorialDot2.clearAnimation();
             mTutorialDot2.setVisibility(View.GONE);
         }
@@ -317,28 +266,25 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     protected void onStart() {
         Log.d(TAG, "MainActivity: onStart + bindService + Registered receiver");
         super.onStart();
-        EventBus.getDefault().register(this);
-        if(!mBound){bindService(mIntent, mConn, 0);}
+        if (!mBound) {
+            bindService(mIntent, mConn, 0);
+        }
         mActive = true;
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         Log.d(TAG, "MainActivity: onStop + unbindService");
         super.onStop();
-        EventBus.getDefault().unregister(this);
         if (!mBound) return;
         unbindService(mConn);
         mBound = false;
         mActive = false;
-         }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "MainActivity: onResume - mState - "+ model.mState);
-        showTutorialSnackbars();
+        EventBus.getDefault().unregister(this);
     }
+
+
 
     @Override
     public void onPause() {
@@ -350,13 +296,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     public void onDestroy() {
         Log.d(TAG, "MainActivity: onDestroy + Unregistered receiver");
         super.onDestroy();
-        sPrefSettings.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putBoolean("key_mActive",mActive);
+        App.getPrefSettings().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     //слушает изменение настройки и выполняет код при событии
@@ -365,22 +305,22 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         Log.d(TAG, "MainActivity: onSharedPreferenceChanged()");
         switch (key) {
             case ("default_interval"):
-              if(model.mState!=STATE_RUN){
-                  binding.timerView.setText(model.repo.getDefaultTime());}
-                  EventBus.getDefault().postSticky(new StateEvent(CHANGE_INTERVAL_STICKY));
+                if (mCurrentSession.getState().get() != TimerState.ACTIVE) {
+                    String min = PrefHelper.getDefaultTime();
+                    mCurrentSession.setDefaultMinutes(min);
+                    mIntent.putExtra(KEY_STATE, CHANGE_INTERVAL);
+                    startTimeService(mIntent);
+                }
                 break;
             case ("set_plan_day"):
-                //установка количества точек из плана в настройках
-                binding.stepProgressBar.setNumDots(model.repo.getPlan());
+                //установка количества точек из плана в настройка
+                int i = Integer.parseInt(PrefHelper.getDefaultPlan());
+                binding.stepProgressBar.setNumDots(i);
+                mCurrentSession.setPlan(i);
                 break;
             case ("switch_count"):
-                if(model.repo.getIsNeedCount()){
-                binding.imageCount.setVisibility(View.VISIBLE);
-                binding.countSes.setVisibility(View.VISIBLE);
-                } else{
-                    binding.imageCount.setVisibility(View.INVISIBLE);
-                    binding.countSes.setVisibility(View.INVISIBLE);
-                }
+                mCurrentSession.setIsNeedCount(PrefHelper.getNeedCount());
+                binding.invalidateAll();
                 break;
         }
     }
@@ -389,7 +329,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     public void onBackPressed() {
         Log.d(TAG, "MainActivity: onBackPressed");
 
-        if (model.mState == STATE_RUN) {
+        if (mCurrentSession.getState().get() == TimerState.ACTIVE||mCurrentSession.getState().get() == TimerState.BREAK) {
             moveTaskToBack(true);
         } else {
             if (back_pressed + 2000 > System.currentTimeMillis()) {
@@ -405,5 +345,27 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
             back_pressed = System.currentTimeMillis();
         }
 
+    }
+
+    @Override
+    public void onDialogPositiveClick(TimerState state) {
+        if (state==TimerState.TIMER_FINISHED){
+            Intent mIntentBreak = new Intent(MainActivity.this, TimerService.class);
+            mIntentBreak.putExtra(KEY_STATE, STATE_BREAK_STARTED);
+            startTimeService(mIntentBreak);
+            mCurrentSession.setState(TimerState.BREAK);
+            dlg = null;
+        } else {
+            mIntent.putExtra(KEY_STATE, STATE_RUN);
+            startTimeService(mIntent);
+            mCurrentSession.setState(TimerState.ACTIVE);
+            dlg = null;
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick() {
+            mCurrentSession.setState(TimerState.STOPED);
+            dlg = null;
     }
 }

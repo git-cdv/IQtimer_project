@@ -5,9 +5,10 @@
 
     <data>
         <import type="android.view.View"/>
+        <import type="com.hfad.iqtimer.tools.TimerState"/>
         <variable
-            name="model"
-            type="com.hfad.iqtimer.MainViewModel"/>
+            name="session"
+            type="com.hfad.iqtimer.CurrentSession"/>
 
     </data>
 
@@ -22,15 +23,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:text="@{model.timer}"
+        android:text="@{session.mTime}"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textColor="?colorOnPrimary"
         android:textSize="88sp"
-        app:animationOnPause="@{model.isPause}"
+        app:animationOnPause="@{session.mState==TimerState.PAUSED}"
         app:layout_constraintBottom_toTopOf="@+id/imageButtonMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:onClick="toClick"
         tools:text="00:00" />
 
     <com.marcok.stepprogressbar.StepProgressBar
@@ -38,8 +40,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:numberDots="@{model.plan}"
-        app:activeDotIndex="@{model.count &lt; model.plan ? model.count : model.plan}"
+        app:numberDots="@{session.plan}"
+        app:activeDotIndex="@{session.count &lt; session.plan ? session.count : session.plan}"
         app:activeDotColor="@color/brand_blue_200"
         app:cumulativeDots="true"
         app:dotSize="5dp"
@@ -61,6 +63,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:onClick="toClick"
          />
 
     <ImageButton
@@ -72,10 +75,12 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="10dp"
         android:src="@drawable/ic_baseline_stop_24"
-        android:visibility="@{model.isNeedStop ? View.VISIBLE : View.INVISIBLE}"
+        android:visibility="@{session.mState==TimerState.ACTIVE||session.mState==TimerState.PAUSED||session.mState==TimerState.BREAK ? View.VISIBLE : View.INVISIBLE}"
         app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
         app:layout_constraintEnd_toStartOf="@+id/imageCount"
-        app:layout_constraintTop_toTopOf="@+id/imageCounter" />
+        app:layout_constraintTop_toTopOf="@+id/imageCounter"
+        android:onClick="toClick"
+        />
 
     <ImageView
         android:id="@+id/imageCount"
@@ -83,14 +88,14 @@
         android:layout_height="32dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ring_blue"
-        android:visibility="@{model.isNeedCount ? View.VISIBLE : View.GONE}"
+        android:visibility="@{session.isNeedCount ? View.VISIBLE : View.GONE}"
         app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
         app:layout_constraintEnd_toStartOf="@+id/imageCounter"
         app:layout_constraintTop_toTopOf="@+id/imageCounter" />
 
     <TextView
         android:id="@+id/count_ses"
-        android:text="@{model.count.toString}"
+        android:text="@{session.count.toString}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Large"
@@ -101,7 +106,7 @@
         app:layout_constraintEnd_toEndOf="@+id/imageCount"
         app:layout_constraintStart_toStartOf="@+id/imageCount"
         app:layout_constraintTop_toTopOf="@+id/imageCount"
-        android:visibility="@{model.isNeedCount ? View.VISIBLE : View.GONE}"
+        android:visibility="@{session.isNeedCount ? View.VISIBLE : View.GONE}"
         tools:text="5"
         />
 
@@ -119,7 +124,7 @@
 
     <TextView
         android:id="@+id/counter"
-        android:text="@{model.counter.toString}"
+        android:text="@{session.counter.toString}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Large"

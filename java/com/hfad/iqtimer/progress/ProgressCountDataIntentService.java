@@ -83,7 +83,7 @@ public class ProgressCountDataIntentService extends IntentService {
                 ed.putInt(KEY_PREF_COUNT, mPrefCount);
                 ed.apply();
 
-                EventBus.getDefault().post(new StateEvent(STATE_TIMER_FINISHED));
+                //EventBus.getDefault().post(new StateEvent(STATE_TIMER_FINISHED));
 
                 if(isPremium){countPokoritel();countVoin();}
 
@@ -242,7 +242,7 @@ public class ProgressCountDataIntentService extends IntentService {
                 int mCurrentCounter = mPrefProgress.getInt(KEY_COUNTER_CURRENT, 0);
                 mCurrentCounter++;
                 edProgress.putInt(KEY_COUNTER_CURRENT, mCurrentCounter);
-                EventBus.getDefault().post(new StateEvent(STATE_COUNTER_UP));
+               // EventBus.getDefault().post(new StateEvent(STATE_COUNTER_UP));
                 if (isPremium) {
                     int mCurrentDays = mPrefProgress.getInt(KEY_ENTUZIAST_CURRENT, 0);
                     mCurrentDays++;
