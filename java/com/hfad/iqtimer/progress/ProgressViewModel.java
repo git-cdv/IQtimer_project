@@ -57,7 +57,7 @@ public class ProgressViewModel extends AndroidViewModel {
     public MutableLiveData<Integer> winner_l = new MutableLiveData<>();
 
     GoalRepository repo = new GoalRepository(getApplication());
-    ProgressRepository repoProgress = new ProgressRepository(getApplication());
+    ProgressRepository repoProgress = new ProgressRepository();
 
 
     void getStateGoal(){

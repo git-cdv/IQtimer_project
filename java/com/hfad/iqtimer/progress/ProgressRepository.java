@@ -3,6 +3,8 @@ package com.hfad.iqtimer.progress;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.hfad.iqtimer.database.App;
+
 import org.joda.time.LocalDate;
 
 import java.util.LinkedHashSet;
@@ -27,15 +29,14 @@ public class ProgressRepository {
     private static final String KEY_LEGENDA_CURRENT = "LEGENDA.current";
     private static final String KEY_WINNER_LEVEL = "WINNER_.level";
     private static final String KEY_WINNER_CURRENT = "WINNER_.current";
-    private static final String KEY_COUNTER_CURRENT = "COUNTER.current";
+    private static final String KEY_COUNTER_CURRENT = "COUNTER_value";
     private static final String KEY_LAST_WORKDAY = "last.workday";
-    Context context;
+
     SharedPreferences mPref;
 
 
-    public ProgressRepository(Context context) {
-        this.context = context;
-        mPref = context.getSharedPreferences("progress_pref", MODE_PRIVATE);
+    public ProgressRepository() {
+        mPref = App.getPref();
     }
 
     public int [][] getStateP (){

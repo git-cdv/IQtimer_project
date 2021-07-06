@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:numberDots="@{session.plan}"
-        app:activeDotIndex="@{session.count &lt; session.plan ? session.count : session.plan}"
+        app:activeDotIndex="@{session.mCount &lt; session.plan ? session.mCount : session.plan}"
         app:activeDotColor="@color/brand_blue_200"
         app:cumulativeDots="true"
         app:dotSize="5dp"
@@ -95,7 +95,7 @@
 
     <TextView
         android:id="@+id/count_ses"
-        android:text="@{session.count.toString}"
+        android:text="@{session.mCount.toString()}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Large"
@@ -124,7 +124,7 @@
 
     <TextView
         android:id="@+id/counter"
-        android:text="@{session.counter.toString}"
+        android:text="@{session.mCounter.toString}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Large"

@@ -19,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
-import androidx.preference.PreferenceManager;
 
 import com.hfad.iqtimer.database.App;
 import com.hfad.iqtimer.progress.ProgressCountDataIntentService;
@@ -33,7 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Locale;
 
-public class TimerService extends LifecycleService {
+public class TimerService extends Service {
     private static final String TAG = "MYLOGS";
     private static final String KEY_PREF_INTERVAL = "default_interval";
     private static final String KEY_PREF_BREAKTIME = "break_time";
@@ -43,14 +42,9 @@ public class TimerService extends LifecycleService {
     private static final int STATE_BREAK_ENDED = 300;
     private static final int ST_NOTIF_PAUSED = 600;
     private static final int ST_NOTIF_STOPED = 700;
-    private static final int ST_BREAK_STARTED_IN_NOTIF = 800;
     private static final int ST_NOTIF_BREAK_STOPED = 900;
     private static final String KEY_TASK = "taskforintentservice";
-    private static final int STATE_STOP = 706;
     private static final int STATE_RUN = 705;
-    private static final int STATE_PAUSE = 707;
-    private static final String KEY_SERVICE_STATE = "TimerService.state";
-    private static final String KEY_PAUSE_TIME = "pausetime.state";
     private static final int CHANGE_INTERVAL = 710;
 
 
@@ -81,10 +75,10 @@ public class TimerService extends LifecycleService {
         mRingtoneAndVibro = new RingtoneAndVibro(getBaseContext());
 
         mNotifChannel = createNotificationChannel();
-        mPref = getSharedPreferences("prefcount", MODE_PRIVATE);
+        mPref = App.getPref();
         ed = mPref.edit();
         //получаем доступ к файлу с настройками приложения
-        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        sPrefSettings = App.getPrefSettings();
         mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
         mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))*60000;
         mTimeLeftInMillis = mDefaultTimeInMillis;
@@ -100,6 +94,10 @@ public class TimerService extends LifecycleService {
             case PAUSED:
                 Log.d(TAG, "TimerService: PAUSE");
                 TimerPause();
+                break;
+            case CHANGE_INTERVAL:
+                mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
+                mTimeLeftInMillis = mDefaultTimeInMillis;
                 break;
         }
     }
@@ -147,35 +145,27 @@ public class TimerService extends LifecycleService {
                 mTimeLeftInMillis = mDefaultTimeInMillis;
                 mCurrentSession.setState(TimerState.STOPED);
                 break;
-            case CHANGE_INTERVAL:
-                mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
-                mTimeLeftInMillis = mDefaultTimeInMillis;
-                break;
         }
 
         return START_STICKY;
     }
 
     public IBinder onBind(@NonNull Intent intent) {
-        super.onBind(intent);
-        Log.d(TAG, "TimerService: onBind");
         return mBinder;
     }
 
     public void onRebind(Intent intent) {
         super.onRebind(intent);
-        Log.d(TAG, "TimerService: onRebind");
     }
 
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "TimerService: onUnbind");
         return super.onUnbind(intent);
     }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "TimerService: onDestroy");
-        mTimer.cancel();
+        if (mTimer!=null){mTimer.cancel();}
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
@@ -413,8 +403,6 @@ public class TimerService extends LifecycleService {
             startSoundNotif(STATE_TIMER_FINISHED);
             NotificationOnSessionEnd();
             mCurrentSession.setState(TimerState.TIMER_FINISHED);
-            EventBus.getDefault().post(new StateEvent(TimerState.TIMER_FINISHED));
-
 
             } else {
                 //для окончания перерыва
@@ -423,7 +411,7 @@ public class TimerService extends LifecycleService {
                 NotificationOnBreakEnd();
                 startSoundNotif(STATE_BREAK_ENDED);
                 mCurrentSession.setState(TimerState.BREAK_FINISHED);
-                EventBus.getDefault().post(new StateEvent(TimerState.BREAK_FINISHED));
+                EventBus.getDefault().postSticky(new StateEvent(TimerState.BREAK_FINISHED));
             }
 
         }

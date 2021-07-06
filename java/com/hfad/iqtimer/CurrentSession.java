@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableInt;
 import androidx.lifecycle.MutableLiveData;
 
 import com.hfad.iqtimer.database.App;
@@ -24,8 +25,8 @@ public class CurrentSession {
 
     public ObservableField<String> mTime = new ObservableField<>();
     public ObservableField<TimerState> mState = new ObservableField<>();
-    private final MutableLiveData<Integer> mCount = new MutableLiveData<>();
-    private final MutableLiveData<Integer> mCounter = new MutableLiveData<>();
+    public ObservableField<Integer> mCount = new ObservableField<>();
+    public ObservableField<Integer> mCounter = new ObservableField<>();
     private final MutableLiveData<Integer> mPlan = new MutableLiveData<>();
     private final MutableLiveData<Boolean> IsNeedCount = new MutableLiveData<>();
 
@@ -34,12 +35,12 @@ public class CurrentSession {
         this.DefaultMinutes=DefaultMinutes;
         this.mTime.set(getDefaultTime(DefaultMinutes));
         this.mState.set(TimerState.STOPED);
-        this.mCount.setValue(Count);
+        this.mCount.set(Count);
         this.mPlan.setValue(DefaultPlan);
-        this.mCounter.setValue(Counter);
+        this.mCounter.set(Counter);
         this.IsNeedCount.setValue(IsNeedCount);
         mToday = (LocalDate.now()).toString();
-        context = App.getInstance().getContext();
+        context = App.getContext();
         checkNewDay();
     }
     public ObservableField<TimerState> getState() {
@@ -54,12 +55,6 @@ public class CurrentSession {
         }
     }
 
-    public MutableLiveData<Integer> getCount() {
-        return mCount;
-    }
-    public MutableLiveData<Integer> getCounter() {
-        return mCounter;
-    }
     public MutableLiveData<Integer> getPlan() {
         return mPlan;
     }
@@ -87,7 +82,7 @@ public class CurrentSession {
         if (!PrefHelper.getWorkDate().equals(mToday)) {
             Intent mIntentService = new Intent(context, WriteCountDataIntentService.class);
             context.startService(mIntentService);
-            mCount.setValue(0);
+            mCount.set(0);
         }
     }
     public void setDefaultMinutes(String min) {

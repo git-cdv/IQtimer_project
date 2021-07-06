@@ -100,19 +100,33 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
     public void onMessageEvent(StateEvent e) {
+        Log.d(TAG, "MainActivity: StateEvent - "+e.state.name());
         switch (e.state) {
             case TIMER_FINISHED:
+                showMyDialog();
+                mCurrentSession.mCount.set(PrefHelper.getCount());
+                //удаляем липкое оповещение чтобы больше не получать
+                clearStickyEvent();
+                break;
             case BREAK_FINISHED:
                 //создаем диалог если Активити активно
                 showMyDialog();
+                clearStickyEvent();
                 break;
             case BREAK:
             case ACTIVE:
                 //если запущенно из Нотиф - убираем диалог
                 if(dlg != null){dlg.dismiss();}
                 break;
+            case COUNTER_UP:
+                showMyDialog();
+                mCurrentSession.mCounter.set(PrefHelper.getCounter());
+                //удаляем липкое оповещение чтобы больше не получать
+                clearStickyEvent();
+                break;
         }
     }
+
 
     private void showMyDialog() {
         if (dlg == null) {
@@ -127,6 +141,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         super.onResume();
         showTutorialSnackbars();
         if(mCurrentSession.getState().get() == TimerState.TIMER_FINISHED||mCurrentSession.getState().get() == TimerState.BREAK_FINISHED){
+            Log.d(TAG, "MainActivity: onResume - showMyDialog()");
             showMyDialog();
         }
     }
@@ -270,7 +285,8 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
             bindService(mIntent, mConn, 0);
         }
         mActive = true;
-        EventBus.getDefault().register(this);
+        if(!EventBus.getDefault().isRegistered(this)){
+        EventBus.getDefault().register(this);}
     }
 
     @Override
@@ -305,18 +321,16 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         Log.d(TAG, "MainActivity: onSharedPreferenceChanged()");
         switch (key) {
             case ("default_interval"):
-                if (mCurrentSession.getState().get() != TimerState.ACTIVE) {
                     String min = PrefHelper.getDefaultTime();
                     mCurrentSession.setDefaultMinutes(min);
-                    mIntent.putExtra(KEY_STATE, CHANGE_INTERVAL);
-                    startTimeService(mIntent);
-                }
+                    EventBus.getDefault().post(new StateEvent(TimerState.CHANGE_INTERVAL));//для TimerService
                 break;
             case ("set_plan_day"):
                 //установка количества точек из плана в настройка
                 int i = Integer.parseInt(PrefHelper.getDefaultPlan());
                 binding.stepProgressBar.setNumDots(i);
                 mCurrentSession.setPlan(i);
+                binding.stepProgressBar.invalidate();
                 break;
             case ("switch_count"):
                 mCurrentSession.setIsNeedCount(PrefHelper.getNeedCount());
@@ -367,5 +381,10 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     public void onDialogNegativeClick() {
             mCurrentSession.setState(TimerState.STOPED);
             dlg = null;
+    }
+
+    private void clearStickyEvent() {
+        StateEvent stickyEvent = EventBus.getDefault().getStickyEvent(StateEvent.class);
+        if(stickyEvent != null) { EventBus.getDefault().removeStickyEvent(stickyEvent);}
     }
 }

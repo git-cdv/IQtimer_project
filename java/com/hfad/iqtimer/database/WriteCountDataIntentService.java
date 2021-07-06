@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.room.Room;
+
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -41,7 +43,8 @@ public class WriteCountDataIntentService extends IntentService {
             String strOutput = fmtOut.print(mDateFromPref);
 
             //получаем ссылку на БД
-            AppDatabase db = App.getInstance().getDatabase();
+            AppDatabase db = Room.databaseBuilder(this, AppDatabase.class, "database")
+                    .build();
             //получаем Dao для операций с БД
             SessionDao sessionDao = db.sessionDao();
             //записываем последние данные

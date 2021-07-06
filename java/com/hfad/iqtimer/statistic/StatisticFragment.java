@@ -1,20 +1,12 @@
 package com.hfad.iqtimer.statistic;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -22,10 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
-import androidx.preference.PreferenceManager;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;
@@ -39,29 +27,10 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.android.material.color.MaterialColors;
 import com.hfad.iqtimer.R;
-import com.hfad.iqtimer.database.App;
-import com.hfad.iqtimer.database.AppDatabase;
-import com.hfad.iqtimer.database.Session;
-import com.hfad.iqtimer.database.SessionDao;
-import com.hfad.iqtimer.database.SessionDatabaseHelper;
-import com.hfad.iqtimer.databinding.FragmentProgressBinding;
 import com.hfad.iqtimer.databinding.FragmentStatisticBinding;
-import com.hfad.iqtimer.progress.ProgressViewModel;
 
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class StatisticFragment extends Fragment {
 

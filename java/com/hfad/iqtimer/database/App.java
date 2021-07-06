@@ -5,15 +5,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
-import androidx.room.Room;
 
 import com.hfad.iqtimer.CurrentSession;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.hfad.iqtimer.database.PrefHelper.KEY_COUNTER_CURRENT;
 import static com.hfad.iqtimer.database.PrefHelper.KEY_PREF_COUNT;
-import static com.hfad.iqtimer.database.PrefHelper.KEY_PREF_COUNTER;
 import static com.hfad.iqtimer.database.PrefHelper.KEY_PREF_INTERVAL;
 import static com.hfad.iqtimer.database.PrefHelper.KEY_PREF_PLAN;
 import static com.hfad.iqtimer.tools.Constants.DEFAULT_COUNTER_VALUE;
@@ -25,9 +24,8 @@ public class App extends Application {
 
     public static App instance;
 
-    private AppDatabase database;
     private ExecutorService executor;
-    private Context context;
+    private static Context context;
     private static SharedPreferences mPref,mPrefSettings;
     private static CurrentSession mCurrentSession;
 
@@ -35,8 +33,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        database = Room.databaseBuilder(this, AppDatabase.class, "database")
-                .build();
+
         executor = Executors.newFixedThreadPool(3);
         context = getApplicationContext();
         mPref = getSharedPreferences("data_preferences", MODE_PRIVATE);
@@ -46,7 +43,7 @@ public class App extends Application {
                 mPrefSettings.getString(KEY_PREF_INTERVAL, DEFAULT_WORK_TIME);
         int DefaultPlan = Integer.parseInt(mPrefSettings.getString(KEY_PREF_PLAN, DEFAULT_PLAN));
         int Count = mPref.getInt(KEY_PREF_COUNT, DEFAULT_COUNT_VALUE);
-        int Counter = mPref.getInt(KEY_PREF_COUNTER, DEFAULT_COUNTER_VALUE);
+        int Counter = mPref.getInt(KEY_COUNTER_CURRENT, DEFAULT_COUNTER_VALUE);
         boolean IsNeedCount = mPrefSettings.getBoolean("switch_count", true);
 
         mCurrentSession = new CurrentSession(DefaultMinutes,DefaultPlan,Count,Counter,IsNeedCount);
@@ -56,13 +53,10 @@ public class App extends Application {
         return instance;
     }
 
-    public AppDatabase getDatabase() {
-        return database;
-    }
     public ExecutorService getExecutor() {
         return executor;
     }
-    public Context getContext(){return context;}
+    public static Context getContext(){return context;}
     public static SharedPreferences getPref(){return mPref;}
     public static SharedPreferences getPrefSettings(){return mPrefSettings;}
     public static CurrentSession getSession(){return mCurrentSession;}

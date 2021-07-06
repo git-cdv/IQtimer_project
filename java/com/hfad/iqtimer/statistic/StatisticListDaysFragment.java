@@ -2,7 +2,6 @@ package com.hfad.iqtimer.statistic;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,17 +17,17 @@ import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import androidx.room.Room;
 
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.database.App;
 import com.hfad.iqtimer.database.AppDatabase;
 import com.hfad.iqtimer.database.SessionDao;
-import com.hfad.iqtimer.database.SessionDatabaseHelper;
 
 public class StatisticListDaysFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MYLOGS";
-
+    Context context = App.getContext();
     SimpleCursorAdapter listAdapter;
     static Cursor sCursor;
     AppDatabase db;
@@ -46,7 +45,7 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
         String[] from = new String[]{"date_full", "count"};
         int[] to = new int[]{R.id.stat_date, R.id.stat_count};
 
-        listAdapter = new SimpleCursorAdapter(getContext(),
+        listAdapter = new SimpleCursorAdapter(context,
                 R.layout.stat_view_item,//Как должны выводиться данные.
                 null,//в варианте с лоадером - курсор передает лоадре
                 from,//Вывести содержимое столбца в надписях внутри компонента ListView
@@ -69,8 +68,9 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         Log.d(TAG, "StatisticListDaysFragment: onCreateLoader");
         //получаем ссылку на БД
-        db = App.getInstance().getDatabase();
-        return new MyCursorLoader(getContext(), db);
+        db = Room.databaseBuilder(context, AppDatabase.class, "database")
+                .build();
+        return new MyCursorLoader(context, db);
     }
 
     @Override

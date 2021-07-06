@@ -78,7 +78,7 @@
     <string name="level">Уровень %1$d</string>
     <string name="onback">Для выхода нажмите \"назад\" еще раз</string>
     <string name="tutorial_mess1">Нажмите на таймер, чтобы начать или приостановить</string>
-    <string name="tutorial_mess2">Это статус-бар с планом на день и его выполнением</string>
+    <string name="tutorial_mess2">Это статус-бар с планом на день и его выполнение</string>
     <string name="tutorial_mess3">Это количество сессий за день и значение эффективного режима</string>
 
     <string-array name="goals">

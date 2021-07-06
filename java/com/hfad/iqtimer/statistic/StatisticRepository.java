@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 
 import androidx.preference.PreferenceManager;
+import androidx.room.Room;
 
 import com.github.mikephil.charting.data.BarEntry;
 import com.hfad.iqtimer.database.App;
@@ -40,18 +41,17 @@ interface MonthCallback {
 }
 
 public class StatisticRepository {
-    private static final String KEY_PREF_COUNT = "prefcount";
+    private static final String KEY_PREF_COUNT = "COUNT_value";
     private static final String KEY_PREF_PLAN = "set_plan_day";
 
-    Context context;
     ExecutorService executor;
     AppDatabase db;
     SessionDao sesDao;
 
     public StatisticRepository(Context context) {
-        this.context = context;
         this.executor = App.getInstance().getExecutor();
-        this.db = App.getInstance().getDatabase();
+        this.db = Room.databaseBuilder(context, AppDatabase.class, "database")
+                .build();
         this.sesDao = db.sessionDao();
 
     }
@@ -68,7 +68,7 @@ public class StatisticRepository {
 
                 List<Session> sessionList = sesDao.getAll();
 
-                SharedPreferences mPref = context.getSharedPreferences("prefcount", MODE_PRIVATE);
+                SharedPreferences mPref = App.getPref();
                 int mPrefCount = mPref.getInt(KEY_PREF_COUNT, 0);
 
                 //перебираем все строки в sessionList
@@ -115,11 +115,11 @@ public class StatisticRepository {
 
                 Cursor mCursorForHistory = sesDao.getHistoryCursor();
 
-                SharedPreferences mPref = context.getSharedPreferences("prefcount", MODE_PRIVATE);
+                SharedPreferences mPref = App.getPref();
                 int mPrefCount = mPref.getInt(KEY_PREF_COUNT, 0);
 
                 //получаем доступ к файлу с настройками приложения
-                SharedPreferences sPrefSettings = PreferenceManager.getDefaultSharedPreferences(context);
+                SharedPreferences sPrefSettings = App.getPrefSettings();
                 //вытаскиваем дефолтную значение плана из настроек и присваем переменной
                 int mPlanDefault = Integer.valueOf(sPrefSettings.getString(KEY_PREF_PLAN, "5"));
 
@@ -182,7 +182,7 @@ public class StatisticRepository {
 
                 Cursor sCursorForHistory = sesDao.getHistoryCursor();
 
-                SharedPreferences mPref = context.getSharedPreferences("prefcount", MODE_PRIVATE);
+                SharedPreferences mPref = App.getPref();
                 int mPrefCount = mPref.getInt(KEY_PREF_COUNT, 0);
 
                 //создаем массив для графика
