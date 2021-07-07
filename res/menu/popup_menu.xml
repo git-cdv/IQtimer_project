@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/option_progress"
-        android:title="@string/progress_name"/>
+        android:title="@string/progress"/>
     <item android:id="@+id/option_statistic"
         android:title="@string/stat_actionbar_title" />
     <item android:id="@+id/option_setting"

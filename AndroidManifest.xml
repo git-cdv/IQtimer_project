@@ -49,7 +49,7 @@
         </activity>
         <activity
             android:name=".progress.ProgressActivity"
-            android:label="@string/progress_name"
+            android:label="@string/progress"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

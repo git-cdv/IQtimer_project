@@ -74,7 +74,7 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
                 mSelectedName = getResources().getString(R.string.sessiy);
             }else {mSelectedName = getResources().getString(R.string.powerdays);}
 
-            String mTextDisc = "Моя цель: "+ mQnum + " " + mSelectedName + " за " + mPeriodNum + " " + getResources().getString(R.string.days) +".";
+            String mTextDisc = getResources().getString(R.string.text_my_goal)+ " " +mQnum + " " + mSelectedName + " " + getResources().getString(R.string.text_in) + " " + mPeriodNum + " " + getResources().getString(R.string.days) +".";
 
             if (isGoalSessions){
                 model.createNewGoalSes(mName,mTextDisc,mQnum,mPeriodNum);

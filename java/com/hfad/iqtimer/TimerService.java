@@ -277,7 +277,7 @@ public class TimerService extends Service {
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(pendingIntent)
                 .addAction(0, getString(R.string.dialog_rest_start), startBreakPendingIntent)
-                .addAction(0, getString(R.string.dialog_rest_reset), continuePendingIntent)
+                .addAction(0, getString(R.string.break_skip), continuePendingIntent)
                 .build()};
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -338,7 +338,7 @@ public class TimerService extends Service {
                 .setContentText(getString(R.string.qest_continue))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(pendingIntent)
-                .addAction(0, getString(R.string.dialog_rest_end), continuePendingIntent)
+                .addAction(0, getString(R.string.work_start), continuePendingIntent)
                 .build()};
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

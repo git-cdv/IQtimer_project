@@ -55,7 +55,7 @@ public class DialogSession extends DialogFragment {
         } else {
 
             AlertDialog.Builder adb = new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.dialog_break_end).setPositiveButton(R.string.dialog_work_start, new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.dialog_break_end).setPositiveButton(R.string.work_start, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             listener.onDialogPositiveClick(TimerState.BREAK_FINISHED);

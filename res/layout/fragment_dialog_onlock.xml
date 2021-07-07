@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    >
+
+    <TextView
+        android:id="@+id/onLock_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="?colorOnPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/onLock_premium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/rounded_border_gold"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:text="@string/premium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="?colorOnPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/onLock_title"
+        app:layout_constraintStart_toEndOf="@+id/onLock_title"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/onLock_desc"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:lineSpacingExtra="4sp"
+        android:text="@string/onlock_desc"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textColor="?colorOnPrimary"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/onLock_title"
+        app:layout_constraintTop_toBottomOf="@+id/onLock_title" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/brand_gold"
+        android:text="@string/upgrade"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/onLock_desc" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

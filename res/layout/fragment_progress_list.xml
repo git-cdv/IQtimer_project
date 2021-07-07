@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
-                android:text="@string/progress_text_title"
+                android:text="@string/progress"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display4"
                 android:textSize="18sp"
                 android:textColor="?colorOnPrimary"

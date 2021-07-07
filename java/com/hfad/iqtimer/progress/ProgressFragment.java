@@ -25,10 +25,8 @@ import com.hfad.iqtimer.dialogs.DialogProgressDeleteGoal;
 import java.util.Objects;
 
 
-public class ProgressFragment extends Fragment implements View.OnClickListener {
+public class ProgressFragment extends Fragment {
 
-    DialogFragmentGoal dlgSetGoal;
-    DialogProgressDeleteGoal dlgDelGoal;
     FragmentProgressBinding binding;
     ProgressViewModel mViewmodel;
 
@@ -39,12 +37,8 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
         mViewmodel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
         mViewmodel.getCounter();//заполняем вью Счетчика эф дней подряд
         mViewmodel.getStateGoal();//заполняем вью ЦЕЛИ в зависимости от активности цели
-
-
-        if (mViewmodel.isPremium()) {
-            mViewmodel.getStateP();//заполняем вью Достижений
-        }
-
+        //заполняем вью Достижений
+        if (mViewmodel.isPremium()) {mViewmodel.getStateP(); }
         }
 
     @Override
@@ -54,38 +48,10 @@ public class ProgressFragment extends Fragment implements View.OnClickListener {
                 inflater, R.layout.fragment_progress,container,false);
         View v = binding.getRoot();
 
-        (v.findViewById(R.id.BtnMore)).setOnClickListener(this);
-        (v.findViewById(R.id.btnNewGoal)).setOnClickListener(this);
-        (v.findViewById(R.id.img_btn_add_goal)).setOnClickListener(this);
-        (v.findViewById(R.id.img_btn_cancel_goal)).setOnClickListener(this);
-
         binding.setViewmodel(mViewmodel);
         binding.setLifecycleOwner(this);
 
         return v;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.img_btn_add_goal:
-           case R.id.btnNewGoal:
-                dlgSetGoal = new DialogFragmentGoal();
-                dlgSetGoal.show(getParentFragmentManager(), "dlgSetGoal");
-                mViewmodel.isPutAdd.set(true);
-                break;
-            case R.id.img_btn_cancel_goal:
-                dlgDelGoal= new DialogProgressDeleteGoal();
-                dlgDelGoal.show(getParentFragmentManager(), "dlgDelGoal");
-                mViewmodel.isPutAdd.set(false);
-                break;
-            case R.id.BtnMore:
-                ((ProgressActivity) requireActivity()).toProgressList();
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + v.getId());
-        }
-
     }
 
 }

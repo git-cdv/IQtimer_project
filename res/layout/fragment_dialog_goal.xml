@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/mainDialogLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="24dp">
 
 
@@ -12,7 +16,7 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Моя цель:"
+        android:text="@string/text_my_goal"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -56,7 +60,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inputType="none"
-            android:text="Сессий" />
+            android:text="@string/text_Session" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,7 +78,7 @@
             android:id="@+id/dlgEditTextSession"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Количество"
+            android:hint="@string/text_quantity"
             android:textColorHint="@color/brand_blue_600"
             android:imeOptions="actionDone"
             android:inputType="number" />
@@ -108,7 +112,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="за"
+        android:text="@string/text_in"
         android:textColor="?colorOnPrimary"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="18sp"
@@ -131,11 +135,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="auto"
-            android:hint="Название цели"
+            android:hint="@string/goal_name_empty"
             android:textColorHint="@color/brand_blue_600"
             android:textColor="?colorOnPrimary"
             android:inputType="text"
-            android:text="Цель #1" />
+            android:text="@string/goal_number" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

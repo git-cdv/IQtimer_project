@@ -34,6 +34,7 @@ import com.hfad.iqtimer.database.App;
 import com.hfad.iqtimer.database.PrefHelper;
 import com.hfad.iqtimer.databinding.ActivityMainBinding;
 import com.hfad.iqtimer.dialogs.DialogSession;
+import com.hfad.iqtimer.dialogs.DialogStop;
 import com.hfad.iqtimer.progress.ProgressActivity;
 import com.hfad.iqtimer.settings.AboutActivity;
 import com.hfad.iqtimer.settings.SettingsActivity;
@@ -50,21 +51,19 @@ import java.util.List;
 
 
 public class MainActivity extends FragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener,
-        DialogSession.DialogSessionListener {
+        DialogSession.DialogSessionListener, DialogStop.DialogStopListener {
 
     private static final String TAG = "MYLOGS";
     private static final int STATE_BREAK_STARTED = 400;
     private static final String KEY_STATE = "iqtimer.state";
     private static final int STATE_RUN = 705;
-    private static final int CHANGE_INTERVAL = 710;
-
 
     ImageButton mButtonMenu;
     boolean mBound = false;
     boolean mActive = false;
     ServiceConnection mConn;
     Intent mIntent;
-    DialogFragment dlg;
+    DialogFragment dlg,dlgStop;
     ActivityMainBinding binding;
     private ImageView mTutorialDot, mTutorialDot2;
     private static long back_pressed;
@@ -164,8 +163,11 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
             case R.id.imageButtonStop:
                 Log.d(TAG, "MainActivity: btn_Stop");
-                mCurrentSession.setState(TimerState.STOPED);
-                EventBus.getDefault().post(new StateEvent(TimerState.STOPED));//для TimerService
+                if (dlgStop == null) {
+                    dlgStop = new DialogStop();
+                    dlgStop.setCancelable(false);
+                    dlgStop.show(getSupportFragmentManager(), "StopDialog");
+                }
                 break;
             case R.id.imageButtonMenu:
                 Log.d(TAG, "MainActivity: btn_Menu");
@@ -386,5 +388,16 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     private void clearStickyEvent() {
         StateEvent stickyEvent = EventBus.getDefault().getStickyEvent(StateEvent.class);
         if(stickyEvent != null) { EventBus.getDefault().removeStickyEvent(stickyEvent);}
+    }
+
+    @Override
+    public void onDialogStopPositiveClick() {
+        mCurrentSession.setState(TimerState.STOPED);
+        EventBus.getDefault().post(new StateEvent(TimerState.STOPED));//для TimerService
+    }
+
+    @Override
+    public void onDialogStopNegativeClick() {
+        dlgStop.dismiss();
     }
 }

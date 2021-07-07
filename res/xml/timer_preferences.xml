@@ -6,21 +6,21 @@
         android:key="categ1"
         android:title="@string/set_category_timer">
     <EditTextPreference
-        android:title="Время сессии"
+        android:title="@string/time_duration"
         android:key="default_interval"
-        android:summary="Время сессии по умолчанию"
+        android:summary="@string/by_default"
         android:defaultValue="45"
         />
     <EditTextPreference
-        android:title="Время перерыва"
+        android:title="@string/break_duration"
         android:key="break_time"
-        android:summary="Время перерыва по умолчанию"
+        android:summary="@string/by_default"
         android:defaultValue="15"
         />
     <EditTextPreference
-        android:title="План на день"
+        android:title="@string/plan_day"
         android:key="set_plan_day"
-        android:summary="План на день по умолчанию"
+        android:summary="@string/by_default"
         android:defaultValue="6"
         />
     </PreferenceCategory>
@@ -36,19 +36,19 @@
     <Preference
         android:key="set_dialog_sounds"
         android:title="@string/pref_sounds"
-        android:summary="Звук по умолчанию"
+        android:summary="@string/by_default"
         android:defaultValue="0"
         />
     <Preference
         android:key="set_dialog_sounds_break"
         android:title="@string/pref_sounds_break"
-        android:summary="Звук по умолчанию"
+        android:summary="@string/by_default"
         android:defaultValue="0"
         />
     <Preference
         android:key="set_dialog_vibro"
         android:title="@string/pref_vibrator"
-        android:summary="Вибрация по умолчанию"
+        android:summary="@string/by_default"
         android:defaultValue="0"
         android:icon="@drawable/ic_baseline_vibration_black"
         />
