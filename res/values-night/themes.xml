@@ -39,4 +39,9 @@
     <style name="Widget.IQtimer.Button.TextButton.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@color/brand_blue_200</item>
     </style>
+
+    <style name="IQtimer.TextColor" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/brand_blue_200</item>
+    </style>
+
 </resources>

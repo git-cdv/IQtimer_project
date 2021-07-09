@@ -42,7 +42,6 @@ public class ListProgressFragment extends Fragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_progress_list,container,false);
         View v = binding.getRoot();
-
         binding.setViewmodel(mViewmodel);
         binding.setLifecycleOwner(this);
 

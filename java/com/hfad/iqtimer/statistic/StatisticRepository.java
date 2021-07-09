@@ -94,11 +94,12 @@ public class StatisticRepository {
 
                     //считаем сумму сессий Total
                     mCountTotal = mCountTotal+strCountSession;
-
-                    mCountWeek = mCountWeek+mPrefCount;
-                    mCountMonth = mCountMonth+mPrefCount;
-                    mCountTotal = mCountTotal+mPrefCount;
                 }
+
+                mCountWeek = mCountWeek+mPrefCount;
+                mCountMonth = mCountMonth+mPrefCount;
+                mCountTotal = mCountTotal+mPrefCount;
+
                 int [] array = {mPrefCount,mCountWeek,mCountMonth,mCountTotal};
 
                 callback.onComplete(array);

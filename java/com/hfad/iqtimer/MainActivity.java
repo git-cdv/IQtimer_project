@@ -332,7 +332,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 int i = Integer.parseInt(PrefHelper.getDefaultPlan());
                 binding.stepProgressBar.setNumDots(i);
                 mCurrentSession.setPlan(i);
-                binding.stepProgressBar.invalidate();
+                binding.invalidateAll();
                 break;
             case ("switch_count"):
                 mCurrentSession.setIsNeedCount(PrefHelper.getNeedCount());
@@ -394,10 +394,13 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     public void onDialogStopPositiveClick() {
         mCurrentSession.setState(TimerState.STOPED);
         EventBus.getDefault().post(new StateEvent(TimerState.STOPED));//для TimerService
+        dlgStop=null;
     }
 
     @Override
     public void onDialogStopNegativeClick() {
+
         dlgStop.dismiss();
+        dlgStop=null;
     }
 }
