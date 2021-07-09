@@ -31,30 +31,21 @@ public class ProgressActivity extends AppCompatActivity {
 
 
     public void toClickProgress(View v) {
-        switch(v.getId()) {
-            case R.id.img_btn_add_goal:
-            case R.id.btnNewGoal:
-                dlgSetGoal = new DialogFragmentGoal();
-                dlgSetGoal.show(getSupportFragmentManager(), "dlgSetGoal");
-                mViewmodel.isPutAdd.set(true);
-                break;
-            case R.id.img_btn_cancel_goal:
-                dlgDelGoal= new DialogProgressDeleteGoal();
-                dlgDelGoal.show(getSupportFragmentManager(), "dlgDelGoal");
-                mViewmodel.isPutAdd.set(false);
-                break;
-            case R.id.BtnMore:
-                toProgressList();
-                break;
-            case R.id.img_btn_lock:
-                dlgOnLock = new DialogOnLock();
-                dlgOnLock.show(getSupportFragmentManager(), "dlgOnLock");
-                break;
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + v.getId());
+        if(v.getId()==R.id.img_btn_add_goal||v.getId()==R.id.btnNewGoal){
+            dlgSetGoal = new DialogFragmentGoal();
+            dlgSetGoal.show(getSupportFragmentManager(), "dlgSetGoal");
+            mViewmodel.isPutAdd.set(true);
+        } else if (v.getId()==R.id.img_btn_cancel_goal){
+            dlgDelGoal= new DialogProgressDeleteGoal();
+            dlgDelGoal.show(getSupportFragmentManager(), "dlgDelGoal");
+            mViewmodel.isPutAdd.set(false);
+        } else if (v.getId()==R.id.BtnMore){
+            toProgressList();
+        } else if (v.getId()==R.id.img_btn_lock){
+            dlgOnLock = new DialogOnLock();
+            dlgOnLock.show(getSupportFragmentManager(), "dlgOnLock");
         }
-
     }
 
 public void toProgressList(){

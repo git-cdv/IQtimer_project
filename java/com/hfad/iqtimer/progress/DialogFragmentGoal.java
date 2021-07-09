@@ -1,5 +1,6 @@
 package com.hfad.iqtimer.progress;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
@@ -21,6 +21,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.hfad.iqtimer.R;
 
+import java.util.Objects;
+
 import static com.hfad.iqtimer.R.id.btnCancel;
 
 public class DialogFragmentGoal extends DialogFragment implements View.OnClickListener {
@@ -32,6 +34,7 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
     String selectedNameGoal;
     ProgressViewModel model;
 
+    @SuppressLint("InflateParams")
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "DialogFragmentGoal: onCreateView");
@@ -42,7 +45,7 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
         mEditTextPeriod= v.findViewById(R.id.dlgEditTextPeriod);
         mEditTextNameGoal = v.findViewById(R.id.dlgEditTextNameGoal);
         mTextInputSession = v.findViewById(R.id.textInputSession);
-        mTextInputPeriod= v.findViewById(R.id.textInputDays);;
+        mTextInputPeriod= v.findViewById(R.id.textInputDays);
 
         return v;
     }
@@ -58,17 +61,15 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
     @Override
     public void onClick(View v) {
 
-    switch (v.getId()){
-    case btnCancel:
+    if(v.getId()==btnCancel){
         model.isPutAdd.set(false);
         this.dismiss();
-        break;
-    case R.id.btnOk:
+    } else {
         if(validateInput()){
             String mSelectedName;
-            String mName = mEditTextNameGoal.getText().toString();
-            String mQnum= mEditTextSession.getText().toString();
-            String mPeriodNum= mEditTextPeriod.getText().toString();
+            String mName = Objects.requireNonNull(mEditTextNameGoal.getText()).toString();
+            String mQnum= Objects.requireNonNull(mEditTextSession.getText()).toString();
+            String mPeriodNum= Objects.requireNonNull(mEditTextPeriod.getText()).toString();
             boolean isGoalSessions = selectedNameGoal.equals("sessions");
             if (isGoalSessions){
                 mSelectedName = getResources().getString(R.string.sessiy);
@@ -79,10 +80,10 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
             if (isGoalSessions){
                 model.createNewGoalSes(mName,mTextDisc,mQnum,mPeriodNum);
             }else {model.createNewGoalPower(mName,mTextDisc,mQnum,mPeriodNum);}
-        this.dismiss();
+            this.dismiss();
         }
-        break;
-}
+    }
+
     }
 
     @Override
@@ -93,11 +94,11 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
 
     private boolean validateInput() {
 
-        if (mEditTextSession.getText().toString().length() == 0) {
+        if (Objects.requireNonNull(mEditTextSession.getText()).toString().length() == 0) {
             mTextInputSession.setError(getResources().getString(R.string.empty));
             setupTextListener(mTextInputSession,mEditTextSession);
             return false;
-        } else if (mEditTextPeriod.getText().toString().length() == 0){
+        } else if (Objects.requireNonNull(mEditTextPeriod.getText()).toString().length() == 0){
             mTextInputPeriod.setError(getResources().getString(R.string.empty));
             setupTextListener(mTextInputPeriod,mEditTextPeriod);
             return false;
@@ -130,16 +131,13 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.goals, android.R.layout.simple_spinner_dropdown_item);
         completeTextViewSes.setAdapter(adapter);
-        completeTextViewSes.setOnItemClickListener((new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
-                if (position==0){
-                    selectedNameGoal = "sessions";
-                } else {
-                    selectedNameGoal = "powerdays";
-                }
-
+        completeTextViewSes.setOnItemClickListener(((parent, view, position, l) -> {
+            if (position==0){
+                selectedNameGoal = "sessions";
+            } else {
+                selectedNameGoal = "powerdays";
             }
+
         }));
 
     }

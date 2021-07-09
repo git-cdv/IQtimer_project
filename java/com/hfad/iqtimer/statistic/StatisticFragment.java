@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -49,29 +49,23 @@ public class StatisticFragment extends Fragment {
         mViewmodel = new ViewModelProvider(requireActivity()).get(StatisticViewModel.class);
         //обновляет график после загрузки данных
         LiveData<String []> liveDataDays = mViewmodel.getDaysDates();
-        liveDataDays.observe(this, new Observer<String[]>() {
-            @Override
-            public void onChanged(String[] strings) {
-                Log.d(TAG, "StatisticFragment: liveDataDays");
-                    setDaysChart();
-            }
+        liveDataDays.observe(this, strings -> {
+            Log.d(TAG, "StatisticFragment: liveDataDays");
+                setDaysChart();
         });
 
         LiveData <ArrayList<String>> liveDataMonth = mViewmodel.getMonthDates();
-        liveDataMonth.observe(this, new Observer<ArrayList<String>>() {
-            @Override
-            public void onChanged(ArrayList<String> arrayList) {
-                Log.d(TAG, "StatisticFragment: liveDataMonth");
-                   setMonthChart();
+        liveDataMonth.observe(this, arrayList -> {
+            Log.d(TAG, "StatisticFragment: liveDataMonth");
+               setMonthChart();
 
-            }
         });
 
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "StatisticFragment: onCreateView");
         binding = DataBindingUtil.inflate(
@@ -89,6 +83,7 @@ public class StatisticFragment extends Fragment {
         return v;
     }
 
+    @SuppressWarnings("RedundantArrayCreation")
     void setDaysChart() {
 
         ArrayList<BarEntry> arrayForChartDay = mViewmodel.getBarDaysEntries().getValue();
@@ -108,6 +103,7 @@ public class StatisticFragment extends Fragment {
         ValueFormatter formatter = new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
+                assert datesForChartDay != null;
                 return datesForChartDay[(int) value];
             }
         };
@@ -137,6 +133,7 @@ public class StatisticFragment extends Fragment {
         //устанавливает количество Баров для отображение, если больше - скролится
         mBarChartDay.setVisibleXRangeMaximum(14f);
         //переводит начальный вид графиков в конец
+        assert arrayForChartDay != null;
         mBarChartDay.moveViewToX(arrayForChartDay.size());
         //убираем description
         Description description = mBarChartDay.getDescription();
@@ -157,6 +154,7 @@ public class StatisticFragment extends Fragment {
         String stringDescription = getResources().getString(R.string.stat_chart_description_month);
 
         //создаем через свой класс, где переопределен метод вывода цвета для бара
+        assert arrayForChartMonth != null;
         BarDataSet barDataSet1 = new BarDataSet(arrayForChartMonth,stringDescription);
         //назначаем цвета для баров
         barDataSet1.setColors(ContextCompat.getColor(requireContext(), R.color.brand_blue_600));
@@ -167,6 +165,7 @@ public class StatisticFragment extends Fragment {
         ValueFormatter formatter = new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
+                assert datesForChartMonth != null;
                 return datesForChartMonth.get((int) value);
             }
         };

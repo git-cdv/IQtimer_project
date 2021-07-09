@@ -7,8 +7,6 @@ import androidx.core.app.NavUtils;
 
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;

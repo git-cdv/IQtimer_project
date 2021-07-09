@@ -2,9 +2,6 @@ package com.hfad.iqtimer.database;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import androidx.room.Room;
@@ -12,8 +9,6 @@ import androidx.room.Room;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
-import java.util.List;
 
 public class WriteCountDataIntentService extends IntentService {
     private static final String TAG = "MYLOGS";

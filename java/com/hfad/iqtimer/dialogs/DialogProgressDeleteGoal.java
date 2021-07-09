@@ -17,11 +17,12 @@ public class DialogProgressDeleteGoal extends DialogFragment implements DialogIn
 
     ProgressViewModel mViewmodel;
 
+        @NonNull
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 
             mViewmodel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
 
-            AlertDialog.Builder adb = new AlertDialog.Builder(getActivity())
+            AlertDialog.Builder adb = new AlertDialog.Builder(requireActivity())
                     .setTitle(R.string.dlg_delete_goal_title).setPositiveButton(R.string.yes, this)
                     .setNegativeButton(R.string.cancel, this);
 

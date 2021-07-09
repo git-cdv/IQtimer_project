@@ -1,5 +1,6 @@
 package com.hfad.iqtimer;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -18,7 +19,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.lifecycle.LifecycleService;
 
 import com.hfad.iqtimer.database.App;
 import com.hfad.iqtimer.progress.ProgressCountDataIntentService;
@@ -45,7 +45,6 @@ public class TimerService extends Service {
     private static final int ST_NOTIF_BREAK_STOPED = 900;
     private static final String KEY_TASK = "taskforintentservice";
     private static final int STATE_RUN = 705;
-    private static final int CHANGE_INTERVAL = 710;
 
 
     static private long mTimeLeftInMillis;
@@ -62,8 +61,9 @@ public class TimerService extends Service {
     static boolean isBreak = false;
     static int mState;
     static String mTime;
-    private final CurrentSession mCurrentSession = App.getSession();
+    private final CurrentSession mCurrentSession = App.instance.getSession();
 
+    @SuppressLint("CommitPrefEdits")
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
@@ -185,10 +185,7 @@ public class TimerService extends Service {
         Log.d(TAG, "TimerService: TimerPause()");
     }
 
-    class MyBinder extends Binder {
-        TimerService getService() {
-            return TimerService.this;
-        }
+    static class MyBinder extends Binder {
     }
 
     public void NotificationUpdate(String mTime) {

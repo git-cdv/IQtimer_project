@@ -25,9 +25,9 @@ public class App extends Application {
     public static App instance;
 
     private ExecutorService executor;
-    private static Context context;
+    private Context context;
     private static SharedPreferences mPref,mPrefSettings;
-    private static CurrentSession mCurrentSession;
+    private CurrentSession mCurrentSession;
 
     @Override
     public void onCreate() {
@@ -56,8 +56,8 @@ public class App extends Application {
     public ExecutorService getExecutor() {
         return executor;
     }
-    public static Context getContext(){return context;}
+    public Context getContext(){return context;}
     public static SharedPreferences getPref(){return mPref;}
     public static SharedPreferences getPrefSettings(){return mPrefSettings;}
-    public static CurrentSession getSession(){return mCurrentSession;}
+    public CurrentSession getSession(){return mCurrentSession;}
 }

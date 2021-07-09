@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
@@ -16,27 +17,28 @@ import androidx.preference.PreferenceManager;
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.database.ListSounds;
 
+
 public class SettingDialogSoundsBreak extends DialogFragment implements DialogInterface.OnClickListener {
 
-    private static final String TAG = "MYLOGS";
     private static final String KEY_PREF_SOUND_BREAK_RES = "prefsoundbreakres";
     private static final String KEY_PREF_SOUND_BREAK_NUM = "prefsoundbreaknumber";
 
 
-    String ListTitle[];
-    int ListSounds[];
+    String[] ListTitle;
+    int[] ListSounds;
     ListSounds mListSounds;
     SharedPreferences sPrefSettings;
     MediaPlayer mPlayer;
 
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mListSounds = new ListSounds();
         ListSounds = mListSounds.getList();
-        ListTitle=mListSounds.getListTitle(getContext());
+        ListTitle=mListSounds.getListTitle(requireContext());
         //получаем доступ к файлу с настройками приложения
-        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(requireContext());
         int mChoiceSound = sPrefSettings.getInt(KEY_PREF_SOUND_BREAK_NUM,0);
-        AlertDialog.Builder adb = new AlertDialog.Builder(getActivity())
+        AlertDialog.Builder adb = new AlertDialog.Builder(requireActivity())
                 .setTitle(R.string.pref_sounds_break)
                 .setPositiveButton(R.string.ok, this)
                 .setNegativeButton(R.string.cancel, this)
@@ -56,7 +58,7 @@ public class SettingDialogSoundsBreak extends DialogFragment implements DialogIn
             //записываем выбранный звукe
             ed.putInt(KEY_PREF_SOUND_BREAK_NUM,lv.getCheckedItemPosition());
             ed.putInt(KEY_PREF_SOUND_BREAK_RES,ListSounds[lv.getCheckedItemPosition()]);
-            ed.commit();
+            ed.apply();
 
             }
         else if (which == Dialog.BUTTON_NEGATIVE){

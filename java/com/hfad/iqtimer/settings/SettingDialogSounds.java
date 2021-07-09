@@ -7,9 +7,9 @@ import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
@@ -19,25 +19,25 @@ import com.hfad.iqtimer.database.ListSounds;
 
 public class SettingDialogSounds extends DialogFragment implements DialogInterface.OnClickListener {
 
-    private static final String TAG = "MYLOGS";
     private static final String KEY_PREF_SOUND_RES = "prefsoundres";
     private static final String KEY_PREF_SOUND_NUM = "prefsoundnumber";
 
 
-    String ListTitle[];
-    int ListSounds[];
+    String[] ListTitle;
+    int[] ListSounds;
     ListSounds mListSounds;
     SharedPreferences sPrefSettings;
     MediaPlayer mPlayer;
 
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mListSounds = new ListSounds();
         ListSounds = mListSounds.getList();
-        ListTitle=mListSounds.getListTitle(getContext());
+        ListTitle=mListSounds.getListTitle(requireContext());
         //получаем доступ к файлу с настройками приложения
-        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(requireContext());
         int mChoiceSound = sPrefSettings.getInt(KEY_PREF_SOUND_NUM,0);
-        AlertDialog.Builder adb = new AlertDialog.Builder(getActivity())
+        AlertDialog.Builder adb = new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.pref_sounds)
                 .setPositiveButton(R.string.ok, this)
                 .setNegativeButton(R.string.cancel, this)

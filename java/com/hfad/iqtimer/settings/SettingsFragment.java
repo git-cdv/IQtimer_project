@@ -4,18 +4,12 @@ package com.hfad.iqtimer.settings;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
-import androidx.preference.PreferenceScreen;
 
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.database.ListSounds;
@@ -47,17 +41,18 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
         sharedPreferences = getPreferenceScreen()
                 .getSharedPreferences();
-        PreferenceScreen preferenceScreen = getPreferenceScreen();
         //получаем количество настроек в preferenceScreen
-        int count = preferenceScreen.getPreferenceCount();
         mListSounds = new ListSounds();
-        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        sPrefSettings = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
         Preference preferenceInterval = findPreference("default_interval");//получаем настройку интервала
+        assert preferenceInterval != null;
         setDefaultSummaryLite(preferenceInterval);
         Preference preferenceBreakTime = findPreference("break_time");//получаем настройку перерыва
+        assert preferenceBreakTime != null;
         setDefaultSummaryLite(preferenceBreakTime);
         Preference preferencePlan = findPreference("set_plan_day"); //получаем настройку плана
+        assert preferencePlan != null;
         setDefaultSummaryLite(preferencePlan);
         Preference preferenceSwitch = findPreference("switch_notif"); //получаем настройку switch
         //получаем настройку Диалога выбора мелодии и вибро
@@ -73,17 +68,17 @@ public class SettingsFragment extends PreferenceFragmentCompat
         EditTextPreference editTextPreferenceBreak = getPreferenceManager().findPreference("break_time");
         EditTextPreference editTextPreferencePlan = getPreferenceManager().findPreference("set_plan_day");
 
-        EditTextPreference.OnBindEditTextListener EditTextListener = new EditTextPreference.OnBindEditTextListener() {
-            @Override
-            public void onBindEditText(@NonNull EditText editText) {
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                editText.getText().clear();//очищаем фокус для удобства ввода
+        EditTextPreference.OnBindEditTextListener EditTextListener = editText -> {
+            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            editText.getText().clear();//очищаем фокус для удобства ввода
 
-            }
         };
 
+        assert editTextPreferenceInterval != null;
         editTextPreferenceInterval.setOnBindEditTextListener(EditTextListener);
+        assert editTextPreferenceBreak != null;
         editTextPreferenceBreak.setOnBindEditTextListener(EditTextListener);
+        assert editTextPreferencePlan != null;
         editTextPreferencePlan.setOnBindEditTextListener(EditTextListener);
 
 
@@ -92,9 +87,11 @@ public class SettingsFragment extends PreferenceFragmentCompat
             preferenceDialogSoundsBreak.setVisible(false);
         }
         //назначаем на нее слушателя на нажатие
+        assert preferenceSwitch != null;
         preferenceSwitch.setOnPreferenceClickListener(this);
         preferenceDialogSounds.setOnPreferenceClickListener(this);
         preferenceDialogSoundsBreak.setOnPreferenceClickListener(this);
+        assert preferenceDialogVibro != null;
         preferenceDialogVibro.setOnPreferenceClickListener(this);
         //назначаем на нее слушателя для проверки на валидность
         preferenceInterval.setOnPreferenceChangeListener(this);
@@ -104,8 +101,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     }
 
     private void setDefaultSummary(Preference pref, String prefKey) {
-        getDefaultSound(prefKey);
-        setPreferenceLabel(pref, mDefValue);
+        setPreferenceLabel(pref, getDefaultSound(prefKey));
     }
 
     private void setDefaultSummaryLite(Preference pref) {
@@ -120,11 +116,11 @@ public class SettingsFragment extends PreferenceFragmentCompat
         switch (key){
             case KEY_PREF_SOUND_BREAK_NUM:
             case KEY_PREF_SOUND_NUM:
-                String ListTitle[]=mListSounds.getListTitle(getContext());
+                String[] ListTitle =mListSounds.getListTitle(requireContext());
                 mDefValue = ListTitle[mChoiceSound];
                 break;
             case KEY_PREF_VIBRO_NUM:
-                String ListTitleVibro[]=mListSounds.getListTitleVibro(getContext());
+                String[] ListTitleVibro =mListSounds.getListTitleVibro(requireContext());
                 mDefValue = ListTitleVibro[mChoiceSound];
             break;
                     }
@@ -149,28 +145,31 @@ public class SettingsFragment extends PreferenceFragmentCompat
     //слушает изменение в настройках ПОСЛЕ записи
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        String value;
-        //получаем настройку которую передали по ключу
+               //получаем настройку которую передали по ключу
         Preference preference = findPreference(key);
         switch (key) {
             case KEY_PREF_SOUND_RES:
             case KEY_PREF_SOUND_NUM:
                 getDefaultSound(KEY_PREF_SOUND_NUM);
                 preference = findPreference("set_dialog_sounds");
+                assert preference != null;
                 setPreferenceLabel(preference, mDefValue);
                 break;
             case KEY_PREF_SOUND_BREAK_RES:
             case KEY_PREF_SOUND_BREAK_NUM:
                 getDefaultSound(KEY_PREF_SOUND_BREAK_NUM);
                 preference = findPreference("set_dialog_sounds_break");
+                assert preference != null;
                 setPreferenceLabel(preference, mDefValue);
                 break;
             case KEY_PREF_VIBRO_NUM:
                 getDefaultSound(KEY_PREF_VIBRO_NUM);
                 preference = findPreference("set_dialog_vibro");
+                assert preference != null;
                 setPreferenceLabel(preference, mDefValue);
                 break;
             case "switch_notif":
+                assert preference != null;
                 if (sharedPreferences.getBoolean(preference.getKey(),true)){
                     preferenceDialogSounds.setVisible(true);
                     preferenceDialogSoundsBreak.setVisible(true);
@@ -184,6 +183,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 break;
 
             default:
+                assert preference != null;
                 mDefValue = sharedPreferences.getString(preference.getKey(), "");
                 //устанавливаем значение в описание Summary
                 setPreferenceLabel(preference, mDefValue);
@@ -204,6 +204,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
             String defaultPlanString = (String) o;
 
             if (Integer.parseInt(defaultPlanString) > 30 || Integer.parseInt(defaultPlanString) < 1) {
+                assert toast != null;
                 toast.show();
                 return false;
             }

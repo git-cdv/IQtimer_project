@@ -58,38 +58,29 @@ public class StatisticViewModel extends AndroidViewModel {
     //результат приходит в рабочем фоне, поэтому используем LiveData и .postValue() для передачи в Главный поток
     public void setDataObzor() {
         isDataObzorDone.set(false);
-        repo.getDataObzor(new ObzorCallback() {
-            @Override
-            public void onComplete(int[] result) {
-                countToday.postValue(result[0]);
-                countWeek.postValue(result[1]);
-                countMonth.postValue(result[2]);
-                countTotal.postValue(result[3]);
-                isDataObzorDone.set(true);
-            }
+        repo.getDataObzor(result -> {
+            countToday.postValue(result[0]);
+            countWeek.postValue(result[1]);
+            countMonth.postValue(result[2]);
+            countTotal.postValue(result[3]);
+            isDataObzorDone.set(true);
         });
     }
 
     public void setDataDays() {
         isDataDaysDone.set(false);
-        repo.getDataDays(new DaysCallback() {
-            @Override
-            public void onComplete(ArrayList<BarEntry> barEntries , String [] dates, int planDefault) {
-                barDaysEntries.postValue(barEntries);
-                mPlanDefault.postValue(planDefault);
-                daysDates.postValue(dates);
-            }
+        repo.getDataDays((barEntries, dates, planDefault) -> {
+            barDaysEntries.postValue(barEntries);
+            mPlanDefault.postValue(planDefault);
+            daysDates.postValue(dates);
         });
     }
 
     public void setDataMonth() {
         isDataMonthDone.set(false);
-        repo.getDataMonth(new MonthCallback() {
-            @Override
-            public void onComplete(ArrayList<BarEntry> barEntries , ArrayList<String> dates) {
-                barMonthEntries.postValue(barEntries);
-                monthDates.postValue(dates);
-            }
+        repo.getDataMonth((barEntries, dates) -> {
+            barMonthEntries.postValue(barEntries);
+            monthDates.postValue(dates);
         });
     }
 

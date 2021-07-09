@@ -1,5 +1,6 @@
 package com.hfad.iqtimer.dialogs;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.hfad.iqtimer.R;
 
 public class DialogOnLock extends DialogFragment{
 
+    @SuppressLint("InflateParams")
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 

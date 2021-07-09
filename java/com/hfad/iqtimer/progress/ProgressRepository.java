@@ -1,17 +1,10 @@
 package com.hfad.iqtimer.progress;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.hfad.iqtimer.database.App;
 
 import org.joda.time.LocalDate;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import static android.content.Context.MODE_PRIVATE;
-
 
 public class ProgressRepository {
 

@@ -1,5 +1,6 @@
 package com.hfad.iqtimer.statistic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -27,7 +28,7 @@ import com.hfad.iqtimer.database.SessionDao;
 public class StatisticListDaysFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MYLOGS";
-    Context context = App.getContext();
+    Context context = App.instance.getContext();
     SimpleCursorAdapter listAdapter;
     static Cursor sCursor;
     AppDatabase db;
@@ -36,7 +37,7 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_stat_list_days, null);
+        @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.fragment_stat_list_days, null);
 
         // создаем лоадер для чтения данных (работает только с фрагментами)
         LoaderManager.getInstance(this).initLoader(0, null, this);

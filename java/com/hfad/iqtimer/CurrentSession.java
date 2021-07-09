@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.util.Log;
 
 import androidx.databinding.ObservableField;
-import androidx.databinding.ObservableInt;
 import androidx.lifecycle.MutableLiveData;
 
 import com.hfad.iqtimer.database.App;
@@ -40,7 +39,7 @@ public class CurrentSession {
         this.mCounter.set(Counter);
         this.IsNeedCount.setValue(IsNeedCount);
         mToday = (LocalDate.now()).toString();
-        context = App.getContext();
+        context = App.instance.getContext();
         checkNewDay();
     }
     public ObservableField<TimerState> getState() {

@@ -70,15 +70,13 @@ public class ListSounds {
         //2 - первый виброзвонок в мс
         //3 - пауза в мс
         //4 - второй виброзвонок в мс
-        long[] pattern0 = null;
         long[] patternLow = { 0, 100, 100, 100 };
         long[] patternHigh = { 0, 500, 100, 500 };
         long[] patternSos = {100,30,100,30,100,200,200,30,200,30,200,200,100,30,100,30,100};
         long[] patternPuls = { 0, 300, 100, 300,400,300,100,300 };
         long[] patternFanfare = {50,100,50,100,50,100,400,100,300,100,350,50,200,100,100,50,600};
         long[] patternStarWars = {500,110,500,110,450,110,200,110,170,40,450,110,200,110,170,40,500};
-        long[][] ListVibro = {pattern0,patternLow,patternHigh,patternSos,patternPuls,patternFanfare,patternStarWars};
 
-        return ListVibro;
+        return new long[][]{null,patternLow,patternHigh,patternSos,patternPuls,patternFanfare,patternStarWars};
     }
 }

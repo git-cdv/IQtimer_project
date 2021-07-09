@@ -1,17 +1,13 @@
 package com.hfad.iqtimer.progress;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import androidx.preference.PreferenceManager;
-
 import com.hfad.iqtimer.R;
 import com.hfad.iqtimer.database.App;
 import com.hfad.iqtimer.database.PrefHelper;
 
 import org.joda.time.LocalDate;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class GoalRepository {
 
@@ -38,6 +34,7 @@ public class GoalRepository {
     SharedPreferences.Editor ed;
 
 
+    @SuppressLint("CommitPrefEdits")
     public GoalRepository(Context context) {
         this.context = context;
         mPref = App.getPref();

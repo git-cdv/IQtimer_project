@@ -5,13 +5,10 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.preference.PreferenceManager;
 
-import android.app.Dialog;
+
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -20,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -67,7 +63,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     ActivityMainBinding binding;
     private ImageView mTutorialDot, mTutorialDot2;
     private static long back_pressed;
-    private final CurrentSession mCurrentSession = App.getSession();
+    private final CurrentSession mCurrentSession = App.getInstance().getSession();
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -146,69 +142,62 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     }
 
     public void toClick(View v) {
-        switch (v.getId()) {
 
-            case R.id.timer_view:
-                if (mCurrentSession.getState().get() == TimerState.ACTIVE) {//это пауза
-                    Log.d(TAG, "MainActivity: Pause");
-                    mCurrentSession.setState(TimerState.PAUSED);
-                    EventBus.getDefault().post(new StateEvent(TimerState.PAUSED));//для TimerService
-                } else {
-                    Log.d(TAG, "MainActivity: Start");
-                    mIntent.putExtra(KEY_STATE, STATE_RUN);
-                    startTimeService(mIntent);
-                    mCurrentSession.setState(TimerState.ACTIVE);
-                }
-                break;
+        if (v.getId() == R.id.timer_view) {
 
-            case R.id.imageButtonStop:
-                Log.d(TAG, "MainActivity: btn_Stop");
-                if (dlgStop == null) {
-                    dlgStop = new DialogStop();
-                    dlgStop.setCancelable(false);
-                    dlgStop.show(getSupportFragmentManager(), "StopDialog");
-                }
-                break;
-            case R.id.imageButtonMenu:
-                Log.d(TAG, "MainActivity: btn_Menu");
-                showMenu(v);
-                break;
-
+            if (mCurrentSession.getState().get() == TimerState.ACTIVE) {//это пауза
+                Log.d(TAG, "MainActivity: Pause");
+                mCurrentSession.setState(TimerState.PAUSED);
+                EventBus.getDefault().post(new StateEvent(TimerState.PAUSED));//для TimerService
+            } else {
+                Log.d(TAG, "MainActivity: Start");
+                mIntent.putExtra(KEY_STATE, STATE_RUN);
+                startTimeService(mIntent);
+                mCurrentSession.setState(TimerState.ACTIVE);
+            }
+        } else if (v.getId() == R.id.imageButtonStop) {
+            Log.d(TAG, "MainActivity: btn_Stop");
+            if (dlgStop == null) {
+                dlgStop = new DialogStop();
+                dlgStop.setCancelable(false);
+                dlgStop.show(getSupportFragmentManager(), "StopDialog");
+            }
+        } else if (v.getId() == R.id.imageButtonMenu) {
+            Log.d(TAG, "MainActivity: btn_Menu");
+            showMenu(v);
         }
     }
+
 
     private void showMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
         popup.inflate(R.menu.popup_menu);
 
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case (R.id.option_progress):
-                        //открываем активити со Достижениями
-                        Intent openProgress = new Intent(getApplication(), ProgressActivity.class);
-                        startActivity(openProgress);
-                        break;
-                    case (R.id.option_statistic):
-                        //открываем активити со статистикой
-                        Intent openStat = new Intent(getApplication(), StatisticActivity.class);
-                        startActivity(openStat);
-                        break;
-                    //открываем активити с настройками
-                    case (R.id.option_setting):
-                        Intent openSettings = new Intent(getApplication(), SettingsActivity.class);
-                        startActivity(openSettings);
-                        break;
-                    case (R.id.option_about):
-                        //открываем активити с инфой
-                        Intent openAbout = new Intent(getApplication(), AboutActivity.class);
-                        startActivity(openAbout);
-                        break;
-                }
-                return true;
-
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case (R.id.option_progress):
+                    //открываем активити со Достижениями
+                    Intent openProgress = new Intent(getApplication(), ProgressActivity.class);
+                    startActivity(openProgress);
+                    break;
+                case (R.id.option_statistic):
+                    //открываем активити со статистикой
+                    Intent openStat = new Intent(getApplication(), StatisticActivity.class);
+                    startActivity(openStat);
+                    break;
+                //открываем активити с настройками
+                case (R.id.option_setting):
+                    Intent openSettings = new Intent(getApplication(), SettingsActivity.class);
+                    startActivity(openSettings);
+                    break;
+                case (R.id.option_about):
+                    //открываем активити с инфой
+                    Intent openAbout = new Intent(getApplication(), AboutActivity.class);
+                    startActivity(openAbout);
+                    break;
             }
+            return true;
+
         });
 
         popup.show();
@@ -256,6 +245,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 mTutorialDot2.setAnimation(animTap);
             }
 
+            @SuppressLint("ShowToast")
             Snackbar s = Snackbar.make(mButtonMenu, messages.get(PrefHelper.getLastIntroStep()), Snackbar.LENGTH_INDEFINITE)
                     .setAction("OK", view -> {
                         int nextStep = i + 1;
@@ -264,7 +254,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                     })
                     .setAnchorView(mButtonMenu)
                     .setActionTextColor(Color.WHITE)
-                    .setBackgroundTint(getResources().getColor(R.color.brand_blue_900));
+                    .setBackgroundTint(getResources().getColor(R.color.brand_blue_900,getTheme()));
 
             s.setBehavior(new BaseTransientBottomBar.Behavior() {
                 @Override
@@ -370,13 +360,12 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
             mIntentBreak.putExtra(KEY_STATE, STATE_BREAK_STARTED);
             startTimeService(mIntentBreak);
             mCurrentSession.setState(TimerState.BREAK);
-            dlg = null;
         } else {
             mIntent.putExtra(KEY_STATE, STATE_RUN);
             startTimeService(mIntent);
             mCurrentSession.setState(TimerState.ACTIVE);
-            dlg = null;
         }
+        dlg = null;
     }
 
     @Override

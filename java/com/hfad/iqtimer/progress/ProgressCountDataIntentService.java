@@ -210,11 +210,11 @@ public class ProgressCountDataIntentService extends IntentService {
             //проверяем текущие уровни других Достижений
             int mCount = 0;
             int mLevelEntuz = mPref.getInt(KEY_ENTUZIAST_LEVEL, 0);
-            if(mLevelEntuz>mLevel){mCount++;};
+            if(mLevelEntuz>mLevel){mCount++;}
             int mLevelHero = mPref.getInt(KEY_HERO_LEVEL, 0);
-            if(mLevelHero>mLevel){mCount++;};
+            if(mLevelHero>mLevel){mCount++;}
             int mLevelPokor = mPref.getInt(KEY_POKORITEL_LEVEL, 0);
-            if(mLevelPokor>mLevel){mCount++;};
+            if(mLevelPokor>mLevel){mCount++;}
 
             ed.putInt(KEY_LEGENDA_LEVEL, mLevel);
             ed.putInt(KEY_LEGENDA_CURRENT, mCount);
