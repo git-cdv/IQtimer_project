@@ -68,7 +68,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                         />
+                        android:contentDescription="@string/avatar_ach" />
 
                     <ImageView
                         android:id="@+id/imageEntuziast"
@@ -78,7 +78,9 @@
                         app:layout_constraintBottom_toTopOf="@+id/LevelEnt"
                         app:layout_constraintEnd_toEndOf="@+id/image1"
                         app:layout_constraintStart_toStartOf="@+id/image1"
-                        app:layout_constraintTop_toTopOf="@+id/image1" />
+                        app:layout_constraintTop_toTopOf="@+id/image1"
+                        android:contentDescription="@string/avatar_ach"
+                        />
 
                     <TextView
                         android:id="@+id/LevelEnt"
@@ -186,6 +188,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@string/avatar_ach"
                          />
                     <ImageView
                         android:id="@+id/imageVoin"
@@ -195,7 +198,8 @@
                         app:layout_constraintBottom_toTopOf="@+id/LevelVoin"
                         app:layout_constraintEnd_toEndOf="@+id/image2"
                         app:layout_constraintStart_toStartOf="@+id/image2"
-                        app:layout_constraintTop_toTopOf="@+id/image2" />
+                        app:layout_constraintTop_toTopOf="@+id/image2"
+                        android:contentDescription="@string/avatar_ach"/>
 
                     <TextView
                         android:id="@+id/LevelVoin"
@@ -300,6 +304,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@string/avatar_ach"
                        />
 
                     <ImageView
@@ -310,7 +315,8 @@
                         app:layout_constraintBottom_toTopOf="@+id/LevelBoss"
                         app:layout_constraintEnd_toEndOf="@+id/image3"
                         app:layout_constraintStart_toStartOf="@+id/image3"
-                        app:layout_constraintTop_toTopOf="@+id/image3" />
+                        app:layout_constraintTop_toTopOf="@+id/image3"
+                        android:contentDescription="@string/avatar_ach"/>
 
                     <TextView
                         android:id="@+id/LevelBoss"
@@ -415,6 +421,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@string/avatar_ach"
                          />
 
                     <ImageView
@@ -425,7 +432,8 @@
                         app:layout_constraintBottom_toTopOf="@+id/LevelPok"
                         app:layout_constraintEnd_toEndOf="@+id/image4"
                         app:layout_constraintStart_toStartOf="@+id/image4"
-                        app:layout_constraintTop_toTopOf="@+id/image4" />
+                        app:layout_constraintTop_toTopOf="@+id/image4"
+                        android:contentDescription="@string/avatar_ach"/>
 
                     <TextView
                         android:id="@+id/LevelPok"
@@ -530,6 +538,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@string/avatar_ach"
                        />
                     <ImageView
                         android:id="@+id/imageHero"
@@ -539,7 +548,8 @@
                         app:layout_constraintBottom_toTopOf="@+id/LevelHero"
                         app:layout_constraintEnd_toEndOf="@+id/image5"
                         app:layout_constraintStart_toStartOf="@+id/image5"
-                        app:layout_constraintTop_toTopOf="@+id/image5" />
+                        app:layout_constraintTop_toTopOf="@+id/image5"
+                        android:contentDescription="@string/avatar_ach"/>
 
                     <TextView
                         android:id="@+id/LevelHero"
@@ -644,6 +654,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@string/avatar_ach"
                          />
                     <ImageView
                         android:id="@+id/imageLeg"
@@ -653,7 +664,8 @@
                         app:layout_constraintBottom_toTopOf="@+id/LevelLegenda"
                         app:layout_constraintEnd_toEndOf="@+id/image6"
                         app:layout_constraintStart_toStartOf="@+id/image6"
-                        app:layout_constraintTop_toTopOf="@+id/image6" />
+                        app:layout_constraintTop_toTopOf="@+id/image6"
+                        android:contentDescription="@string/avatar_ach"/>
 
                     <TextView
                         android:id="@+id/LevelLegenda"
@@ -757,7 +769,8 @@
                         app:backgroundProgress="@{viewmodel.winner_l.intValue()}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@string/avatar_ach"/>
 
                     <ImageView
                         android:id="@+id/imageWinner"
@@ -767,7 +780,8 @@
                         app:layout_constraintBottom_toBottomOf="@+id/image7"
                         app:layout_constraintEnd_toEndOf="@+id/image7"
                         app:layout_constraintStart_toStartOf="@+id/image7"
-                        app:layout_constraintTop_toTopOf="@+id/image7" />
+                        app:layout_constraintTop_toTopOf="@+id/image7"
+                        android:contentDescription="@string/avatar_ach"/>
 
 
 
@@ -849,6 +863,7 @@
                 app:layout_constraintTop_toTopOf="@+id/textView3"
                 app:srcCompat="@drawable/ic_lock_24"
                 android:onClick="toClickProgress"
+                android:contentDescription="@string/todo"
                 />
 
 

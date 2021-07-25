@@ -53,16 +53,5 @@
         android:icon="@drawable/ic_baseline_vibration_black"
         />
     </PreferenceCategory>
-    <PreferenceCategory
-        android:key="categ3"
-        android:title="@string/set_category_mainscreen"
-        >
 
-        <SwitchPreference
-            android:key="switch_count"
-            android:title="@string/set_swith_count"
-            android:defaultValue="true"
-            />
-
-    </PreferenceCategory>
 </PreferenceScreen>

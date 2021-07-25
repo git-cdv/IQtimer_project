@@ -51,7 +51,7 @@ public class TimerService extends Service {
     static private long mBreakTimeInMillis;
     static private long mDefaultTimeInMillis;
     private static CountDownTimer mTimer;
-    MyBinder mBinder = new MyBinder();
+    final MyBinder mBinder = new MyBinder();
     SharedPreferences mPref;
     static SharedPreferences sPrefSettings;
     SharedPreferences.Editor ed;

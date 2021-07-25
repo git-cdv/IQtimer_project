@@ -113,12 +113,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 //если запущенно из Нотиф - убираем диалог
                 if(dlg != null){dlg.dismiss();}
                 break;
-            case COUNTER_UP:
-                showMyDialog();
-                mCurrentSession.mCounter.set(PrefHelper.getCounter());
-                //удаляем липкое оповещение чтобы больше не получать
-                clearStickyEvent();
-                break;
         }
     }
 
@@ -322,10 +316,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
                 int i = Integer.parseInt(PrefHelper.getDefaultPlan());
                 binding.stepProgressBar.setNumDots(i);
                 mCurrentSession.setPlan(i);
-                binding.invalidateAll();
-                break;
-            case ("switch_count"):
-                mCurrentSession.setIsNeedCount(PrefHelper.getNeedCount());
                 binding.invalidateAll();
                 break;
         }

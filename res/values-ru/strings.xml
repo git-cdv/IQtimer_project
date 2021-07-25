@@ -87,7 +87,7 @@
     <string name="onback">Для выхода нажмите \"назад\" еще раз</string>
     <string name="tutorial_mess1">Нажмите на таймер, чтобы начать или приостановить</string>
     <string name="tutorial_mess2">Это статус-бар с планом на день и его выполнение</string>
-    <string name="tutorial_mess3">Это количество сессий за день и значение эффективного режима</string>
+    <string name="tutorial_mess3">Это количество сессий за день</string>
     <string-array name="goals">
         <item>Сессий</item>
         <item>Эффективных дней</item>
@@ -105,5 +105,9 @@
     <string name="onlock_desc">Обновить до Premium-версии, чтобы поддержать наше приложение и получить активацию страницы Достижения.</string>
     <string name="premium">Premium</string>
     <string name="upgrade">Обновить</string>
+    <string name="descim_menu">Меню</string>
+    <string name="count">Счетчик сессий</string>
+    <string name="todo">Пусто</string>
+    <string name="avatar_ach">avatar for achievement</string>
 
 </resources>

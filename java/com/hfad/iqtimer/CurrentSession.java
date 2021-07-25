@@ -18,26 +18,21 @@ import java.util.Locale;
 public class CurrentSession {
     private static final String TAG = "MYLOGS";
 
-    String mToday;
-    Context context;
+    final String mToday;
+    final Context context;
     String DefaultMinutes;
 
-    public ObservableField<String> mTime = new ObservableField<>();
-    public ObservableField<TimerState> mState = new ObservableField<>();
-    public ObservableField<Integer> mCount = new ObservableField<>();
-    public ObservableField<Integer> mCounter = new ObservableField<>();
+    public final ObservableField<String> mTime = new ObservableField<>();
+    public final ObservableField<TimerState> mState = new ObservableField<>();
+    public final ObservableField<Integer> mCount = new ObservableField<>();
     private final MutableLiveData<Integer> mPlan = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> IsNeedCount = new MutableLiveData<>();
 
-
-    public CurrentSession(String DefaultMinutes, int DefaultPlan, int Count, int Counter, boolean IsNeedCount) {
+    public CurrentSession(String DefaultMinutes, int DefaultPlan, int Count) {
         this.DefaultMinutes=DefaultMinutes;
         this.mTime.set(getDefaultTime(DefaultMinutes));
         this.mState.set(TimerState.STOPED);
         this.mCount.set(Count);
         this.mPlan.setValue(DefaultPlan);
-        this.mCounter.set(Counter);
-        this.IsNeedCount.setValue(IsNeedCount);
         mToday = (LocalDate.now()).toString();
         context = App.instance.getContext();
         checkNewDay();
@@ -57,10 +52,6 @@ public class CurrentSession {
     public MutableLiveData<Integer> getPlan() {
         return mPlan;
     }
-    public MutableLiveData<Boolean> getIsNeedCount() {
-        return IsNeedCount;
-    }
-    public void setIsNeedCount(boolean b) {IsNeedCount.setValue(b);}
     public void setPlan(int i) { mPlan.setValue(i);}
 
     public String getDefaultTime(String DefaultMinutes) {

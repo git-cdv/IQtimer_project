@@ -41,9 +41,9 @@ public class StatisticRepository {
     private static final String KEY_PREF_COUNT = "COUNT_value";
     private static final String KEY_PREF_PLAN = "set_plan_day";
 
-    ExecutorService executor;
-    AppDatabase db;
-    SessionDao sesDao;
+    final ExecutorService executor;
+    final AppDatabase db;
+    final SessionDao sesDao;
 
     public StatisticRepository(Context context) {
         this.executor = App.getInstance().getExecutor();

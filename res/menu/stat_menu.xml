@@ -6,7 +6,6 @@
     android:icon="@drawable/ic_baseline_list_24"
     android:title="@string/stat_list"
     app:showAsAction="ifRoom|withText"
-    android:iconTint="@color/brand_gold"
     />
     <item
         android:id="@+id/stat_graph"

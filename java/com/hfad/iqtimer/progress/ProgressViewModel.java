@@ -23,41 +23,41 @@ public class ProgressViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public ObservableField<String> name = new ObservableField<>();
-    public ObservableField<String> desc = new ObservableField<>();
-    public ObservableField<String> q_current = new ObservableField<>();
-    public ObservableField<String> q_plan = new ObservableField<>();
-    public ObservableField<String> days_current = new ObservableField<>();
-    public ObservableField<String> days_plan = new ObservableField<>();
-    public ObservableBoolean isPutAdd = new ObservableBoolean();
-    public ObservableBoolean isViewDone = new ObservableBoolean();
-    public ObservableField<String> textGoalDone = new ObservableField<>();
-    public ObservableField<Integer> counter = new ObservableField<>();
+    public final ObservableField<String> name = new ObservableField<>();
+    public final ObservableField<String> desc = new ObservableField<>();
+    public final ObservableField<String> q_current = new ObservableField<>();
+    public final ObservableField<String> q_plan = new ObservableField<>();
+    public final ObservableField<String> days_current = new ObservableField<>();
+    public final ObservableField<String> days_plan = new ObservableField<>();
+    public final ObservableBoolean isPutAdd = new ObservableBoolean();
+    public final ObservableBoolean isViewDone = new ObservableBoolean();
+    public final ObservableField<String> textGoalDone = new ObservableField<>();
+    public final ObservableField<Integer> counter = new ObservableField<>();
 
-    public MutableLiveData<Integer> entuziast_c = new MutableLiveData<>();
-    public MutableLiveData<Integer> entuziast_p = new MutableLiveData<>();
-    public MutableLiveData<Integer> entuziast_l = new MutableLiveData<>();
-    public MutableLiveData<Integer> voin_c = new MutableLiveData<>();
-    public MutableLiveData<Integer> voin_p = new MutableLiveData<>();
-    public MutableLiveData<Integer> voin_l = new MutableLiveData<>();
-    public MutableLiveData<Integer> boss_c = new MutableLiveData<>();
-    public MutableLiveData<Integer> boss_p = new MutableLiveData<>();
-    public MutableLiveData<Integer> boss_l = new MutableLiveData<>();
-    public MutableLiveData<Integer> hero_c = new MutableLiveData<>();
-    public MutableLiveData<Integer> hero_p = new MutableLiveData<>();
-    public MutableLiveData<Integer> hero_l = new MutableLiveData<>();
-    public MutableLiveData<Integer> pokoritel_c = new MutableLiveData<>();
-    public MutableLiveData<Integer> pokoritel_p = new MutableLiveData<>();
-    public MutableLiveData<Integer> pokoritel_l = new MutableLiveData<>();
-    public MutableLiveData<Integer> legenda_c = new MutableLiveData<>();
-    public MutableLiveData<Integer> legenda_p = new MutableLiveData<>();
-    public MutableLiveData<Integer> legenda_l = new MutableLiveData<>();
-    public MutableLiveData<Integer> winner_c = new MutableLiveData<>();
-    public MutableLiveData<Integer> winner_p = new MutableLiveData<>();
-    public MutableLiveData<Integer> winner_l = new MutableLiveData<>();
+    public final MutableLiveData<Integer> entuziast_c = new MutableLiveData<>();
+    public final MutableLiveData<Integer> entuziast_p = new MutableLiveData<>();
+    public final MutableLiveData<Integer> entuziast_l = new MutableLiveData<>();
+    public final MutableLiveData<Integer> voin_c = new MutableLiveData<>();
+    public final MutableLiveData<Integer> voin_p = new MutableLiveData<>();
+    public final MutableLiveData<Integer> voin_l = new MutableLiveData<>();
+    public final MutableLiveData<Integer> boss_c = new MutableLiveData<>();
+    public final MutableLiveData<Integer> boss_p = new MutableLiveData<>();
+    public final MutableLiveData<Integer> boss_l = new MutableLiveData<>();
+    public final MutableLiveData<Integer> hero_c = new MutableLiveData<>();
+    public final MutableLiveData<Integer> hero_p = new MutableLiveData<>();
+    public final MutableLiveData<Integer> hero_l = new MutableLiveData<>();
+    public final MutableLiveData<Integer> pokoritel_c = new MutableLiveData<>();
+    public final MutableLiveData<Integer> pokoritel_p = new MutableLiveData<>();
+    public final MutableLiveData<Integer> pokoritel_l = new MutableLiveData<>();
+    public final MutableLiveData<Integer> legenda_c = new MutableLiveData<>();
+    public final MutableLiveData<Integer> legenda_p = new MutableLiveData<>();
+    public final MutableLiveData<Integer> legenda_l = new MutableLiveData<>();
+    public final MutableLiveData<Integer> winner_c = new MutableLiveData<>();
+    public final MutableLiveData<Integer> winner_p = new MutableLiveData<>();
+    public final MutableLiveData<Integer> winner_l = new MutableLiveData<>();
 
-    GoalRepository repo = new GoalRepository(getApplication());
-    ProgressRepository repoProgress = new ProgressRepository();
+    final GoalRepository repo = new GoalRepository(getApplication());
+    final ProgressRepository repoProgress = new ProgressRepository();
 
 
     void getStateGoal(){

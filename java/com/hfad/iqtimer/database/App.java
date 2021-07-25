@@ -43,10 +43,8 @@ public class App extends Application {
                 mPrefSettings.getString(KEY_PREF_INTERVAL, DEFAULT_WORK_TIME);
         int DefaultPlan = Integer.parseInt(mPrefSettings.getString(KEY_PREF_PLAN, DEFAULT_PLAN));
         int Count = mPref.getInt(KEY_PREF_COUNT, DEFAULT_COUNT_VALUE);
-        int Counter = mPref.getInt(KEY_COUNTER_CURRENT, DEFAULT_COUNTER_VALUE);
-        boolean IsNeedCount = mPrefSettings.getBoolean("switch_count", true);
 
-        mCurrentSession = new CurrentSession(DefaultMinutes,DefaultPlan,Count,Counter,IsNeedCount);
+        mCurrentSession = new CurrentSession(DefaultMinutes,DefaultPlan,Count);
     }
 
     public static App getInstance() {

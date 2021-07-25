@@ -7,6 +7,5 @@ public enum TimerState {
     TIMER_FINISHED,
     BREAK,
     BREAK_FINISHED,
-    COUNTER_UP,
     CHANGE_INTERVAL
 }

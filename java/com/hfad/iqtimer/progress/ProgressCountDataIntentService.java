@@ -257,8 +257,6 @@ public class ProgressCountDataIntentService extends IntentService {
             }
             ed.putString(KEY_LAST_WORKDAY, mToDay.toString());
             ed.apply();
-
-            EventBus.getDefault().postSticky(new StateEvent(TimerState.COUNTER_UP));//для MainActivity
         }
     }
 

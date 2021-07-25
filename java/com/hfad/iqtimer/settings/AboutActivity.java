@@ -4,7 +4,6 @@ package com.hfad.iqtimer.settings;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +35,7 @@ public class AboutActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void testDialog(View view) {
+    public void testDialog() {
         DialogFragmentGoal dialog = new DialogFragmentGoal();
         dialog.show(getSupportFragmentManager(),"dlg1");
     }

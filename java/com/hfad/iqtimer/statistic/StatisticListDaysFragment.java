@@ -28,7 +28,7 @@ import com.hfad.iqtimer.database.SessionDao;
 public class StatisticListDaysFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MYLOGS";
-    Context context = App.instance.getContext();
+    final Context context = App.instance.getContext();
     SimpleCursorAdapter listAdapter;
     static Cursor sCursor;
     AppDatabase db;
@@ -90,7 +90,7 @@ public class StatisticListDaysFragment extends Fragment implements LoaderManager
 
     //наш лоадер, наследник класса CursorLoader. У него мы переопределяем метод loadInBackground, в котором просто получаем курсор с данными БД
     static class MyCursorLoader extends CursorLoader {
-        AppDatabase db;
+        final AppDatabase db;
 
         public MyCursorLoader(Context context, AppDatabase db) {
             super(context);

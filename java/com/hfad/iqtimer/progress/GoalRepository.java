@@ -29,9 +29,10 @@ public class GoalRepository {
     private static final String KEY_PREMIUM = "isPremium";
 
 
-    Context context;
-    SharedPreferences mPref, mPrefSettings;
-    SharedPreferences.Editor ed;
+    final Context context;
+    final SharedPreferences mPref;
+    final SharedPreferences mPrefSettings;
+    final SharedPreferences.Editor ed;
 
 
     @SuppressLint("CommitPrefEdits")

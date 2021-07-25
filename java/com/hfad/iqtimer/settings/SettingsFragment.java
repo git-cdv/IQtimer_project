@@ -179,9 +179,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 }
                 break;
 
-            case "switch_count":
-                break;
-
             default:
                 assert preference != null;
                 mDefValue = sharedPreferences.getString(preference.getKey(), "");

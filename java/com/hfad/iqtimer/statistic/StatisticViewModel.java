@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class StatisticViewModel extends AndroidViewModel {
 
-    StatisticRepository repo;
+    final StatisticRepository repo;
 
     public StatisticViewModel(@NonNull Application application) {
         super(application);
@@ -50,9 +50,9 @@ public class StatisticViewModel extends AndroidViewModel {
     private final MutableLiveData<String []> daysDates = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<BarEntry>> barMonthEntries = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<String>> monthDates = new MutableLiveData<>();
-    public ObservableBoolean isDataObzorDone = new ObservableBoolean();
-    public ObservableBoolean isDataDaysDone = new ObservableBoolean();
-    public ObservableBoolean isDataMonthDone = new ObservableBoolean();
+    public final ObservableBoolean isDataObzorDone = new ObservableBoolean();
+    public final ObservableBoolean isDataDaysDone = new ObservableBoolean();
+    public final ObservableBoolean isDataMonthDone = new ObservableBoolean();
 
 
     //результат приходит в рабочем фоне, поэтому используем LiveData и .postValue() для передачи в Главный поток

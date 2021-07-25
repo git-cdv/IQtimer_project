@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/settings"
-        android:title="Settings"
+        android:title="@string/sett_actionbar_title"
         android:orderInCategory="1"
         app:showAsAction="never"
         />
     <item
         android:id="@+id/statistic"
-        android:title="Statistic"
+        android:title="@string/stat_actionbar_title"
         android:orderInCategory="2"
         app:showAsAction="never"
         />
     <item
         android:id="@+id/about"
-        android:title="About"
+        android:title="@string/about"
         android:orderInCategory="3"
         app:showAsAction="never"
         />

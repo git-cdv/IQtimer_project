@@ -23,16 +23,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:fontFamily="sans-serif-thin"
+        android:onClick="toClick"
         android:text="@{session.mTime}"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textColor="?colorOnPrimary"
-        android:textSize="88sp"
+        android:textSize="100sp"
         app:animationOnPause="@{session.mState==TimerState.PAUSED}"
         app:layout_constraintBottom_toTopOf="@+id/imageButtonMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:onClick="toClick"
         tools:text="00:00" />
 
     <com.marcok.stepprogressbar.StepProgressBar
@@ -64,7 +65,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:onClick="toClick"
-         />
+        android:contentDescription="@string/descim_menu" />
 
     <ImageButton
         android:id="@+id/imageButtonStop"
@@ -76,11 +77,11 @@
         android:padding="10dp"
         android:src="@drawable/ic_baseline_stop_24"
         android:visibility="@{session.mState==TimerState.ACTIVE||session.mState==TimerState.PAUSED||session.mState==TimerState.BREAK ? View.VISIBLE : View.INVISIBLE}"
-        app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
+        app:layout_constraintBottom_toBottomOf="@+id/imageCount"
         app:layout_constraintEnd_toStartOf="@+id/imageCount"
-        app:layout_constraintTop_toTopOf="@+id/imageCounter"
+        app:layout_constraintTop_toTopOf="@+id/imageCount"
         android:onClick="toClick"
-        />
+        android:contentDescription="@string/stop" />
 
     <ImageView
         android:id="@+id/imageCount"
@@ -88,10 +89,11 @@
         android:layout_height="32dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ring_blue"
-        android:visibility="@{session.isNeedCount ? View.VISIBLE : View.GONE}"
-        app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
-        app:layout_constraintEnd_toStartOf="@+id/imageCounter"
-        app:layout_constraintTop_toTopOf="@+id/imageCounter" />
+        app:layout_constraintBottom_toBottomOf="@+id/imageButtonMenu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageButtonMenu"
+        android:contentDescription="@string/count"
+        />
 
     <TextView
         android:id="@+id/count_ses"
@@ -106,37 +108,10 @@
         app:layout_constraintEnd_toEndOf="@+id/imageCount"
         app:layout_constraintStart_toStartOf="@+id/imageCount"
         app:layout_constraintTop_toTopOf="@+id/imageCount"
-        android:visibility="@{session.isNeedCount ? View.VISIBLE : View.GONE}"
         tools:text="5"
         />
 
-    <ImageView
-        android:id="@+id/imageCounter"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="24dp"
-        android:src="@drawable/ring_orange"
-        app:layout_constraintBottom_toBottomOf="@+id/imageButtonMenu"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageButtonMenu"
 
-        />
-
-    <TextView
-        android:id="@+id/counter"
-        android:text="@{session.mCounter.toString}"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@android:style/TextAppearance.Large"
-        android:textSize="14sp"
-        android:textColor="@color/brand_orange"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
-        app:layout_constraintEnd_toEndOf="@+id/imageCounter"
-        app:layout_constraintStart_toStartOf="@+id/imageCounter"
-        app:layout_constraintTop_toTopOf="@+id/imageCounter"
-        tools:text="5"
-        />
 
     <ImageView
         android:id="@+id/tutorialDot"
@@ -149,7 +124,7 @@
         app:layout_constraintStart_toStartOf="@+id/timer_view"
         app:layout_constraintTop_toTopOf="@+id/timer_view"
         android:visibility="gone"
-        />
+        android:contentDescription="@string/todo" />
 
     <ImageView
         android:id="@+id/tutorialDot2"
@@ -157,11 +132,12 @@
         android:layout_height="56dp"
         android:gravity="center"
         android:src="@drawable/shape_tutorial_dot"
-        app:layout_constraintBottom_toBottomOf="@+id/imageCounter"
-        app:layout_constraintEnd_toStartOf="@+id/imageCounter"
+        app:layout_constraintBottom_toBottomOf="@+id/imageCount"
+        app:layout_constraintEnd_toStartOf="@+id/imageCount"
         app:layout_constraintStart_toEndOf="@+id/imageCount"
-        app:layout_constraintTop_toTopOf="@+id/imageCounter"
+        app:layout_constraintTop_toTopOf="@+id/imageCount"
         android:visibility="gone"
+        android:contentDescription="@string/todo"
         />
 
 

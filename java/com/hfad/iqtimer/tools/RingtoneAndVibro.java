@@ -28,7 +28,7 @@ public class RingtoneAndVibro extends ContextWrapper {
     private MediaPlayer mMediaPlayer;
     private Vibrator mVibrator;
     private final AudioManager mAudioManager;
-    SharedPreferences sPrefSettings;
+    final SharedPreferences sPrefSettings;
 
     public RingtoneAndVibro(Context base) {
         super(base);

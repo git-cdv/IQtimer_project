@@ -29,7 +29,7 @@
     <string name="sessiy">sessions</string>
     <string name="days">days</string>
     <string name="pref_sounds">Finished work notification sound</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="pref_sounds_break">Finished break notification sound</string>
     <string name="pref_vibrator">Vibration</string>
     <string name="no">No</string>
@@ -87,7 +87,7 @@
     <string name="onback">Press the back button again to exit</string>
     <string name="tutorial_mess1">Tap the timer to start and pause</string>
     <string name="tutorial_mess2">This is a status bar with a plan for the day and its implementation</string>
-    <string name="tutorial_mess3">This is the number of sessions per day and the effective mode</string>
+    <string name="tutorial_mess3">This is the number of sessions per day</string>
     <string-array name="goals">
         <item>Sessions</item>
         <item>Effective days</item>
@@ -105,5 +105,9 @@
     <string name="onlock_desc">Upgrade to Premium to support our app and get the Achievements page activated.</string>
     <string name="premium">Premium</string>
     <string name="upgrade">Upgrade</string>
+    <string name="descim_menu">Menu</string>
+    <string name="count">sessions counter</string>
+    <string name="todo">empty</string>
+    <string name="avatar_ach">avatar for achievement</string>
 
 </resources>
