@@ -203,6 +203,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:text="@string/new_goal"
+                    android:backgroundTint="@color/brand_blue_600"
+                    android:textColor="@color/white"
                     android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
                     app:layout_constraintBottom_toBottomOf="@+id/viewGoalDone"
                     app:layout_constraintEnd_toEndOf="@+id/viewGoalDone"

@@ -718,7 +718,7 @@
                         android:layout_marginEnd="16dp"
                         android:minLines="2"
                         android:textColor="@color/brand_blue_900"
-                        android:text="@{@string/p_desc_legenda(viewmodel.legenda_l+1)}"
+                        android:text="@{@string/p_desc_legenda(viewmodel.legenda_l&lt;10?viewmodel.legenda_l+1:10)}"
                         app:layout_constraintBottom_toTopOf="@+id/progressBar6"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/image6"

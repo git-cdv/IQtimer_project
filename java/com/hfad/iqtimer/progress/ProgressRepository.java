@@ -27,7 +27,6 @@ public class ProgressRepository {
 
     final SharedPreferences mPref;
 
-
     public ProgressRepository() {
         mPref = App.getPref();
     }

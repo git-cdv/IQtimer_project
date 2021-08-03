@@ -222,6 +222,9 @@ public class ProgressCountDataIntentService extends IntentService {
 
             if(mLevel==10){
                 countWinner();
+                ed.putInt(KEY_LEGENDA_LEVEL, 11);
+                ed.putInt(KEY_LEGENDA_CURRENT, 3);
+                ed.apply();
             }
         }
     }
@@ -292,7 +295,7 @@ public class ProgressCountDataIntentService extends IntentService {
         ed.apply();
 
         if(mCurrent==6){
-            ed.putInt(KEY_WINNER_LEVEL,10);
+            ed.putInt(KEY_WINNER_LEVEL,11);
             ed.apply();
         }
     }

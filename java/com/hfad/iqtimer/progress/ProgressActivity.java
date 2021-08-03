@@ -29,6 +29,11 @@ public class ProgressActivity extends AppCompatActivity {
         mViewmodel = new ViewModelProvider(this).get(ProgressViewModel.class);
 }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        //изменяет поведение при нажати на стрелку "UP" - здесь идет по стеку, а не на главную
+        return navController.navigateUp() || super.onSupportNavigateUp();
+    }
 
     public void toClickProgress(View v) {
 
