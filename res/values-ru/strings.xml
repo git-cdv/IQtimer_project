@@ -109,5 +109,6 @@
     <string name="count">Счетчик сессий</string>
     <string name="todo">Пусто</string>
     <string name="avatar_ach">avatar for achievement</string>
+    <string name="text_switch_out">Оставить звук в режиме \"без звука\"</string>
 
 </resources>

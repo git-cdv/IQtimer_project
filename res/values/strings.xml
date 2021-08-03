@@ -109,5 +109,6 @@
     <string name="count">sessions counter</string>
     <string name="todo">empty</string>
     <string name="avatar_ach">avatar for achievement</string>
+    <string name="text_switch_out">Leave sound in silent mode</string>
 
 </resources>

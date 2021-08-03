@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hfad.iqtimer">
+    package="com.chkan.iqtimer">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name=".database.App"
+        android:name="com.chkan.iqtimer.database.App"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.IQtimer">
         <service
-            android:name=".progress.ProgressCountDataIntentService"
+            android:name="com.chkan.iqtimer.progress.ProgressCountDataIntentService"
             android:exported="false" />
         <service
-            android:name=".database.WriteCountDataIntentService"
+            android:name="com.chkan.iqtimer.database.WriteCountDataIntentService"
             android:exported="false" />
 
         <activity
-            android:name=".statistic.StatisticActivity"
+            android:name="com.chkan.iqtimer.statistic.StatisticActivity"
             android:label="@string/stat_actionbar_title"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.chkan.iqtimer.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.chkan.iqtimer.MainActivity" />
         </activity>
 
-        <service android:name=".TimerService" />
+        <service android:name="com.chkan.iqtimer.TimerService" />
 
         <activity
-            android:name=".settings.AboutActivity"
+            android:name="com.chkan.iqtimer.settings.AboutActivity"
             android:label="@string/about"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.chkan.iqtimer.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.chkan.iqtimer.MainActivity" />
         </activity>
         <activity
-            android:name=".settings.SettingsActivity"
+            android:name="com.chkan.iqtimer.settings.SettingsActivity"
             android:label="@string/sett_actionbar_title"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.chkan.iqtimer.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.chkan.iqtimer.MainActivity" />
         </activity>
         <activity
-            android:name=".progress.ProgressActivity"
+            android:name="com.chkan.iqtimer.progress.ProgressActivity"
             android:label="@string/progress"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.chkan.iqtimer.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.chkan.iqtimer.MainActivity" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.chkan.iqtimer.MainActivity"
             android:launchMode="singleTask"
             android:showOnLockScreen="true"
             >

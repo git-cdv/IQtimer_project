@@ -5,10 +5,10 @@
 
     <data>
         <import type="android.view.View"/>
-        <import type="com.hfad.iqtimer.tools.TimerState"/>
+        <import type="com.chkan.iqtimer.tools.TimerState"/>
         <variable
             name="session"
-            type="com.hfad.iqtimer.CurrentSession"/>
+            type="com.chkan.iqtimer.CurrentSession"/>
 
     </data>
 

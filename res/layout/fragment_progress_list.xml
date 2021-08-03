@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewmodel"
-            type="com.hfad.iqtimer.progress.ProgressViewModel"/>
+            type="com.chkan.iqtimer.progress.ProgressViewModel"/>
 
     </data>
 

@@ -5,10 +5,10 @@
 
     <data>
         <import type="android.view.View"/>
-        <import type="com.hfad.iqtimer.tools.TimerState"/>
+        <import type="com.chkan.iqtimer.tools.TimerState"/>
         <variable
             name="session"
-            type="com.hfad.iqtimer.CurrentSession"/>
+            type="com.chkan.iqtimer.CurrentSession"/>
 
     </data>
 
@@ -124,21 +124,19 @@
         app:layout_constraintStart_toStartOf="@+id/timer_view"
         app:layout_constraintTop_toTopOf="@+id/timer_view"
         android:visibility="gone"
-        android:contentDescription="@string/todo" />
+         />
 
     <ImageView
         android:id="@+id/tutorialDot2"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:gravity="center"
-        android:src="@drawable/shape_tutorial_dot"
-        app:layout_constraintBottom_toBottomOf="@+id/imageCount"
-        app:layout_constraintEnd_toStartOf="@+id/imageCount"
-        app:layout_constraintStart_toEndOf="@+id/imageCount"
-        app:layout_constraintTop_toTopOf="@+id/imageCount"
-        android:visibility="gone"
         android:contentDescription="@string/todo"
-        />
+        android:src="@drawable/shape_tutorial_dot"
+        app:layout_constraintBottom_toBottomOf="@+id/imageButtonMenu"
+        app:layout_constraintEnd_toEndOf="@+id/imageCount"
+        app:layout_constraintTop_toTopOf="@+id/imageButtonMenu"
+        android:visibility="gone"
+         />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
