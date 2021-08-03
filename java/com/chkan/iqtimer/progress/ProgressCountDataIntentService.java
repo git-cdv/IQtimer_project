@@ -120,8 +120,8 @@ public class ProgressCountDataIntentService extends IntentService {
     }
 
     private void countHero() {
-        ////НУЖНО ИСПРАВИТЬ
-        if(mToDay.getDayOfWeek()!=6|mToDay.getDayOfWeek()==7) {
+
+        if(mToDay.getDayOfWeek()==6|mToDay.getDayOfWeek()==7) {
             LocalDate mLastDay = LocalDate.parse(mPref.getString(KEY_HERO_LASTDAY, "2020-01-01"));
             if(mToDay.getDayOfYear()!=mLastDay.getDayOfYear()) {
                 int mCurrentDays = mPref.getInt(KEY_HERO_CURRENT, 0);
@@ -149,8 +149,8 @@ public class ProgressCountDataIntentService extends IntentService {
     }
 
     private void countVoin() {
-        ////НУЖНО ИСПРАВИТЬ
-        if(mToDay.getDayOfWeek()!=6|mToDay.getDayOfWeek()==7) {
+
+        if(mToDay.getDayOfWeek()==6|mToDay.getDayOfWeek()==7) {
             LocalDate mLastDay = LocalDate.parse(mPref.getString(KEY_VOIN_LASTDAY, "2020-01-01"));
             if(mToDay.getDayOfYear()!=mLastDay.getDayOfYear()) {
                 int mCurrentDays = mPref.getInt(KEY_VOIN_CURRENT, 0);
@@ -167,20 +167,17 @@ public class ProgressCountDataIntentService extends IntentService {
     private void checkLevelWith100(String keyLevel, int currentValue) {
 
         int mCurrentLevel = mPref.getInt(keyLevel, 0);
-        //int [] mPlan = {2,6,10,14,20,30,40,50,60,80,100};
-        int [] mPlan = {2,3,4,5,6,7,8,9,10,11,12};
-        //проверяем на повышение уровня и на его конец
+        int [] mPlan = {2,6,10,14,20,30,40,50,60,80,100};
 
-        //ДОЛЖНО БЫТЬ 100
-        if (currentValue<12){
+        if (currentValue<100){
             if (currentValue==mPlan[mCurrentLevel]){
                 ed.putInt(keyLevel, ++mCurrentLevel);
                 ed.apply();
             }
             if(keyLevel.equals(KEY_HERO_LEVEL)) {checkLegenda(KEY_HERO_LEVEL);}
-            //ДОЛЖНО БЫТЬ 100
+
             //когда дошло до последнего значения - назначаем лвл 11 для золотого значка и убрать надпись с Уровнем
-        } else if (currentValue==12){
+        } else if (currentValue==100){
             countWinner();
             ed.putInt(keyLevel, 11);
             ed.apply();
@@ -307,7 +304,6 @@ public class ProgressCountDataIntentService extends IntentService {
                 ed.putInt(KEY_PREF_GOAL_STATE,STATE_GOAL_DONE);
                 ed.apply();
                 if(isPremium){countBoss();}
-                ///МОЖНО ОТПРАВИТЬ БАСОМ СОБЫТИЕ О ОКОНЧАНИИ Цели
 
             }
 

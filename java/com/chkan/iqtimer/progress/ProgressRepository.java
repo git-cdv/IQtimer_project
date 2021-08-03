@@ -39,11 +39,8 @@ public class ProgressRepository {
         int[] pokoritelArray;
         int[] legendaArray;
 
-        /*int [] mPlan1 = {2,6,10,14,20,30,40,50,60,80,100};
-        int [] mPlan2 = {5,10,30,50,75,100,150,200,250,300,365};*/
-
-        int[] mPlan1 = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-        int[] mPlan2 = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        int [] mPlan1 = {2,6,10,14,20,30,40,50,60,80,100};
+        int [] mPlan2 = {5,10,30,50,75,100,150,200,250,300,365};
 
         int mEntLevel = mPref.getInt(KEY_ENTUZIAST_LEVEL, 0);
         if (mEntLevel < 11) {

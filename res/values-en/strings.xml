@@ -109,6 +109,19 @@
     <string name="count">sessions counter</string>
     <string name="todo">empty</string>
     <string name="avatar_ach">avatar for achievement</string>
-    <string name="text_switch_out">Leave sound in silent mode</string>
+    <string name="text_switch_out">Enable sound in silent mode</string>
+    <string-array name="about">
+        <item>Version 1.3</item>
+        <item>Open Source Licenses</item>
+    </string-array>
+    <string name="text_license_common">
+        Licensed under the Apache License, Version 2.0 (the \"License\"); \n
+        you may not use this software except in compliance with the License. You may obtain a copy of the License at \n \n
 
+        http://www.apache.org/licenses/LICENSE-2.0 \n\n
+
+        Unless required by applicable law or agreed to in writing, software \n
+        distributed under the License is distributed on an \"AS IS\" BASIS, \n
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. \n
+        See the License for the specific language governing permissions and limitations under the License.</string>
 </resources>
