@@ -99,7 +99,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         switch (e.state) {
             case TIMER_FINISHED:
                 showMyDialog();
-                mCurrentSession.mCount.set(PrefHelper.getCount());
                 //удаляем липкое оповещение чтобы больше не получать
                 clearStickyEvent();
                 break;

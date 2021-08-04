@@ -66,7 +66,7 @@
     <string name="goal_desc_empty">Описание цели</string>
     <string name="powerdays">эффективных дней</string>
     <string name="dlg_delete_goal_title">Удалить цель?</string>
-    <string name="textGoalDone">Поздравляем, вы выполнили цель!</string>
+    <string name="textGoalDone">Вы сделали это на 100%!</string>
     <string name="new_goal">Новая цель</string>
     <string name="textDaysEnded">"Вы выполнили цель на "</string>
     <string name="p_title_entuziast">Энтузиаст</string>

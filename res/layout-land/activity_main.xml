@@ -26,13 +26,14 @@
         android:text="@{session.mTime}"
         app:animationOnPause="@{session.mState==TimerState.PAUSED}"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-        android:textSize="100sp"
+        android:textSize="160sp"
         android:fontFamily="sans-serif-thin"
         android:textColor="@color/brand_blue_900"
         app:layout_constraintBottom_toTopOf="@+id/imageButtonMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:onClick="toClick"
         tools:text="00:00"
         />
 
@@ -54,21 +55,23 @@
 
     <ImageButton
         android:id="@+id/imageButtonMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginBottom="48dp"
+        android:padding="8dp"
         android:src="@drawable/ic_baseline_menu_24"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:onClick="toClick"
         android:contentDescription="@string/descim_menu"
         />
 
     <ImageButton
         android:id="@+id/imageButtonStop"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_margin="16dp"
         android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
@@ -78,14 +81,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageCount"
         app:layout_constraintEnd_toStartOf="@+id/imageCount"
         app:layout_constraintTop_toTopOf="@+id/imageCount"
+        android:onClick="toClick"
         android:contentDescription="@string/stop"
         />
 
     <ImageView
         android:id="@+id/imageCount"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="48dp"
         android:src="@drawable/ring_blue"
         app:layout_constraintBottom_toBottomOf="@+id/imageButtonMenu"
         app:layout_constraintEnd_toEndOf="parent"
@@ -130,10 +134,9 @@
         android:layout_height="56dp"
         android:gravity="center"
         android:src="@drawable/shape_tutorial_dot"
-        app:layout_constraintBottom_toBottomOf="@+id/imageCount"
-        app:layout_constraintEnd_toStartOf="@+id/imageCount"
-        app:layout_constraintStart_toEndOf="@+id/imageCount"
-        app:layout_constraintTop_toTopOf="@+id/imageCount"
+        app:layout_constraintBottom_toBottomOf="@+id/imageButtonMenu"
+        app:layout_constraintEnd_toEndOf="@+id/imageCount"
+        app:layout_constraintTop_toTopOf="@+id/imageButtonMenu"
         android:visibility="gone"
         android:contentDescription="@string/todo"
         />

@@ -190,6 +190,7 @@
                     android:textColor="@color/brand_blue_900"
                     android:textSize="18sp"
                     android:textStyle="bold"
+                    android:textAlignment="center"
                     android:visibility="@{viewmodel.isViewDone ? View.VISIBLE : View.INVISIBLE}"
                     tools:text="Цель выполнена"
                     app:layout_constraintBottom_toTopOf="@+id/btnNewGoal"

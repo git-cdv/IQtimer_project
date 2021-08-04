@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.chkan.iqtimer.CurrentSession;
 import com.chkan.iqtimer.database.App;
+import com.chkan.iqtimer.database.PrefHelper;
 import com.chkan.iqtimer.tools.StateEvent;
 import com.chkan.iqtimer.tools.TimerState;
 
@@ -54,6 +56,7 @@ public class ProgressCountDataIntentService extends IntentService {
     int mPrefCount;
     boolean isGoalSessions,isPremium;
     LocalDate mToDay;
+    private final CurrentSession mCurrentSession = App.instance.getSession();
 
     public ProgressCountDataIntentService() {
         super("ProgressCountDataIntentService");
@@ -80,6 +83,8 @@ public class ProgressCountDataIntentService extends IntentService {
                 ed.putInt(KEY_PREF_COUNT, mPrefCount);
                 ed.apply();
 
+                mCurrentSession.mCount.set(mPrefCount);
+                //отправляем в Мэйн для запуска диалога
                 EventBus.getDefault().postSticky(new StateEvent(TimerState.TIMER_FINISHED));
 
                 if(isPremium){countPokoritel();countVoin();}
@@ -263,14 +268,10 @@ public class ProgressCountDataIntentService extends IntentService {
     private void checkLevelWith365(String keyLevel, int currentValue) {
 
         int mCurrentLevel = mPref.getInt(keyLevel, 0);
-        //int [] mPlan = {5,10,30,50,75,100,150,200,250,300,365};
-        int [] mPlan = {2,3,4,5,6,7,8,9,10,11,12};
 
-        //проверяем на повышение уровня и на его конец
+        int [] mPlan = {5,10,30,50,75,100,150,200,250,300,365};
 
-        //ДОЛЖНО БЫТЬ 365
-
-        if (currentValue<12){
+        if (currentValue<365){
             if (currentValue==mPlan[mCurrentLevel]){
                 ed.putInt(keyLevel, ++mCurrentLevel);
                 ed.apply();
@@ -278,7 +279,7 @@ public class ProgressCountDataIntentService extends IntentService {
             if(keyLevel.equals(KEY_ENTUZIAST_LEVEL) | keyLevel.equals(KEY_POKORITEL_LEVEL))
             {checkLegenda(keyLevel);}
         }
-        if (currentValue==12){
+        if (currentValue==365){
             ed.putInt(keyLevel, 11);
             ed.apply();
             countWinner();
