@@ -124,4 +124,7 @@
         distributed under the License is distributed on an \"AS IS\" BASIS, \n
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. \n
         See the License for the specific language governing permissions and limitations under the License.</string>
+    <string name="purchase_ack">Purchase Acknowledged</string>
+    <string name="disconnected">No connection</string>
+    <string name="already_owned">The item has already been purchased</string>
 </resources>
