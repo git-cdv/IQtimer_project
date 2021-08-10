@@ -31,6 +31,7 @@ public class ProgressViewModel extends AndroidViewModel {
     public final ObservableField<String> days_plan = new ObservableField<>();
     public final ObservableBoolean isPutAdd = new ObservableBoolean();
     public final ObservableBoolean isViewDone = new ObservableBoolean();
+    public final ObservableBoolean isPremium = new ObservableBoolean();
     public final ObservableField<String> textGoalDone = new ObservableField<>();
     public final ObservableField<Integer> counter = new ObservableField<>();
 
@@ -58,7 +59,6 @@ public class ProgressViewModel extends AndroidViewModel {
 
     final GoalRepository repo = new GoalRepository(getApplication());
     final ProgressRepository repoProgress = new ProgressRepository();
-
 
     void getStateGoal(){
         Log.d(TAG, "ProgressViewModel: getState");
@@ -128,23 +128,26 @@ public class ProgressViewModel extends AndroidViewModel {
         isPutAdd.set(false);
     }
 
-    public boolean isPremium() {
-        return repo.isPremium();
-    }
-
     public void getStateP() {
-     //получаем данные по Достижениям и назначаем их LiveData
-        MutableLiveData[][] liveDataArray = {{entuziast_l,entuziast_c,entuziast_p}, {voin_l,voin_c,voin_p}, {boss_l,boss_c,boss_p}, {hero_l,hero_c,hero_p}, {pokoritel_l,pokoritel_c,pokoritel_p}, {legenda_l,legenda_c,legenda_p}, {winner_l,winner_c,winner_p}};
+        //проверяем отображать замок или нет
+        isPremium.set(repo.isPremium());
 
-        int[][] stateArray = repoProgress.getStateP(); //{entuziastArray,voinArray,bossArray,heroArray,pokoritelArray,legendaArray,winnerArray};
+        MutableLiveData[][] liveDataArray = {{entuziast_l, entuziast_c, entuziast_p}, {voin_l, voin_c, voin_p}, {boss_l, boss_c, boss_p}, {hero_l, hero_c, hero_p}, {pokoritel_l, pokoritel_c, pokoritel_p}, {legenda_l, legenda_c, legenda_p}, {winner_l, winner_c, winner_p}};
+        int[][] stateArray;
 
-        for (int i = 0; i < 7; i++) {  //идём по строкам - количество Достижений
-            for (int j = 0; j < 3; j++) {//идём по столбцам - количество параметров состояния Достижений
-                //назначение соответствующим LiveData параметров состояния
-                liveDataArray[i][j].setValue(stateArray[i][j]);
-            }
+        if (isPremium.get()) {
+            //получаем данные по Достижениям и назначаем их LiveData
+            stateArray = repoProgress.getStateP(); //{entuziastArray,voinArray,bossArray,heroArray,pokoritelArray,legendaArray,winnerArray};
+        } else {
+            stateArray = new int[][]{{0,0,5},{0,0,2},{0,0,2},{0,0,2},{0,0,5},{0,0,3},{0,0,6}};
         }
 
+        for (int i = 0; i < 7; i++) {  //идём по строкам - количество Достижений
+        for (int j = 0; j < 3; j++) {//идём по столбцам - количество параметров состояния Достижений
+            //назначение соответствующим LiveData параметров состояния
+            liveDataArray[i][j].setValue(stateArray[i][j]);
+        }
+        }
     }
 
     public void getCounter() {

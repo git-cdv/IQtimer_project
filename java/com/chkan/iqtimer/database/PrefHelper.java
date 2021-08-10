@@ -21,6 +21,7 @@ public class PrefHelper {
     private static final String KEY_PREF_NAME = "GOAL_name";
     private static final String KEY_PREF_DESC = "GOAL_desc";
     private static final String KEY_PREF_QPLAN = "GOAL_Q_plan";
+    private static final String KEY_PREMIUM = "isPremium";
 
     public static int getLastIntroStep() {
         return App.getPref().getInt(INTRO_SNACKBAR_STEP, 0);
@@ -78,5 +79,9 @@ public class PrefHelper {
 
     public static Integer getCounter() {
         return App.getPref().getInt(KEY_COUNTER_CURRENT, 0);
+    }
+
+    public static void setPremium() {
+        App.getPref().edit().putBoolean(KEY_PREMIUM, true).apply();
     }
 }

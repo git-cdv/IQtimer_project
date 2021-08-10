@@ -127,4 +127,6 @@
     <string name="purchase_ack">Покупка подтверждена</string>
     <string name="disconnected">Соединение отсутствует</string>
     <string name="already_owned">Товар уже приобретен</string>
+    <string name="mess_error">Неверное значение</string>
+    <string name="purchase_ok">Премиум активирован</string>
 </resources>

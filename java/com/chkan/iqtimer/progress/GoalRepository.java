@@ -165,7 +165,7 @@ public class GoalRepository {
     }
 
     public boolean isPremium() {
-        return mPref.getBoolean(KEY_PREMIUM, true);
+        return mPref.getBoolean(KEY_PREMIUM, false);
     }
 
 }

@@ -15,6 +15,8 @@ import androidx.preference.SwitchPreference;
 import com.chkan.iqtimer.R;
 import com.chkan.iqtimer.database.ListSounds;
 
+import java.io.IOException;
+
 
 public class SettingsFragment extends PreferenceFragmentCompat
         implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
@@ -200,19 +202,22 @@ public class SettingsFragment extends PreferenceFragmentCompat
     @Override
     public boolean onPreferenceChange(Preference preference, Object o) {
 
-        Toast toast = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            toast = Toast.makeText(getContext(), R.string.sett_e_tost, Toast.LENGTH_LONG);
-        }
+        Toast toast;
+        toast = Toast.makeText(getContext(), R.string.sett_e_tost, Toast.LENGTH_LONG);
 
         if (preference.getKey().equals("set_plan_day")) {
             String defaultPlanString = (String) o;
-
-            if (Integer.parseInt(defaultPlanString) > 30 || Integer.parseInt(defaultPlanString) < 1) {
-                assert toast != null;
+            try {
+    if (Integer.parseInt(defaultPlanString) > 30 || Integer.parseInt(defaultPlanString) < 1) {
+        assert toast != null;
+        toast.show();
+        return false;
+    }
+} catch (NumberFormatException e) {
                 toast.show();
                 return false;
             }
+
 
             }
              return true;

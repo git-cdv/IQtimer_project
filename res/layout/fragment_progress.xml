@@ -646,6 +646,7 @@
             android:id="@+id/img_btn_lock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="@{viewmodel.isPremium ? View.INVISIBLE : View.VISIBLE}"
             android:layout_marginEnd="24dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"

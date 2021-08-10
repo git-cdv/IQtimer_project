@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -20,11 +19,13 @@ import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.chkan.iqtimer.R;
+import com.chkan.iqtimer.database.PrefHelper;
 import com.chkan.iqtimer.dialogs.DialogOnLock;
 import com.chkan.iqtimer.dialogs.DialogProgressDeleteGoal;
 
@@ -44,6 +45,7 @@ public class ProgressActivity extends AppCompatActivity {
     ProgressViewModel mViewmodel;
     private BillingClient mBillingClient;
     private final Map<String, SkuDetails> mSkuDetailsMap = new HashMap<>();
+    private final String mSkuId = "sku_access_achivements";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +74,9 @@ public class ProgressActivity extends AppCompatActivity {
         } else if (v.getId()==R.id.BtnMore){
             toProgressList();
         } else if (v.getId()==R.id.img_btn_lock){
-            if (mBillingClient==null){initBilling();}
             dlgOnLock = new DialogOnLock();
             dlgOnLock.show(getSupportFragmentManager(), "dlgOnLock");
-
+            if (mBillingClient==null){initBilling();}
         }
     }
 
@@ -126,6 +127,9 @@ public class ProgressActivity extends AppCompatActivity {
                     //здесь мы можем запросить информацию о товарах и покупках
                     //Прежде чем предлагать товар на продажу, убедитесь, что пользователь еще не владеет этим товаром.
                     querySkuDetails(); //запрос о товарах
+                    checkPurchases(); //проверка наличия покупки
+
+
                 }
             }
             @Override
@@ -137,6 +141,28 @@ public class ProgressActivity extends AppCompatActivity {
         });
 
         }
+
+    private void checkPurchases() {
+        Log.d(TAG, "initBilling: checkPurchases()");
+        mBillingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new PurchasesResponseListener() {
+            @Override
+            public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> list) {
+
+                if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
+
+                    //если товар уже куплен, предоставить его пользователю
+                    for (int i = 0; i < list.size(); i++) {
+                        String purchaseId = list.get(i).getSkus().get(i);
+                        if(TextUtils.equals(mSkuId, purchaseId)) {
+                            Log.d(TAG, "checkPurchases: payCompleteOld()");
+                            payComplete();
+                            }
+                        }
+                    }
+                }
+        });
+
+    }
 
     void handlePurchase(Purchase purchase) {
         Log.d(TAG, "handlePurchase");
@@ -169,16 +195,15 @@ public class ProgressActivity extends AppCompatActivity {
     }
 
     private void payComplete() {
-    //TODO сдлеать активацию Достижений
-        //TODO настроить проверку покупок и активацию при первом посещении
-
-
+        PrefHelper.setPremium();
+        mViewmodel.isPremium.set(true);
+        if(dlgOnLock!=null){dlgOnLock.dismiss();}
     }
 
     private void querySkuDetails() {
 
         List<String> skuList = new ArrayList<>();
-        skuList.add("sku_access_achivements");
+        skuList.add(mSkuId);
         SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
         params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
 

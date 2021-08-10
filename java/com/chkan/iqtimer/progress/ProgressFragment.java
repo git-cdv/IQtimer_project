@@ -28,7 +28,7 @@ public class ProgressFragment extends Fragment {
         mViewmodel.getCounter();//заполняем вью Счетчика эф дней подряд
         mViewmodel.getStateGoal();//заполняем вью ЦЕЛИ в зависимости от активности цели
         //заполняем вью Достижений
-        if (mViewmodel.isPremium()) {mViewmodel.getStateP(); }
+        mViewmodel.getStateP();
         }
 
     @Override
