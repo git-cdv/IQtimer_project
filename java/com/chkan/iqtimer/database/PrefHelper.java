@@ -37,10 +37,6 @@ public class PrefHelper {
         return PreferenceManager.getDefaultSharedPreferences(App.getInstance().getContext()).getString(KEY_PREF_PLAN, DEFAULT_PLAN);
     }
 
-    public static boolean getNeedCount() {
-        return PreferenceManager.getDefaultSharedPreferences(App.getInstance().getContext()).getBoolean("switch_count", DEFAULT_NEED_COUNT);
-    }
-
     public static String getWorkDate() {
         return App.getPref().getString(KEY_PREF_DATE, "empty");
     }
@@ -75,10 +71,6 @@ public class PrefHelper {
 
     public static String getPlanQ() {
         return App.getPref().getString(KEY_PREF_QPLAN, "0");
-    }
-
-    public static Integer getCounter() {
-        return App.getPref().getInt(KEY_COUNTER_CURRENT, 0);
     }
 
     public static void setPremium() {

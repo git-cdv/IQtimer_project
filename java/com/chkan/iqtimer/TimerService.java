@@ -54,12 +54,10 @@ public class TimerService extends Service {
     final MyBinder mBinder = new MyBinder();
     SharedPreferences mPref;
     static SharedPreferences sPrefSettings;
-    SharedPreferences.Editor ed;
     String mNotifChannel;
     RingtoneAndVibro mRingtoneAndVibro;
     long mSeconds;
     static boolean isBreak = false;
-    static int mState;
     static String mTime;
     private final CurrentSession mCurrentSession = App.instance.getSession();
 
@@ -76,7 +74,6 @@ public class TimerService extends Service {
 
         mNotifChannel = createNotificationChannel();
         mPref = App.getPref();
-        ed = mPref.edit();
         //получаем доступ к файлу с настройками приложения
         sPrefSettings = App.getPrefSettings();
         mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
@@ -104,7 +101,7 @@ public class TimerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "TimerService: onStartCommand startId -"+startId+", mSTATE - "+mState);
+        Log.d(TAG, "TimerService: onStartCommand startId -"+startId);
         super.onStartCommand(intent, flags, startId);
 
         //извлекаем и проверяпм состояние

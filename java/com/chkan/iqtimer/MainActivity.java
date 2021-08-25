@@ -56,7 +56,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
 
     ImageButton mButtonMenu;
     boolean mBound = false;
-    boolean mActive = false;
     ServiceConnection mConn;
     Intent mIntent;
     DialogFragment dlg,dlgStop;
@@ -269,7 +268,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         if (!mBound) {
             bindService(mIntent, mConn, 0);
         }
-        mActive = true;
         if(!EventBus.getDefault().isRegistered(this)){
         EventBus.getDefault().register(this);}
     }
@@ -281,7 +279,6 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         if (!mBound) return;
         unbindService(mConn);
         mBound = false;
-        mActive = false;
         EventBus.getDefault().unregister(this);
     }
 
