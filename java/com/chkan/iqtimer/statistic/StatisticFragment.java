@@ -88,7 +88,13 @@ public class StatisticFragment extends Fragment {
 
         ArrayList<BarEntry> arrayForChartDay = mViewmodel.getBarDaysEntries().getValue();
         String[] datesForChartDay = mViewmodel.getDaysDates().getValue();
-        mPlanDefault = mViewmodel.getPlanDefault().getValue();
+
+        try{
+            //noinspection ConstantConditions
+            mPlanDefault = mViewmodel.getPlanDefault().getValue();
+        } catch (NullPointerException e){
+            mPlanDefault = 4;
+        }
 
         String stringDescription = getResources().getString(R.string.stat_chart_description);
 

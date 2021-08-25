@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.chkan.iqtimer.CurrentSession;
 import com.chkan.iqtimer.database.App;
-import com.chkan.iqtimer.database.PrefHelper;
 import com.chkan.iqtimer.tools.StateEvent;
 import com.chkan.iqtimer.tools.TimerState;
 
@@ -66,8 +65,8 @@ public class ProgressCountDataIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "ProgressCountDataIntentService(): onHandleIntent");
         //получаем доступ к файлу с данными по дате и сессиям
-        mPref = App.getPref();
-        sPrefSettings = App.getPrefSettings();
+        mPref = App.getInstance().getPref();
+        sPrefSettings = App.getInstance().getPrefSettings();
         ed = mPref.edit();
         mToDay = LocalDate.now();
 

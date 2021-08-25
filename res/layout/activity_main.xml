@@ -124,7 +124,7 @@
         app:layout_constraintStart_toStartOf="@+id/timer_view"
         app:layout_constraintTop_toTopOf="@+id/timer_view"
         android:visibility="gone"
-         />
+        android:contentDescription="@string/tutorial_mess1" />
 
     <ImageView
         android:id="@+id/tutorialDot2"

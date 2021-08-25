@@ -63,7 +63,7 @@ public class StatisticRepository {
 
             List<Session> sessionList = sesDao.getAll();
 
-            SharedPreferences mPref = App.getPref();
+            SharedPreferences mPref = App.getInstance().getPref();
             int mPrefCount = mPref.getInt(KEY_PREF_COUNT, 0);
 
             //перебираем все строки в sessionList
@@ -108,11 +108,11 @@ public class StatisticRepository {
 
             Cursor mCursorForHistory = sesDao.getHistoryCursor();
 
-            SharedPreferences mPref = App.getPref();
+            SharedPreferences mPref = App.getInstance().getPref();
             int mPrefCount = mPref.getInt(KEY_PREF_COUNT, 0);
 
             //получаем доступ к файлу с настройками приложения
-            SharedPreferences sPrefSettings = App.getPrefSettings();
+            SharedPreferences sPrefSettings = App.getInstance().getPrefSettings();
             //вытаскиваем дефолтную значение плана из настроек и присваем переменной
             int mPlanDefault = Integer.parseInt(sPrefSettings.getString(KEY_PREF_PLAN, "5"));
 
@@ -173,7 +173,7 @@ public class StatisticRepository {
 
             Cursor sCursorForHistory = sesDao.getHistoryCursor();
 
-            SharedPreferences mPref = App.getPref();
+            SharedPreferences mPref = App.getInstance().getPref();
             int mPrefCount = mPref.getInt(KEY_PREF_COUNT, 0);
 
             //создаем массив для графика

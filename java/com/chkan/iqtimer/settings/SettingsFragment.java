@@ -15,8 +15,6 @@ import androidx.preference.SwitchPreference;
 import com.chkan.iqtimer.R;
 import com.chkan.iqtimer.database.ListSounds;
 
-import java.io.IOException;
-
 
 public class SettingsFragment extends PreferenceFragmentCompat
         implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">IQtimer</string>
-    <string name="start">Старт</string>
     <string name="stop">Стоп</string>
     <string name="pause">Пауза</string>
     <string name="back">Назад</string>
@@ -10,7 +9,6 @@
     <string name="obzor_stat_month">Месяц</string>
     <string name="obzor_stat_total">Итого</string>
     <string name="stat_chart_description">Сессий в день</string>
-    <string name="stat_chart_planday">План</string>
     <string name="dialog_session_end">Сессия закончена</string>
     <string name="dialog_rest_start">Начать перерыв</string>
     <string name="break_skip">Пропустить перерыв</string>
@@ -40,9 +38,6 @@
     <string name="starwars">Звездные Войны</string>
     <string name="set_category_timer">Таймер и план</string>
     <string name="set_category_notif">Уведомления</string>
-    <string name="set_category_mainscreen">Главный экран</string>
-    <string name="set_swith_count">Показывать счетчик сессий</string>
-    <string name="set_swith_counter">Показывать счетчик эффективных дней</string>
     <string name="set_swith_notif">Звук уведомления</string>
     <string name="history">История, дни</string>
     <string name="stat_list">Список</string>
@@ -53,13 +48,11 @@
     <string name="history_month">История, месяцы</string>
     <string name="stat_chart_description_month">Сессий в месяц</string>
     <string name="stat_graph">График</string>
-    <string name="icon_for_menu">Icon for Menu</string>
     <string name="progress_efective_days">Эффективных дней подряд</string>
     <string name="progress">Достижения</string>
     <string name="show_yet">Показать еще</string>
     <string name="list_stat_empty_text">Пока нет данных</string>
     <string name="maingoal_text_title">Главная цель</string>
-    <string name="set_goal">Поставить цель</string>
     <string name="empty">Пусто</string>
     <string name="dlg_progress_q_days">Количество дней</string>
     <string name="goal_name_empty">Название цели</string>
@@ -127,6 +120,4 @@
     <string name="purchase_ack">Покупка подтверждена</string>
     <string name="disconnected">Соединение отсутствует</string>
     <string name="already_owned">Товар уже приобретен</string>
-    <string name="mess_error">Неверное значение</string>
-    <string name="purchase_ok">Премиум активирован</string>
 </resources>

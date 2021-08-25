@@ -3,7 +3,6 @@ package com.chkan.iqtimer.settings;
 
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,8 +15,6 @@ import androidx.core.app.NavUtils;
 
 import com.chkan.iqtimer.R;
 import com.chkan.iqtimer.dialogs.DialogLicense;
-import com.chkan.iqtimer.dialogs.DialogOnLock;
-import com.chkan.iqtimer.progress.DialogFragmentGoal;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -35,14 +32,11 @@ public class AboutActivity extends AppCompatActivity {
                 this, R.array.about, android.R.layout.simple_list_item_1);
         lvAbout.setAdapter(adapter);
 
-        lvAbout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-               if (position==1){
-                   dlgLicense = new DialogLicense();
-                   dlgLicense.show(getSupportFragmentManager(), "dlgLicense");
-               }
-            }
+        lvAbout.setOnItemClickListener((parent, view, position, id) -> {
+           if (position==1){
+               dlgLicense = new DialogLicense();
+               dlgLicense.show(getSupportFragmentManager(), "dlgLicense");
+           }
         });
 
         ActionBar actionBar = this.getSupportActionBar();

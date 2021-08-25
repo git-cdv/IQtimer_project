@@ -88,7 +88,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         };
 
         //регистрируем слушателя настроек
-        App.getPrefSettings().registerOnSharedPreferenceChangeListener(this);
+        App.instance.getPrefSettings().registerOnSharedPreferenceChangeListener(this);
 
     }
 
@@ -97,13 +97,10 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
         Log.d(TAG, "MainActivity: StateEvent - "+e.state.name());
         switch (e.state) {
             case TIMER_FINISHED:
-                showMyDialog();
-                //удаляем липкое оповещение чтобы больше не получать
-                clearStickyEvent();
-                break;
             case BREAK_FINISHED:
                 //создаем диалог если Активити активно
                 showMyDialog();
+                //удаляем липкое оповещение чтобы больше не получать
                 clearStickyEvent();
                 break;
             case BREAK:
@@ -294,7 +291,7 @@ public class MainActivity extends FragmentActivity implements SharedPreferences.
     public void onDestroy() {
         Log.d(TAG, "MainActivity: onDestroy + Unregistered receiver");
         super.onDestroy();
-        App.getPrefSettings().unregisterOnSharedPreferenceChangeListener(this);
+        App.instance.getPrefSettings().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     //слушает изменение настройки и выполняет код при событии

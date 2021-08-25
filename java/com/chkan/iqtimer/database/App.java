@@ -53,7 +53,7 @@ public class App extends Application {
         return executor;
     }
     public Context getContext(){return context;}
-    public static SharedPreferences getPref(){return mPref;}
-    public static SharedPreferences getPrefSettings(){return mPrefSettings;}
+    public SharedPreferences getPref(){return mPref;}
+    public SharedPreferences getPrefSettings(){return mPrefSettings;}
     public CurrentSession getSession(){return mCurrentSession;}
 }

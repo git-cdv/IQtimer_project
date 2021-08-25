@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class ProgressActivity extends AppCompatActivity {
@@ -82,33 +83,30 @@ public class ProgressActivity extends AppCompatActivity {
 
     private void initBilling() {
 
-        PurchasesUpdatedListener purchasesUpdatedListener = new PurchasesUpdatedListener() {
-            @Override
-            public void onPurchasesUpdated(BillingResult billingResult, List<Purchase> purchases) {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                        && purchases != null) {
-                    //сюда мы попадем когда будет осуществлена покупка
-                    //purchases - список покупок сделанные пользователем через приложение (содержит sku, purchaseToken и isAcknowledged атрибуты)
+        PurchasesUpdatedListener purchasesUpdatedListener = (billingResult, purchases) -> {
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
+                    && purchases != null) {
+                //сюда мы попадем когда будет осуществлена покупка
+                //purchases - список покупок сделанные пользователем через приложение (содержит sku, purchaseToken и isAcknowledged атрибуты)
 
-                    //Проверка и подтверждение покупки
-                    //Если ваше приложение не подтвердит покупку в течение 72 часов, пользователю будет возвращена сумма,
-                    // и он больше не будет иметь доступа к первоначальной покупке, которую он совершил
-                    for (Purchase purchase : purchases) {
-                        handlePurchase(purchase);
-                    }
-                    Log.d(TAG, "onPurchasesUpdated: payComplete");
-                } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-                    // Handle an error caused by a user cancelling the purchase flow.
-                    Log.d(TAG, "onPurchasesUpdated: Cancel");
-                } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
-                    // возвращает если эта покупка уже есть
-                    Toast.makeText(ProgressActivity.this, getString(R.string.already_owned), Toast.LENGTH_SHORT).show();
-
-                    Log.d(TAG, "onPurchasesUpdated: ITEM_ALREADY_OWNED");
-                } else {
-                    // Handle any other error codes.
-                    Log.d(TAG, "onPurchasesUpdated: Error");
+                //Проверка и подтверждение покупки
+                //Если ваше приложение не подтвердит покупку в течение 72 часов, пользователю будет возвращена сумма,
+                // и он больше не будет иметь доступа к первоначальной покупке, которую он совершил
+                for (Purchase purchase : purchases) {
+                    handlePurchase(purchase);
                 }
+                Log.d(TAG, "onPurchasesUpdated: payComplete");
+            } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+                // Handle an error caused by a user cancelling the purchase flow.
+                Log.d(TAG, "onPurchasesUpdated: Cancel");
+            } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+                // возвращает если эта покупка уже есть
+                Toast.makeText(ProgressActivity.this, getString(R.string.already_owned), Toast.LENGTH_SHORT).show();
+
+                Log.d(TAG, "onPurchasesUpdated: ITEM_ALREADY_OWNED");
+            } else {
+                // Handle any other error codes.
+                Log.d(TAG, "onPurchasesUpdated: Error");
             }
         };
         //основной интерфейс для связи с Google Play Billing Library
@@ -120,7 +118,7 @@ public class ProgressActivity extends AppCompatActivity {
         //стартуем подключение к сервису
         mBillingClient.startConnection(new BillingClientStateListener() {
             @Override
-            public void onBillingSetupFinished(BillingResult billingResult) {
+            public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
                 if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
                     Log.d(TAG, "startConnection: Connected");
                     // сюда приходим после удачного подключения
@@ -144,37 +142,30 @@ public class ProgressActivity extends AppCompatActivity {
 
     private void checkPurchases() {
         Log.d(TAG, "initBilling: checkPurchases()");
-        mBillingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, new PurchasesResponseListener() {
-            @Override
-            public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> list) {
+        mBillingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP, (billingResult, list) -> {
 
-                if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
+            if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
 
-                    //если товар уже куплен, предоставить его пользователю
-                    for (int i = 0; i < list.size(); i++) {
-                        String purchaseId = list.get(i).getSkus().get(i);
-                        if(TextUtils.equals(mSkuId, purchaseId)) {
-                            Log.d(TAG, "checkPurchases: payCompleteOld()");
-                            payComplete();
-                            }
+                //если товар уже куплен, предоставить его пользователю
+                for (int i = 0; i < list.size(); i++) {
+                    String purchaseId = list.get(i).getSkus().get(i);
+                    if(TextUtils.equals(mSkuId, purchaseId)) {
+                        Log.d(TAG, "checkPurchases: payCompleteOld()");
+                        payComplete();
                         }
                     }
                 }
-        });
+            });
 
     }
 
     void handlePurchase(Purchase purchase) {
         Log.d(TAG, "handlePurchase");
-        AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = new AcknowledgePurchaseResponseListener() {
-            @Override
-            public void onAcknowledgePurchaseResponse(BillingResult billingResult) {
+        AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = billingResult -> {
 
-                if(billingResult.getResponseCode()== BillingClient.BillingResponseCode.OK){
-                    Toast.makeText(ProgressActivity.this, getString(R.string.purchase_ack), Toast.LENGTH_SHORT).show();
-                }
+            if(billingResult.getResponseCode()== BillingClient.BillingResponseCode.OK){
+                Toast.makeText(ProgressActivity.this, getString(R.string.purchase_ack), Toast.LENGTH_SHORT).show();
             }
-
         };
 
 
@@ -209,16 +200,12 @@ public class ProgressActivity extends AppCompatActivity {
 
         //получаем данные о товаре и кладем их в Мар
         mBillingClient.querySkuDetailsAsync(params.build(),
-                new SkuDetailsResponseListener() {
-                    @Override
-                    public void onSkuDetailsResponse(BillingResult billingResult,
-                                                     List<SkuDetails> skuDetailsList) {
-                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                            for (SkuDetails skuDetails : skuDetailsList) {
-                                mSkuDetailsMap.put(skuDetails.getSku(), skuDetails);
-                            }
-
+                (billingResult, skuDetailsList) -> {
+                    if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                        for (SkuDetails skuDetails : skuDetailsList) {
+                            mSkuDetailsMap.put(skuDetails.getSku(), skuDetails);
                         }
+
                     }
                 });
     }
@@ -231,10 +218,14 @@ public class ProgressActivity extends AppCompatActivity {
     //вызывается для отображения окна покупки и в setSkuDetails указывваем какой товар показывать
     public void launchBilling(String skuId) {
         Log.d(TAG, "launchBilling");
+        if (mSkuDetailsMap.get(skuId)!=null){
         BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
-                .setSkuDetails(mSkuDetailsMap.get(skuId))
+                .setSkuDetails((Objects.requireNonNull(mSkuDetailsMap.get(skuId))))
                 .build();
         mBillingClient.launchBillingFlow(this, billingFlowParams);
+        } else {
+            Toast.makeText(this, "Product not found", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

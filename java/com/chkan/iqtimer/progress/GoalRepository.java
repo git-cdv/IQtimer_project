@@ -38,8 +38,8 @@ public class GoalRepository {
     @SuppressLint("CommitPrefEdits")
     public GoalRepository(Context context) {
         this.context = context;
-        mPref = App.getPref();
-        mPrefSettings = App.getPrefSettings();
+        mPref = App.instance.getPref();
+        mPrefSettings = App.instance.getPrefSettings();
         ed = mPref.edit();
     }
 

@@ -13,8 +13,6 @@ import androidx.fragment.app.DialogFragment;
 import com.chkan.iqtimer.R;
 import com.chkan.iqtimer.progress.ProgressActivity;
 
-import java.util.Objects;
-
 public class DialogOnLock extends DialogFragment{
 
     private static final String TAG = "MYLOGS";
@@ -25,15 +23,12 @@ public class DialogOnLock extends DialogFragment{
 
         View v = inflater.inflate(R.layout.fragment_dialog_onlock, null);
         Button btn = v.findViewById(R.id.button);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "DialogOnLock: onClick");
-                ProgressActivity activity = (ProgressActivity) getActivity();
-                assert activity != null;
-                activity.launchBilling("sku_access_achivements");
-                dismiss();
-            }
+        btn.setOnClickListener(v1 -> {
+            Log.d(TAG, "DialogOnLock: onClick");
+            ProgressActivity activity = (ProgressActivity) getActivity();
+            assert activity != null;
+            activity.launchBilling("sku_access_achivements");
+            dismiss();
         });
 
         return v;

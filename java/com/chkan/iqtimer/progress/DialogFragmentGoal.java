@@ -23,8 +23,6 @@ import com.chkan.iqtimer.R;
 
 import java.util.Objects;
 
-import static com.chkan.iqtimer.R.id.btnCancel;
-
 public class DialogFragmentGoal extends DialogFragment implements View.OnClickListener {
     private static final String TAG = "MYLOGS";
 
@@ -40,7 +38,7 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
         Log.d(TAG, "DialogFragmentGoal: onCreateView");
         v = inflater.inflate(R.layout.fragment_dialog_goal, null);
         v.findViewById(R.id.btnOk).setOnClickListener(this);
-        v.findViewById(btnCancel).setOnClickListener(this);
+        v.findViewById(R.id.btnCancel).setOnClickListener(this);
         mEditTextSession = v.findViewById(R.id.dlgEditTextSession);
         mEditTextPeriod= v.findViewById(R.id.dlgEditTextPeriod);
         mEditTextNameGoal = v.findViewById(R.id.dlgEditTextNameGoal);
@@ -61,7 +59,7 @@ public class DialogFragmentGoal extends DialogFragment implements View.OnClickLi
     @Override
     public void onClick(View v) {
 
-    if(v.getId()==btnCancel){
+    if(v.getId()==R.id.btnCancel){
         model.isPutAdd.set(false);
         this.dismiss();
     } else {

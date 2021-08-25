@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">IQtimer</string>
-    <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="pause">Pause</string>
     <string name="back">Back</string>
@@ -10,7 +9,6 @@
     <string name="obzor_stat_month">Month</string>
     <string name="obzor_stat_total">Total</string>
     <string name="stat_chart_description">Sessions per day</string>
-    <string name="stat_chart_planday">Plan</string>
     <string name="dialog_session_end">Session finished</string>
     <string name="dialog_rest_start">Start break</string>
     <string name="break_skip">Skip break</string>
@@ -29,7 +27,7 @@
     <string name="sessiy">sessions</string>
     <string name="days">days</string>
     <string name="pref_sounds">Finished work notification sound</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="pref_sounds_break">Finished break notification sound</string>
     <string name="pref_vibrator">Vibration</string>
     <string name="no">No</string>
@@ -40,9 +38,6 @@
     <string name="starwars">Star Wars</string>
     <string name="set_category_timer">Timer and plan</string>
     <string name="set_category_notif">Notifications</string>
-    <string name="set_category_mainscreen">Main screen</string>
-    <string name="set_swith_count">Show session counter</string>
-    <string name="set_swith_counter">Show effective days counter</string>
     <string name="set_swith_notif">Notification sound</string>
     <string name="history">History, days</string>
     <string name="stat_list">List</string>
@@ -53,13 +48,11 @@
     <string name="history_month">History, months</string>
     <string name="stat_chart_description_month">Sessions per month</string>
     <string name="stat_graph">Chart</string>
-    <string name="icon_for_menu">Icon for Menu</string>
     <string name="progress_efective_days">Productive days in a row</string>
     <string name="progress">Achievements</string>
     <string name="show_yet">Show more</string>
     <string name="list_stat_empty_text">No data yet</string>
     <string name="maingoal_text_title">Main goal</string>
-    <string name="set_goal">Set a goal</string>
     <string name="empty">Empty</string>
     <string name="dlg_progress_q_days">Number of days</string>
     <string name="goal_name_empty">Goal name</string>
@@ -127,6 +120,4 @@
     <string name="purchase_ack">Purchase Acknowledged</string>
     <string name="disconnected">No connection</string>
     <string name="already_owned">The item has already been purchased</string>
-    <string name="mess_error">Invalid value</string>
-    <string name="purchase_ok">Premium activated</string>
 </resources>

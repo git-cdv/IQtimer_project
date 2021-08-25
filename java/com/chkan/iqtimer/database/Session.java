@@ -15,9 +15,9 @@ public class Session {
     @PrimaryKey(autoGenerate = true)
     public long _id;
 
-    public String date;
+    public final String date;
 
-    public int count;
+    public final int count;
 
-    public String date_full;
+    public final String date_full;
 }

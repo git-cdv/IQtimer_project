@@ -44,7 +44,8 @@
         android:src="@drawable/ic_baseline_fire_24"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toStartOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="@+id/textView"
+        android:contentDescription="TODO" />
 
     <TextView
         android:id="@+id/textView2"

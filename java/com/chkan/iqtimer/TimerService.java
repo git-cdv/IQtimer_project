@@ -73,11 +73,11 @@ public class TimerService extends Service {
         mRingtoneAndVibro = new RingtoneAndVibro(getBaseContext());
 
         mNotifChannel = createNotificationChannel();
-        mPref = App.getPref();
+        mPref = App.instance.getPref();
         //получаем доступ к файлу с настройками приложения
-        sPrefSettings = App.getPrefSettings();
-        mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
-        mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))*60000;
+        sPrefSettings = App.instance.getPrefSettings();
+        mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))* 60000L;
+        mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))* 60000L;
         mTimeLeftInMillis = mDefaultTimeInMillis;
     }
 
@@ -93,7 +93,7 @@ public class TimerService extends Service {
                 TimerPause();
                 break;
             case CHANGE_INTERVAL:
-                mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))*60000;
+                mDefaultTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_INTERVAL, "45")))* 60000L;
                 mTimeLeftInMillis = mDefaultTimeInMillis;
                 break;
         }
@@ -127,7 +127,7 @@ public class TimerService extends Service {
                 break;
             case STATE_BREAK_STARTED: //обработка интента для перерыва
                 Log.d(TAG, "TimerService: onStartCommand - ST_BREAK_STARTED");
-                mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))*60000;
+                mBreakTimeInMillis = (Integer.parseInt(sPrefSettings.getString(KEY_PREF_BREAKTIME, "15")))* 60000L;
                 mTimeLeftInMillis=mBreakTimeInMillis;
                 isBreak = true;
                 mTimer = new Timer(mTimeLeftInMillis, 1000);
