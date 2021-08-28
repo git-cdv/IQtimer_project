@@ -6,4 +6,4 @@ BD: SQlite, Room
 Multithreading: IntentService,Executors
 Design: Material Components, ConstraintLayouts
 DI: manual
-Tools: DataDinding, LiveData, Navigations
+Tools: DataBinding, LiveData, Navigations
